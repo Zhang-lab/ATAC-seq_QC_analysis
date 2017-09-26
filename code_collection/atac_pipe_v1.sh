@@ -326,5 +326,6 @@ sort -k1,1V -k2,2n reads.txt > sorted_read.txt
 sort -k1,1V -k2,2n 'peakcall_'$name'_peaks.narrowPeak' | awk '{print $9}' | paste sorted_read.txt - | awk '{print $0}' OFS='\t' > rpkm_for_all_peak.Peak
 sort  -k 7 -nr rpkm_for_all_peak.Peak  > sorted_rpkm_all_peak.Peak
 
-peak_number=`wc -l sorted_rpkm_all_peak.Peak` | awk '{print $1}'
+peak_number=`wc -l sorted_rpkm_all_peak.Peak | awk '{print $1}'`
+
 

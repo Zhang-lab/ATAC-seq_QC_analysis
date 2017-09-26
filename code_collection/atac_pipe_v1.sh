@@ -536,6 +536,53 @@ mv bin*.result ./'data_collection_'$name
 # clean result
 find . -name "*.result" | xargs sed -i 's/^-e //'
 cd ./'data_collection_'$name
+Rscript $pipe_path'/visualization.R' $name
+if [ $? == 0 ] 
+	then
+	echo "step4.7, plot process sucessful!" >> ../pipe_processing.log
+else 
+	echo "step4.7, plot process fail......" >> ../pipe_processing.log
+fi
+
+mkdir 'plots_collection_'$name
+mv density_plot_dedup.png  plot1.4_density_dedup.png
+mv density_plot_background.png  plot4.6_density_background.png
+mv density_plot_insertion_size.png  plot3.1_density_insertion_size.png
+mv density_plot_noduplication_ratio.png  plot4.3_density_noduplication_ratio.png
+mv density_plot_peak_length.png  plot3.3_density_peak_length.png
+mv density_plot_reads_distribution.png  plot3.1_density_library_reads_distri.png
+mv density_plot_rup_ratio.png  plot4.1_density_reads_under_peak.png
+mv stacked_barplot_chromosome_count.png  plot2.2_stacked_bar_reads_distri_in_chrom.png
+mv line_chart_enrichment_peaks.png  plot4.2_line_chart_peak_enrichment_ratio.png
+mv line_chart_saturation_peak_percentage.png plot4.5_line_chart_saturation.png
+mv pie_chart_promoter_region.png  plot4.6_pie_chart_promoter-peak_count.png
+mv promoter_distribution.png   plot4.6_promoter_distribution_among_peaks.png
+
+mv *png 'plots_collection_'$name
+cp 'dedup_percentage_'$name'.result'   ../'step1.3_dedup_percentage_'$name'.result'
+cp 'chrom_count_'$name'.result'  ../'step2.2_chrom_count_'$name'.result'
+cp 'insertion_distri_'$name'.result'   ../'step3.1_insertion_distri_'$name'.result'
+mv 'plots_collection_'$name  ../
+cd ..
+
+rm config.txt
+rm -r data/
+rm sorted_read.txt
+rm chr.peak
+rm -r 'saturation_'$name
+rm temp.txt
+rm refined_chrom_size.txt
+rm pesudo_bl.txt 2> /dev/null
+
+rename 's/Trimed_/step3.1_Trimed_/' Trimed_*
+rename 's/peakcall_/step3.3_peakcall_/' peakcall_*
+
+echo "Processing $file done"
+echo "Processing $file done"
+echo "Processing $file done"
+cd ..
+date
+
 
 
 

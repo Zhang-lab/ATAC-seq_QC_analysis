@@ -68,6 +68,7 @@ fi
 
 mkdir 'Processed_'$name
 mv $R1    ./'Processed_'$name/
+mv pesudo_bl.txt  ./'Processed_'$name/  2> /dev/null
 mv $raw1  ./'Processed_'$name/  2> /dev/null
 mv $raw2  ./'Processed_'$name/  2> /dev/null
 cd ./'Processed_'$name/
@@ -86,6 +87,95 @@ echo "types of reads is $types" >> pipe_processing.log
 echo " " >> pipe_processing.log
 
 ###################################################################################################
+# Step 1, Trim ATAC-seq adapters and QC on seq file
+# 1.1 Trim by cutadapt
+if [[ $types == PE ]];
+	then
+	echo 'trimming ATAC PE reads by cutadapt'
+	cutadapt -a $adapter_1 -A $adapter_2 --quality-cutoff=10 --minimum-length=36  -o 'Trimed_'$name'_1.fastq' -p  'Trimed_'$name'_2.fastq'  $raw1 $raw2  > 'step1.1_'$name'_cutadapt_PE.trimlog'
+elif [[ $types == SE ]];
+	then
+	echo 'trimming ATAC SE reads by cutadapt'
+	cutadapt -a $adatper_1 --quality-cutoff=10 --minimum-length=36  -o  'Trimed_'$name'.fastq' $raw1 > 'step1.1_'$name'_cutadapt_SE.trimlog'
+fi
+
+if [ $? == 0 ] 
+	then
+	echo "step1.1, trimming process sucessful!" >> pipe_processing.log
+else 
+	echo "step1.1, trimming process fail......" >> pipe_processing.log
+	exit 1
+fi
+
+# 1.2 fastqc
+echo 'fastqc is processing fastq file......'
+fastqc -t $threads 'Trimed_'$name*'.fastq' -o . 
+
+if [ $? == 0 ] 
+	then
+	echo "step1.2, fastqc process sucessful!" >> pipe_processing.log
+else 
+	echo "step1.2, fastqc process fail......" >> pipe_processing.log
+	exit 1
+fi
+
+for zip in `ls | grep fastqc.zip`
+do
+unzip -o $zip	
+mv $zip 'step1.2_'$zip
+done
+
+
+# 1.3 fastqc data collection (rely on the output data structure of Fastqc, double-check if it's updated)
+echo -e "filename\tdeduplication_percentage\tmarker" > 'dedup_percentage_'$name'.result'
+for file in `ls -d *fastqc/`
+do
+	cd $file
+	temp=`echo ${file##Trimed_}`
+	out_name=`echo ${temp%*_fastqc/}`
+	out_value=`grep 'Total Deduplicated Percentage' fastqc_data.txt | awk '{print $4}'`
+	echo -e "$out_name\t$out_value\t$marker" >> ../'dedup_percentage_'$name'.result'
+	echo -e "item\t$out_name\t$out_name" > 'duplication_summary_'$out_name'.result'
+	grep 'Sequence Duplication Levels' -A 15 fastqc_data.txt >> 'duplication_summary_'$out_name'.result'
+	mv 'duplication_summary_'$out_name'.result' ../'data_collection_'$name
+	echo -e "$out_name\tfastqc_test" > 'fastqc_summary_'$out_name'.result'
+	awk -F "\t" '{print $1,$2}' OFS='\t' summary.txt >> 'fastqc_summary_'$out_name'.result'
+	mv 'fastqc_summary_'$out_name'.result' ../'data_collection_'$name
+	cd ..
+done
+
+if [ $? == 0 ] 
+	then
+	echo "step1.3, fastqc data_collection process sucessful!" >> pipe_processing.log
+else 
+	echo "step1.3, fastqc data_collection process fail......" >> pipe_processing.log
+fi
+
+mv 'dedup_percentage_'$name'.result'  ./'data_collection_'$name
+
+# 1.4, get PE data R1 R2 deduplication difference percentage 
+if [[ $types == PE ]];
+then
+per1=`tail -n 2 ./'data_collection_'$name/'dedup_percentage_'$name'.result' | awk '{print $2}' | sed -n '1p'`
+per2=`tail -n 2 ./'data_collection_'$name/'dedup_percentage_'$name'.result' | awk '{print $2}' | sed -n '2p'`
+dif=`echo "scale=2; ($per1-$per2)*200/($per1+$per2)" | bc -l`
+else
+dif=0
+fi
+
+if [ $? == 0 ] 
+	then
+	echo "step1.4, calculate replicate difference process sucessful!" >> pipe_processing.log
+else 
+	echo "step1.4, calculate replicate difference process fail......" >> pipe_processing.log
+fi
+
+
+
+###################################################################################################
+
+# step2, alignment and data processing
+# 2.1 alignment by bwa mem
 
 
 

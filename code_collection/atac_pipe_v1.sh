@@ -67,7 +67,8 @@ else
 fi
 
 mkdir 'Processed_'$name
-mv $raw1  ./'Processed_'$name/
+mv $R1    ./'Processed_'$name/
+mv $raw1  ./'Processed_'$name/  2> /dev/null
 mv $raw2  ./'Processed_'$name/  2> /dev/null
 cd ./'Processed_'$name/
 mkdir 'data_collection_'$name
@@ -85,4 +86,6 @@ echo "types of reads is $types" >> pipe_processing.log
 echo " " >> pipe_processing.log
 
 ###################################################################################################
+
+
 

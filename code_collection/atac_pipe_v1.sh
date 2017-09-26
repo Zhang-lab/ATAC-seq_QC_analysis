@@ -77,7 +77,7 @@ touch pipe_processing.log
 
 # refine chrom_size file (remove random and Unknown record)
 awk  '{ if ((length($1) < 6) && (length($1) > 1))  print $0}' OFS='\t' $chrom_size  > refined_chrom_size.txt
-chrom_size="./refined_chrom_size.txt"
+chrom_size=`pwd`"/refined_chrom_size.txt"
 
 # start record
 date >> pipe_processing.log
@@ -327,5 +327,218 @@ sort -k1,1V -k2,2n 'peakcall_'$name'_peaks.narrowPeak' | awk '{print $9}' | past
 sort  -k 7 -nr rpkm_for_all_peak.Peak  > sorted_rpkm_all_peak.Peak
 
 peak_number=`wc -l sorted_rpkm_all_peak.Peak | awk '{print $1}'`
+
+cal_enrich() {
+rm top_peak.txt  2> /dev/null
+rm top_ratio.txt  2> /dev/null
+rm 'enrichment_'$name'.result'  2> /dev/null
+start=$1
+max=$2
+for i in `seq $start 1000 $max`
+do
+	head -$i sorted_rpkm_all_peak.Peak > 'top_'$i'_peaks_by_qvalue.Peak'
+	peak_length=`awk -F " " '{s+=($3-$2+1)}END{print s}' 'top_'$i'_peaks_by_qvalue.Peak'`
+	read_number=`awk -F " " '{s+=$5}END{print s}' 'top_'$i'_peaks_by_qvalue.Peak'`
+	echo $i >> top_peak.txt
+	echo "scale=2; $read_number / $peak_length / $denominator" | bc -l >> top_ratio.txt
+	rm 'top_'$i'_peaks_by_qvalue.Peak'
+done
+cut -f1 top_peak.txt  | paste -s | awk '{print "file",$0}' OFS="\t"  > enrich_peak.txt
+cut -f1 top_ratio.txt  | paste -s | awk -v file=$name '{print file,$0}' OFS="\t"  > enrich_ratio.txt
+cat enrich_peak.txt enrich_ratio.txt  > 'enrichment_'$name'.result'
+}
+
+if [ $peak_number -lt 1000 ]; then
+	cal_enrich $peak_number $peak_number
+elif [ $peak_number -ge 1000 ]; then
+	bins=`echo "$peak_number / 1000" | bc`
+	if [ $bins -ge 20 ]; then
+	bins=20
+	fi
+	max=`echo "$bins * 1000" | bc`
+	cal_enrich 1000 $max
+fi
+
+if [ $? == 0 ] 
+	then
+	echo "step4.2, calculate enrichment ratio process sucessful!" >> pipe_processing.log
+else 
+	echo "step4.2, calculate enrichment ratio process fail......" >> pipe_processing.log
+fi
+
+mv 'enrichment_'$name'.result'  ./'data_collection_'$name
+rm *rpkm*
+rm top*
+rm enrich_*.txt
+
+# 4.3 PBC calculation
+methylQA atac -r -o PBC_calculation  $chrom_size  'step2.2_Trimed_rm_mapq0_chrm_'$name'.bam'
+M_distinct=`awk '{s+=($3-$2+1)}END{print s}'  PBC_calculation.open.bedGraph`
+M1=`awk '{if($4==1) s+=($3-$2+1)}END{print s}' PBC_calculation.open.bedGraph`
+PBC=`echo "scale=2; $M1/$M_distinct" | bc -l`
+rm PBC*
+echo -e "file\ttotal\tmapped\tmapped_ratio\tuniq_mapped\tuniq_ratio\tnon-redundant_uniq_mapped\teffect_ratio\tPBC\tnodup_ratio\tnumber_of_reads_under_peak\trup_ratio\treplicate_dif\tmarker" >  'mapping_status_'$name'.result'
+echo -e "$name\t$map_total\t$map_mapped\t$mapped_ratio\t$map_uniq\t$uniq_ratio\t$map_effect\t$effect_ratio\t$PBC\t$nodup_ratio\t$sum\t$ratio\t$dif\t$marker" >>  'mapping_status_'$name'.result'
+mv 'mapping_status_'$name'.result'  ./'data_collection_'$name
+
+if [ -z $name ] || [ -z $map_total ] || [ -z $map_mapped ] || [ -z $mapped_ratio ] || [ -z $map_uniq ] || [ -z $uniq_ratio ] || [ -z $map_effect ] || [ -z $effect_ratio ] || [ -z $PBC ] || [ -z $nodup_ratio ] || [ -z $sum ]|| [ -z $ratio ]|| [ -z $dif ]
+then
+	echo "step4.3, sumarizing result process fail......" >> pipe_processing.log
+else
+	echo "step4.3, sumarizing result process sucessful!" >> pipe_processing.log
+fi
+
+
+# 4.4 IDR: Irreproducible Discovery Rate (IDR) based on statistical model
+## 1), get 2 pseudoreplicates by random sampling bed file without replacement (original bed -> 2 new bed)
+shuf 'Trimed_rmbl_'$name'.open.bed'  -o  random_reads.bed
+n=`wc -l random_reads.bed | awk '{print $1}' `
+size=$(( n/2 ))
+head -$size random_reads.bed > sample1.bed
+tail -$size random_reads.bed > sample2.bed
+macs2 callpeak -t sample1.bed  -g $macs2_genome -q 0.01 -n   sample1_macs2 --keep-dup 1000 --nomodel --shift 0 --extsize 150
+macs2 callpeak -t sample2.bed  -g $macs2_genome -q 0.01 -n   sample2_macs2 --keep-dup 1000 --nomodel --shift 0 --extsize 150
+
+cp -r $idr_file  ./idr
+mv sample*Peak  ./idr
+cd ./idr
+rm genome_table.txt
+cp $chrom_size  ./genome_table.txt
+Rscript batch-consistency-analysis.r  sample1_macs2_peaks.narrowPeak  sample2_macs2_peaks.narrowPeak  -1  $name'_self_IDR' 0 F p.value
+if [ $? == 0 ] 
+	then
+	echo "step4.4, IDR process sucessful!" >> ../pipe_processing.log
+else 
+	echo "step4.4, IDR process fail......" >> ../pipe_processing.log
+fi
+Rscript batch-consistency-plot.r  1  plot_IDR  $name'_self_IDR' 
+mkdir $name'_self_IDR'
+mv $name'_self'*  ./$name'_self_IDR'
+mv plot_IDR*  ./$name'_self_IDR'
+mv $name'_self_IDR' ../
+cd ..
+rm -r ./idr
+rm random_reads.bed
+rm sample*
+rm *zip
+cp ./$name'_self_IDR'/plot_IDR-plot.ps  ./'data_collection_'$name/'idr_plot_'$name'.ps'
+
+
+# 4.5 saturation analysis
+# subsampling:
+for number in 5 10 20 30 40 50 60 70 80 90
+do
+	sample_ratio=$(( total * $number / 100 ))
+	shuf 'Trimed_rmbl_'$name'.open.bed' | head -$sample_ratio >  'Trimed_rmbl_'$name'_sample'$number'.open.bed'
+done
+
+if [ $? == 0 ] 
+	then
+	echo "step4.5, saturation subsampling process sucessful!" >> pipe_processing.log
+else 
+	echo "step4.5, saturation subsampling process fail......" >> pipe_processing.log
+fi
+
+# call peak
+mkdir saturation_$name
+mv *.open.bed ./saturation_$name/
+cp peakcall_*Peak ./saturation_$name/'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak'
+cd ./saturation_$name
+for file in `ls *sample*.open.bed`;
+do
+	macs2 callpeak -t $file -g $macs2_genome -q 0.01 -n 'peakcall_'$file --keep-dup 1000 --nomodel --shift 0 --extsize 150
+done
+
+if [ $? == 0 ] 
+	then
+	echo "step4.5, saturation call peak process sucessful!" >> ../pipe_processing.log
+else 
+	echo "step4.5, saturation call peak process fail......" >> ../pipe_processing.log
+fi
+
+echo "peak calling done......"
+
+# summarise results
+python3.5 $pipe_path'/saturation_result_by_Million.py'   'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak'
+if [ $? == 0 ] 
+	then
+	echo "step4.5, saturation results collection process sucessful!" >> ../pipe_processing.log
+else 
+	echo "step4.5, saturation results collection process fail......" >> ../pipe_processing.log
+fi
+
+
+rm *sample*.open.bed
+mv *.open.bed ../
+echo -e "file\t$name'_read'\t$name'_peak'\t$name'_ratio'\tmarker"  > 'saturation_'$name'.result'
+tail -n +2 *report.txt > bbb.txt
+awk -v marker=$marker '{print $0,marker}' OFS='\t' bbb.txt >> 'saturation_'$name'.result'
+mv 'saturation_'$name'.result'  ../'data_collection_'$name
+rm bbb.txt
+cd ..
+
+# 4.6 calculate background
+peak='peakcall_'$name'_peaks.narrowPeak'
+bed='Trimed_rmbl_'$name'.open.bed'
+
+# signal part
+intersectBed -a $peak -b $promoter_file -u | awk '{print $1"\t"$2"\t"$3"\t""1""\t"$9}' > promoter.narrowPeak
+intersectBed -a $peak -b $promoter_file -v | awk '{print $1"\t"$2"\t"$3"\t""0""\t"$9}' > non-promoter.narrowPeak
+
+echo -e "num_peaks_in_promoter\tnum_peaks_in_non-promoter\tnum_reads_in_promoter_peaks\tnum_reads_in_non-promoter_peaks" > 'promoter_percentage_'$name'.result'
+
+peak1=`wc -l promoter.narrowPeak | awk '{print $1}'`
+peak2=`wc -l non-promoter.narrowPeak | awk '{print $1}'`
+read1=`intersectBed -a $bed -b promoter.narrowPeak -u -f 0.50 | wc -l`
+read2=`intersectBed -a $bed -b non-promoter.narrowPeak -u -f 0.50 | wc -l`
+
+echo -e "$peak1\t$peak2\t$read1\t$read2" >> 'promoter_percentage_'$name'.result'
+sed -i 's/^-e //' 'promoter_percentage_'$name'.result'
+
+cat promoter.narrowPeak non-promoter.narrowPeak | sort -k5 -n -r > top10k.narrowPeak
+python $pipe_path'/promoter_bin.py' top10k.narrowPeak
+rm promoter.narrowPeak
+rm non-promoter.narrowPeak
+rm top10k.narrowPeak
+
+# background noise part
+awk  '{ if ((length($1) < 6) && (length($1) > 1))  print $0}' OFS='\t' $chrom_size > temp.txt
+python2.7  $pipe_path'/random_chr.py' temp.txt
+
+size=`wc -l $bed | awk '{print $1}'`
+
+awk '{print $1"\t"int(($3+$2)/2)-100000"\t"int(($3+$2)/2)+100000"\t"$4}' $peak > temp
+awk '{if ($2<0) $2=0; print $0}' OFS="\t" temp > temp2
+mv temp2 temp
+intersectBed -a chr.peak -b temp -v | shuf - | head -50000 | sort -k1,1V -k2,2n > background
+intersectBed -a $bed -b background -u -f 0.5 | sort -k1,1V -k2,2n > temp
+python $pipe_path'/rpkm_bin.py' background temp $size
+
+if [ $? == 0 ] 
+	then
+	echo "step4.6, background evaluation process sucessful!" >> ./pipe_processing.log
+else 
+	echo "step4.6, background evaluation process fail......" >> ./pipe_processing.log
+fi
+
+mv reads.txt 'background_'$name'.result'
+
+
+
+rm temp
+rm background
+mv bin.txt 'bin_'$name'.result'
+mv background*.result  ./'data_collection_'$name
+mv promoter*.result ./'data_collection_'$name
+mv bin*.result ./'data_collection_'$name
+
+# step 4.7, plot on results
+# clean result
+find . -name "*.result" | xargs sed -i 's/^-e //'
+cd ./'data_collection_'$name
+
+
+
+
 
 

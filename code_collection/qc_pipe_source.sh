@@ -51,6 +51,7 @@ elif [[ $species == danRer10 ]];
 	chrom_size=$pipe_path'/danRer10.chrom.sizes' 
 	touch pesudo_bl.txt
 	black_list="pesudo_bl.txt"
+	genome_size=1371719383
 	promoter_file="/home/shaopengliu/resources/danRer10/promoter_region_danRer10_bistream_2k.bed"
 	macs2_genome='mm'
 elif [[ $species == personalize ]];

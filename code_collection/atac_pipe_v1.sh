@@ -13,11 +13,8 @@
 date
 
 # get the absolute path
-# readlink or realpath can do the trick, but they are not available in some version, e.g. the -f option
-pipe_loc=`dirname $0`
-cd $pipe_loc
-pipe_path=`pwd`
-cd -
+temp=`realpath $0`
+pipe_path=`echo ${temp%/*}`
 
 # read parameters
 while getopts m:t:g:o:p:r:  opts

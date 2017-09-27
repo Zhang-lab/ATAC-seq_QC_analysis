@@ -411,7 +411,7 @@ else
 fi
 Rscript batch-consistency-plot.r  1  plot_IDR  $name'_self_IDR' 
 mkdir $name'_self_IDR'
-mv $name'_self'*  ./$name'_self_IDR'
+mv $name'_self'*  ./$name'_self_IDR'  2> /dev/null
 mv plot_IDR*  ./$name'_self_IDR'
 mv $name'_self_IDR' ../
 cd ..
@@ -575,9 +575,9 @@ rm pesudo_bl.txt 2> /dev/null
 rename 's/Trimed_/step3.1_Trimed_/' Trimed_*
 rename 's/peakcall_/step3.3_peakcall_/' peakcall_*
 
-echo "Processing $file done"
-echo "Processing $file done"
-echo "Processing $file done"
+echo "Processing $name done"
+echo "Processing $name done"
+echo "Processing $name done"
 cd ..
 date
 

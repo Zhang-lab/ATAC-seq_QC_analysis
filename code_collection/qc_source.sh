@@ -2,9 +2,8 @@
 species=$1
 
 # get pipe path, though readlink/realpath can do it, some version doesn't have that
-pipe_loc=`dirname $0`
-cd $pipe_loc
-pipe_path=`pwd`
+temp=`realpath $0`  
+pipe_path=`echo ${temp%/*}`  
 
 # common tools:
 idr_file=$pipe_path'/idr_folder'

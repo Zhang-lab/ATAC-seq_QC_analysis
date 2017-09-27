@@ -47,7 +47,7 @@ elif [[ $species == hg19 ]];
 elif [[ $species == danRer10 ]];
 	then
 	bwa_ref="/home/Resource/Genome/danRer10/bwa_index_denRer10/danRer10.fa"
-	chrom_size=$pipe_path'/danRer10.chrom.sizes' 
+	chrom_size="/home/shaopengliu/resources/danRer10/danRer10.chrom.sizes"
 	touch pesudo_bl.txt
 	black_list="pesudo_bl.txt"
 	genome_size=1371719383

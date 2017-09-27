@@ -17,6 +17,7 @@ date
 pipe_loc=`dirname $0`
 cd $pipe_loc
 pipe_path=`pwd`
+cd -
 
 # read parameters
 while getopts m:t:g:o:p:r:  opts

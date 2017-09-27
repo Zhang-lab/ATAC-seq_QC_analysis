@@ -11,6 +11,16 @@ There are 4 species, with an additional whatever-youlike feature. After download
 user@domain: path_to_pipe/pipe.sh  -g  <mm10/mm9/hg38/hg19/personalize>  -r <PE/SE>  -o read_file1  -p read_file2 (if PE file)  
 Optional parameter:   -t <threads>  -m <marker>  -h for help  
 
+## Caveats in method selection
+### 1, reads distribution count in each chromosome  
+We do **NOT** use samtools index directly, because "bwa" would assign reads of which has mapQ=0 to chr1, the results are not accurate. What we perform is to remove those reads first and count directly by "uniq" command.
+
+### 2, generate random regions from genome  
+We do **NOT** use "bedtools random" because it's hard to determine how many regions we need. Especially for Zebra fish data, those peaks(extended to 10kb at each side) would cover most of genome so it's very hard to get enough hits. So we simply shutter the whole genome and take all regions.
+
+
+
+
 ## Data Processing:  
 ### Step1, Pre-alignment   
 #### 1.1, Trimming by cutadapt  

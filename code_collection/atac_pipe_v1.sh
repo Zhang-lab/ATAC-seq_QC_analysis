@@ -318,7 +318,8 @@ nodup_ratio=`echo "scale=2; $map_effect/$map_uniq" | bc -l`
 
 
 # 4.2 enrichment ratio
-denominator=`echo "scale=10; $total / $genome_size " | bc -l`
+noise_read=`intersectBed -a 'Trimed_rmbl_'$name'.open.bed'  -b 'peakcall_'$name'_peaks.narrowPeak' -f 0.5 -v | wc -l`  
+denominator=`echo "scale=10; $noise_read / $genome_size " | bc -l`
 
 sort -k1,1V -k2,2n reads.txt > sorted_read.txt
 sort -k1,1V -k2,2n 'peakcall_'$name'_peaks.narrowPeak' | awk '{print $9}' | paste sorted_read.txt - | awk '{print $0}' OFS='\t' > rpkm_for_all_peak.Peak

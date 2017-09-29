@@ -458,7 +458,37 @@ fi
 echo "peak calling done......"
 
 # summarise results
-python3.5 $pipe_path'/saturation_result_by_Million.py'   'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak'
+echo -e "5\n`seq 10 10 100`" > saturation_points.txt
+
+for file in `ls *open.bed`
+do
+read_num=`wc -l $file | awk '{print $1}'`
+echo `echo "scale=2; $read_num / 1000000" | bc -l`>> temp1.txt 
+done
+sort -k1,1n temp1.txt > saturation_reads.txt
+rm temp1.txt
+
+total_region=`awk '{s+=$3-$2+1}END{print s}' 'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak'`
+
+for file in `ls *narrowPeak`
+do
+peak_number=`wc -l $file | awk '{print $1}'`
+peak_region=`intersectBed -a $file -b 'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak' | awk '{s+=$3-$2+1}END{print s}'`
+if [ -z "$peak_region" ]; then
+peak_region=0
+fi
+echo `echo "scale=2; $peak_region / $total_region" | bc -l` >> temp3.txt
+echo $peak_number >> temp2.txt
+done
+
+sort -k1,1n temp2.txt > saturation_peak.txt
+sort -k1,1n temp3.txt > saturation_ratio.txt
+rm temp2.txt
+rm temp3.txt
+
+
+paste saturation_points.txt  saturation_reads.txt  saturation_peak.txt   saturation_ratio.txt  > temp4.txt
+
 if [ $? == 0 ] 
 	then
 	echo "step4.5, saturation results collection process sucessful!" >> ../pipe_processing.log
@@ -466,7 +496,9 @@ else
 	echo "step4.5, saturation results collection process fail......" >> ../pipe_processing.log
 fi
 
+echo -e "point\tread\tpeak\tratio" | cat -  temp4.txt > Trimed_rmbl_test_saturation_report.txt
 
+rm saturation*.txt
 rm *sample*.open.bed
 mv *.open.bed ../
 echo -e "file\t$name'_read'\t$name'_peak'\t$name'_ratio'\tmarker"  > 'saturation_'$name'.result'

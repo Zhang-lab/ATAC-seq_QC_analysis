@@ -496,16 +496,13 @@ else
 	echo "step4.5, saturation results collection process fail......" >> ../pipe_processing.log
 fi
 
-echo -e "point\tread\tpeak\tratio" | cat -  temp4.txt > Trimed_rmbl_test_saturation_report.txt
-
+echo -e "file\t$name'_read'\t$name'_peak'\t$name'_ratio'\tmarker"  > 'saturation_'$name'.result'  
+awk -v marker=$marker '{print $0,marker}' OFS='\t' temp4.txt >> 'saturation_'$name'.result'  
+rm temp4.txt
 rm saturation*.txt
 rm *sample*.open.bed
 mv *.open.bed ../
-echo -e "file\t$name'_read'\t$name'_peak'\t$name'_ratio'\tmarker"  > 'saturation_'$name'.result'
-tail -n +2 *report.txt > bbb.txt
-awk -v marker=$marker '{print $0,marker}' OFS='\t' bbb.txt >> 'saturation_'$name'.result'
 mv 'saturation_'$name'.result'  ../'data_collection_'$name
-rm bbb.txt
 cd ..
 
 # 4.6 calculate background

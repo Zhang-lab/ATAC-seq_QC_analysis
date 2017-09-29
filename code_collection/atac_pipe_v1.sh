@@ -13,8 +13,7 @@
 date
 
 # get the absolute path
-temp=`realpath $0`
-pipe_path=`echo ${temp%/*}`
+pipe_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" 
 
 # read parameters
 while getopts m:t:g:o:p:r:  opts

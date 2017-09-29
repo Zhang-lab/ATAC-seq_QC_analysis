@@ -2,8 +2,8 @@
 species=$1
 
 # get pipe path, though readlink/realpath can do it, some version doesn't have that
-temp=`realpath $0`  
-pipe_path=`echo ${temp%/*}`  
+pipe_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" 
+ 
 
 # common tools:
 idr_file=$pipe_path'/idr_folder'

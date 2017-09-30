@@ -104,6 +104,9 @@ else
 	exit 1
 fi
 
+temp=`grep "Total read pairs processed:" step1.1_*trimlog | awk '{print $5}'`  
+raw_reads=`echo ${temp//,}`  
+
 # 1.2 fastqc
 echo 'fastqc is processing fastq file......'
 fastqc -t $threads 'Trimed_'$name*'.fastq' -o . 
@@ -202,12 +205,25 @@ rm input.sam
 
 # all alignment with mapQ > 0, exact same with samtools idxstats
 cat output.sam | awk '{print $3}' |  sort  -k1,1V |   uniq -c > count_no_mapq0.txt
-awk '! /random/ && ! /Un/ && /chr/  ' count_no_mapq0.txt  | awk '{print $2, $1}'  OFS="\t"  | sort  -k1,1 -V -s > 'chrom_count_'$name'.txt'
+awk '! /random/ && ! /Un/ && /chr/  ' count_no_mapq0.txt  | awk '{print $2, $1}'  OFS="\t"  | sort  -k1,1 -V -s > temp.txt
+if [[ $types == SE ]]; then
+mv temp.txt  'chrom_count_'$name'.txt'
+elif [[ $types == PE ]]; then
+awk '{$2=int($2*0.5); print}' OFS="\t" temp.txt > 'chrom_count_'$name'.txt'
+fi
 
 # only effect reads
 methylQA density -S $chrom_size  output.sam
 cat output.extended.bed | awk '{print $1}' | uniq -c >  count_unique.txt
 awk '! /random/ && ! /Un/ && /chr/  ' count_unique.txt  | awk '{print $2, $1}'  OFS="\t"  | sort  -k1,1 -V -s > 'chrom_count_unique_'$name'.txt'
+
+# mapping status
+map_mapped=`grep 'mappable reads' output.report | awk '{print $4}'`
+map_uniq=`grep '(mapQ >= 10)' output.report | awk '{print $8}'`
+map_effect=`grep 'non-redundant'  output.report | awk '{print $6}'`
+mapped_ratio=`echo "scale=2; $map_mapped/$raw_reads" | bc -l`
+effect_ratio=`echo "scale=2; $map_effect/$raw_reads" | bc -l`
+nodup_ratio=`echo "scale=2; $map_effect/$map_uniq" | bc -l`
 
 # rm chrM and other 
 awk '$3!="chrM"' output.sam | samtools view -bS - > 'Trimed_rm_mapq0_chrm_'$name'.bam'
@@ -240,7 +256,7 @@ else
 	exit 1
 fi
 
-
+useful_reads=`grep 'non-redundant'  Trimed_rm_mapq0_chrm_*report | awk '{print $6}'`
 mv 'Trimed_rm_mapq0_chrm_'$name'.bam'   'step2.2_Trimed_rm_mapq0_chrm_'$name'.bam'
 mv 'Trimed_rm_mapq0_chrm_'$name'.genomeCov.pdf'  'step2.2_Trimed_rm_mapq0_chrm_'$name'.genomeCov'
 awk '$1<=500'  'Trimed_'*$name'.insertdistro'  | sort -n | uniq -c | awk '{print $2,$1}' > 'insertion_distri_'$name'.result'
@@ -304,18 +320,6 @@ sum=`awk '{s+=$5}END{print s}' reads.txt`
 ratio=`echo "scale=2; $sum*100/$total" | bc -l`
 
 
-# add RUP results into mapping data collection
-# mapping status
-map_total=`grep "total reads" Trimed_*report | awk '{print $4}'`
-map_mapped=`grep 'mappable reads' Trimed_*report | awk '{print $4}'`
-map_uniq=`grep '(mapQ >= 10)' Trimed_*report | awk '{print $8}'`
-map_effect=`grep 'non-redundant'  Trimed_*report | awk '{print $6}'`
-mapped_ratio=`echo "scale=2; $map_mapped/$map_total" | bc -l`
-uniq_ratio=`echo "scale=2; $map_uniq/$map_total" | bc -l`
-effect_ratio=`echo "scale=2; $map_effect/$map_total" | bc -l`
-nodup_ratio=`echo "scale=2; $map_effect/$map_uniq" | bc -l`
-
-
 # 4.2 enrichment ratio
 noise_read=`intersectBed -a 'Trimed_rmbl_'$name'.open.bed'  -b 'peakcall_'$name'_peaks.narrowPeak' -f 0.5 -v | wc -l`  
 denominator=`echo "scale=10; $noise_read / $genome_size " | bc -l`
@@ -375,8 +379,8 @@ M_distinct=`awk '{s+=($3-$2+1)}END{print s}'  PBC_calculation.open.bedGraph`
 M1=`awk '{if($4==1) s+=($3-$2+1)}END{print s}' PBC_calculation.open.bedGraph`
 PBC=`echo "scale=2; $M1/$M_distinct" | bc -l`
 rm PBC*
-echo -e "file\ttotal\tmapped\tmapped_ratio\tuniq_mapped\tuniq_ratio\tnon-redundant_uniq_mapped\teffect_ratio\tPBC\tnodup_ratio\tnumber_of_reads_under_peak\trup_ratio\treplicate_dif\tmarker" >  'mapping_status_'$name'.result'
-echo -e "$name\t$map_total\t$map_mapped\t$mapped_ratio\t$map_uniq\t$uniq_ratio\t$map_effect\t$effect_ratio\t$PBC\t$nodup_ratio\t$sum\t$ratio\t$dif\t$marker" >>  'mapping_status_'$name'.result'
+echo -e "file\ttotal\tmapped\tmapped_ratio\tuniq_mapped\tnon-redundant_uniq_mapped\teffect_ratio\tuseful_reads\tPBC\tnodup_ratio\tnumber_of_reads_under_peak\trup_ratio\treplicate_dif\tmarker" >  'mapping_status_'$name'.result'
+echo -e "$name\t$raw_reads\t$map_mapped\t$mapped_ratio\t$map_uniq\t$map_effect\t$effect_ratio\t$useful_reads\t$PBC\t$nodup_ratio\t$sum\t$ratio\t$dif\t$marker" >>  'mapping_status_'$name'.result'
 mv 'mapping_status_'$name'.result'  ./'data_collection_'$name
 
 if [ -z $name ] || [ -z $map_total ] || [ -z $map_mapped ] || [ -z $mapped_ratio ] || [ -z $map_uniq ] || [ -z $uniq_ratio ] || [ -z $map_effect ] || [ -z $effect_ratio ] || [ -z $PBC ] || [ -z $nodup_ratio ] || [ -z $sum ]|| [ -z $ratio ]|| [ -z $dif ]

@@ -558,6 +558,15 @@ mv reads.txt 'background_'$name'.result'
 rm temp
 rm background
 mv bin.txt 'bin_'$name'.result'
+
+bg_total=`wc -l background*.result | awk '{print $1}'`  
+bg_less=`awk '$6<=0.3 {print $0}' background*.result | wc -l`  
+bg_more=`awk '$6>0.3 {print $0}' background*.result | wc -l`  
+ra_less=`echo "scale=2; $bg_less*100 / $bg_total" | bc -l`  
+ra_more=`echo "scale=2; $bg_more*100 / $bg_total" | bc -l`  
+echo -e "$ra_less\t$ra_more" > 'dichoto_bg_'$name'.result'  
+
+mv 'dichoto_bg_'$name'.result'   ./'data_collection_'$name  
 mv background*.result  ./'data_collection_'$name
 mv promoter*.result ./'data_collection_'$name
 mv bin*.result ./'data_collection_'$name
@@ -575,19 +584,6 @@ else
 fi
 
 mkdir 'plots_collection_'$name
-mv density_plot_dedup.png  plot1.4_deduplication_level.png
-mv density_plot_background.png  plot4.6_background_noise.png
-mv density_plot_insertion_size.png  plot3.1_insertion_size.png
-mv density_plot_noduplication_ratio.png  plot4.3_noduplication_ratio.png
-mv density_plot_peak_length.png  plot3.3_peak_length.png
-mv density_plot_reads_distribution.png  plot3.1_library_reads_distri.png
-mv density_plot_rup_ratio.png  plot4.1_RUP.png
-mv stacked_barplot_chromosome_count.png  plot2.2_reads_distri_in_chrom.png
-mv line_chart_enrichment_peaks.png  plot4.2_peak_enrichment_ratio.png
-mv line_chart_saturation_peak_percentage.png plot4.5_saturation.png
-mv pie_chart_promoter_region.png  plot4.6_promoter-peak_count.png
-mv promoter_distribution.png   plot4.6_promoter_distribution_among_peaks.png
-
 mv *png 'plots_collection_'$name
 cp 'dedup_percentage_'$name'.result'   ../'step1.3_dedup_percentage_'$name'.result'
 cp 'chrom_count_'$name'.result'  ../'step2.2_chrom_count_'$name'.result'

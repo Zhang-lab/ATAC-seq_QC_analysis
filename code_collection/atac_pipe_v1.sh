@@ -299,7 +299,7 @@ else
 fi
 
 # peak length distribution:
-awk '{print $3-$2}' 'peakcall_'$name'_peaks.narrowPeak' | sort -n | uniq -c | awk '{print $2,$1}' > 'peak_length_distri_'$name'.result'
+awk '{print $3-$2+1}' 'peakcall_'$name'_peaks.narrowPeak' | sort -n | uniq -c | awk '{print $2,$1}' > 'peak_length_distri_'$name'.result'
 mv 'peak_length_distri_'$name'.result'  ./'data_collection_'$name
 
 ###################################################################################################

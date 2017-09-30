@@ -383,7 +383,7 @@ echo -e "file\ttotal\tmapped\tmapped_ratio\tuniq_mapped\tnon-redundant_uniq_mapp
 echo -e "$name\t$raw_reads\t$map_mapped\t$mapped_ratio\t$map_uniq\t$map_effect\t$effect_ratio\t$useful_reads\t$PBC\t$nodup_ratio\t$sum\t$ratio\t$dif\t$marker" >>  'mapping_status_'$name'.result'
 mv 'mapping_status_'$name'.result'  ./'data_collection_'$name
 
-if [ -z $name ] || [ -z $map_total ] || [ -z $map_mapped ] || [ -z $mapped_ratio ] || [ -z $map_uniq ] || [ -z $uniq_ratio ] || [ -z $map_effect ] || [ -z $effect_ratio ] || [ -z $PBC ] || [ -z $nodup_ratio ] || [ -z $sum ]|| [ -z $ratio ]|| [ -z $dif ]
+if [ -z $name ] || [ -z $raw_reads ] || [ -z $map_mapped ] || [ -z $mapped_ratio ] || [ -z $map_uniq ] || [ -z $useful_reads ] || [ -z $map_effect ] || [ -z $effect_ratio ] || [ -z $PBC ] || [ -z $nodup_ratio ] || [ -z $sum ]|| [ -z $ratio ]|| [ -z $dif ]
 then
 	echo "step4.3, sumarizing result process fail......" >> pipe_processing.log
 else
@@ -484,20 +484,19 @@ echo `echo "scale=2; $peak_region / $total_region" | bc -l` >> temp3.txt
 echo $peak_number >> temp2.txt
 done
 
-sort -k1,1n temp2.txt > saturation_peak.txt
-sort -k1,1n temp3.txt > saturation_ratio.txt
-rm temp2.txt
-rm temp3.txt
-
-
-paste saturation_points.txt  saturation_reads.txt  saturation_peak.txt   saturation_ratio.txt  > temp4.txt
-
 if [ $? == 0 ] 
 	then
 	echo "step4.5, saturation results collection process sucessful!" >> ../pipe_processing.log
 else 
 	echo "step4.5, saturation results collection process fail......" >> ../pipe_processing.log
 fi
+
+
+sort -k1,1n temp2.txt > saturation_peak.txt
+sort -k1,1n temp3.txt > saturation_ratio.txt
+rm temp2.txt
+rm temp3.txt
+paste saturation_points.txt  saturation_reads.txt  saturation_peak.txt   saturation_ratio.txt  > temp4.txt
 
 echo -e "file\t$name'_read'\t$name'_peak'\t$name'_ratio'\tmarker"  > 'saturation_'$name'.result'  
 awk -v marker=$marker '{print $0,marker}' OFS='\t' temp4.txt >> 'saturation_'$name'.result'  
@@ -576,17 +575,17 @@ else
 fi
 
 mkdir 'plots_collection_'$name
-mv density_plot_dedup.png  plot1.4_density_dedup.png
-mv density_plot_background.png  plot4.6_density_background.png
-mv density_plot_insertion_size.png  plot3.1_density_insertion_size.png
-mv density_plot_noduplication_ratio.png  plot4.3_density_noduplication_ratio.png
-mv density_plot_peak_length.png  plot3.3_density_peak_length.png
-mv density_plot_reads_distribution.png  plot3.1_density_library_reads_distri.png
-mv density_plot_rup_ratio.png  plot4.1_density_reads_under_peak.png
-mv stacked_barplot_chromosome_count.png  plot2.2_stacked_bar_reads_distri_in_chrom.png
-mv line_chart_enrichment_peaks.png  plot4.2_line_chart_peak_enrichment_ratio.png
-mv line_chart_saturation_peak_percentage.png plot4.5_line_chart_saturation.png
-mv pie_chart_promoter_region.png  plot4.6_pie_chart_promoter-peak_count.png
+mv density_plot_dedup.png  plot1.4_deduplication_level.png
+mv density_plot_background.png  plot4.6_background_noise.png
+mv density_plot_insertion_size.png  plot3.1_insertion_size.png
+mv density_plot_noduplication_ratio.png  plot4.3_noduplication_ratio.png
+mv density_plot_peak_length.png  plot3.3_peak_length.png
+mv density_plot_reads_distribution.png  plot3.1_library_reads_distri.png
+mv density_plot_rup_ratio.png  plot4.1_RUP.png
+mv stacked_barplot_chromosome_count.png  plot2.2_reads_distri_in_chrom.png
+mv line_chart_enrichment_peaks.png  plot4.2_peak_enrichment_ratio.png
+mv line_chart_saturation_peak_percentage.png plot4.5_saturation.png
+mv pie_chart_promoter_region.png  plot4.6_promoter-peak_count.png
 mv promoter_distribution.png   plot4.6_promoter_distribution_among_peaks.png
 
 mv *png 'plots_collection_'$name

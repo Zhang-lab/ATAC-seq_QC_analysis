@@ -89,11 +89,15 @@ echo " " >> pipe_processing.log
 if [[ $types == PE ]];
 	then
 	echo 'trimming ATAC PE reads by cutadapt'
-	cutadapt -a $adapter_1 -A $adapter_2 --quality-cutoff=15,10 --minimum-length=36  -o 'Trimed_'$name'_1.fastq' -p  'Trimed_'$name'_2.fastq'  $raw1 $raw2  > 'step1.1_'$name'_cutadapt_PE.trimlog'
+	cutadapt -a $adapter_1 -A $adapter_2 --quality-cutoff=15,10 --minimum-length=36  -o 'Trimed_'$name'_1.fastq' -p  'Trimed_'$name'_2.fastq'  $raw1 $raw2  > 'step1.1_'$name'_cutadapt_PE.trimlog'  
+	temp=`grep "Total read pairs processed:" step1.1_*trimlog | awk '{print $5}'`  
+	raw_reads=`echo ${temp//,}`  
 elif [[ $types == SE ]];
 	then
 	echo 'trimming ATAC SE reads by cutadapt'
-	cutadapt -a $adatper_1 --quality-cutoff=15,10 --minimum-length=36  -o  'Trimed_'$name'.fastq' $raw1 > 'step1.1_'$name'_cutadapt_SE.trimlog'
+	cutadapt -a $adatper_1 --quality-cutoff=15,10 --minimum-length=36  -o  'Trimed_'$name'.fastq' $raw1 > 'step1.1_'$name'_cutadapt_SE.trimlog'  
+	temp=`grep "Total reads processed:" step1.1_*trimlog | awk '{print $4}'`
+	raw_reads=`echo ${temp//,}` 
 fi
 
 if [ $? == 0 ] 
@@ -104,8 +108,7 @@ else
 	exit 1
 fi
 
-temp=`grep "Total read pairs processed:" step1.1_*trimlog | awk '{print $5}'`  
-raw_reads=`echo ${temp//,}`  
+
 
 # 1.2 fastqc
 echo 'fastqc is processing fastq file......'

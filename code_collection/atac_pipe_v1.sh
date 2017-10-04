@@ -563,11 +563,13 @@ rm background
 mv bin.txt 'bin_'$name'.result'
 
 bg_total=`wc -l background*.result | awk '{print $1}'`  
+bg_half_thres=`awk '$6<=0.15 {print $0}' background*.result | wc -l`  
 bg_less=`awk '$6<=0.3 {print $0}' background*.result | wc -l`  
-bg_more=`awk '$6>0.3 {print $0}' background*.result | wc -l`  
+bg_more=`awk '$6>0.3 {print $0}' background*.result | wc -l` 
+ra_half_thres=`echo "scale=2; $bg_half_thres*100 / $bg_total" | bc -l`  
 ra_less=`echo "scale=2; $bg_less*100 / $bg_total" | bc -l`  
 ra_more=`echo "scale=2; $bg_more*100 / $bg_total" | bc -l`  
-echo -e "$ra_less\t$ra_more" > 'dichoto_bg_'$name'.result'  
+echo -e "$ra_half_thres\t$ra_less\t$ra_more" > 'dichoto_bg_'$name'.result'  
 
 mv 'dichoto_bg_'$name'.result'   ./'data_collection_'$name  
 mv background*.result  ./'data_collection_'$name

@@ -631,7 +631,7 @@ mv bin*.result ./'data_collection_'$name
 # clean result
 find . -name "*.result" | xargs sed -i 's/^-e //'
 cd ./'data_collection_'$name
-Rscript $pipe_path'/visualization.R' $name $species
+Rscript $pipe_path'/visualization.R' $name $pipe_path'/atac_ref/mm10_encode_pe'  $species
 if [ $? == 0 ] 
 	then
 	echo "step4.7, plot process sucessful!" >> ../pipe_processing.log

@@ -19,6 +19,7 @@ if [[ $species == mm10 ]];
 	black_list="/home/shaopengliu/resources/black_list/mm10_black_list.bed"
 	genome_size=2730871774
 	promoter_file="/home/shaopengliu/resources/promoter_region/mm10_promoter_bistream_2kb.bed"
+	coding_promoter="/home/shaopengliu/resources/promoter_region/mm10_promoter_coding_bistream_1kb.bed"
 	macs2_genome='mm'
 elif [[ $species == mm9 ]];
 	then
@@ -27,6 +28,8 @@ elif [[ $species == mm9 ]];
 	black_list="/home/Resource/Genome/mm9/mm9-blacklist.bed"
 	genome_size=2725765481
 	promoter_file="/home/shaopengliu/resources/mm9/mm9_promoter_bystream_2kb.bed"
+	echo "please add coding promoter file!!!!!!"
+	exit
 	macs2_genome='mm'
 elif [[ $species == hg38 ]];
 	then
@@ -35,6 +38,7 @@ elif [[ $species == hg38 ]];
 	black_list="/home/shaopengliu/resources/black_list/hg38_black_list.bed"
 	genome_size=3209286105
 	promoter_file="/home/shaopengliu/resources/promoter_region/hg38_promoter_bistream_2kb.bed"
+	coding_promoter="/home/shaopengliu/resources/promoter_region/hg38_coding_promoter_bistream_1kb.bed"
 	macs2_genome='hs'
 elif [[ $species == hg19 ]];
 	then
@@ -43,6 +47,8 @@ elif [[ $species == hg19 ]];
 	black_list="/home/Resource/Genome/hg19/hg19_blacklist.bed"
 	genome_size=3137161264
 	promoter_file="/home/shaopengliu/resources/hg19/hg19_promoter_bystream_2kb.bed"
+	echo "please add coding promoter file!!!!!!"
+	exit
 	macs2_genome='hs'
 elif [[ $species == danRer10 ]];
 	then
@@ -52,6 +58,7 @@ elif [[ $species == danRer10 ]];
 	black_list="pesudo_bl.txt"
 	genome_size=1371719383
 	promoter_file="/home/shaopengliu/resources/danRer10/promoter_region_danRer10_bistream_2k.bed"
+	coding_promoter="/home/shaopengliu/resources/danRer10/danRer10_coding_promoter_bistream_2k.bed"
 	macs2_genome='mm'
 elif [[ $species == personalize ]];
 	then
@@ -64,6 +71,7 @@ elif [[ $species == personalize ]];
 	genome_size=
 	promoter_file=" "
 	macs2_genome=" "
+	coding_promoter=" "
 fi
 
 # other tools note (their names are stable, so I use it directly)

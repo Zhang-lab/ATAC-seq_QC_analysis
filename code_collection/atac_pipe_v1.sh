@@ -284,6 +284,12 @@ fi
 mv 'Normalized_per_10M_'$name'.open.bedGraph'  'step3.2_Normalized_per_10M_'$name'.open.bedGraph'
 mv 'Normalized_per_10M_'$name'.bigWig'  'step3.2_Normalized_per_10M_'$name'.bigWig'
 
+# add a new bigwig file without black list
+intersectBed -a 'Trimed_'*$name'.open.bedGraph'  -b $black_list -v > rmbl.bedGraph
+bedGraphToBigWig rmbl.bedGraph $chrom_size 'step3.2_Trimed_nochrm_rmbl_'$name'.bigWig'
+rm rmbl.bedGraph
+
+
 
 # 3.3 peak calling
 echo 'peak calling......'
@@ -324,6 +330,7 @@ ratio=`echo "scale=2; $sum*100/$total" | bc -l`
 
 
 # 4.2 enrichment ratio
+# 4.2.1, top 20k peaks enrichment (it looks that this depends on depth)
 noise_read=`intersectBed -a 'Trimed_rmbl_'$name'.open.bed'  -b 'peakcall_'$name'_peaks.narrowPeak' -f 0.5 -v | wc -l`  
 denominator=`echo "scale=10; $noise_read / $genome_size " | bc -l`
 
@@ -366,15 +373,59 @@ fi
 
 if [ $? == 0 ] 
 	then
-	echo "step4.2, calculate enrichment ratio process sucessful!" >> pipe_processing.log
+	echo "step4.2.1, calculate top20k enrichment ratio process sucessful!" >> pipe_processing.log
 else 
-	echo "step4.2, calculate enrichment ratio process fail......" >> pipe_processing.log
+	echo "step4.2.1, calculate top20k enrichment ratio process fail......" >> pipe_processing.log
 fi
 
 mv 'enrichment_'$name'.result'  ./'data_collection_'$name
 rm *rpkm*
 rm top*
 rm enrich_*.txt
+
+# 4.2.3, all peak enrichment (similar to 4.2.1, depends on depth)
+# 4.2.2, coding promoter enrichment (better than previous 2)
+# coding enrichment = ( reads in promoter / promoter length)  /  (total reads / genome size)
+peak='peakcall_'$name'_peaks.narrowPeak'
+bed='Trimed_rmbl_'$name'.open.bed'
+echo "the bed file is $bed......"
+echo "the peak file is $peak......"
+total_reads=`wc -l $bed | awk '{print $1}'`
+denominator=`echo "scale=10; $total_reads / $genome_size" | bc -l`
+intersectBed -a $peak -b $coding_promoter -u > promoter_peak.bed
+reads_in_promoter=`intersectBed -a $bed -b promoter_peak.bed -f 0.5 -u | wc -l | awk '{print $1}'`
+promoter_number=`intersectBed -a $coding_promoter -b promoter_peak.bed -F 0.5 -u | wc -l | awk '{print $1}'`
+promoter_length=`echo "$promoter_number * 2000" | bc -l`
+enrichment_ratio=`echo "scale=3; $reads_in_promoter / $promoter_length / $denominator" | bc -l`
+if [ $? == 0 ] 
+	then
+	echo "step4.2.2, coding promoter enrichment ratio process sucessful!" >> pipe_processing.log
+else 
+	echo "step4.2.2, coding promoter enrichment ratio process fail......" >> pipe_processing.log
+fi
+echo -e "name\ttotal_reads\tpromoter_number\treads_in_promoter\tenrichment_ratio" > 'enrichment_ratio_in_promoter_'$name'.result'
+echo -e "$name\t$total_reads\t$promoter_number\t$reads_in_promoter\t$enrichment_ratio" >> 'enrichment_ratio_in_promoter_'$name'.result'
+echo "the coding promoter enrichment for $name is $enrichment_ratio"
+mv 'enrichment_ratio_in_promoter_'$name'.result'  'data_collection_'$name
+
+# all peak enrichment
+# (reads_under_peak/peak_length)/(read_outof_peak/(genome-peak_length))
+reads_under_peak=`intersectBed -a $bed -b $peak -f 0.5 -u | wc -l`
+peak_length=`awk '{s+=$3-$2+1}END{print s}' $peak`
+
+all_peak_enrichment=`echo "scale=3; $reads_under_peak * ($genome_size - $peak_length)  / $peak_length / ($total_reads - $reads_under_peak)" | bc -l`
+if [ $? == 0 ] 
+	then
+	echo "step4.2.3, all peak enrichment ratio process sucessful!" >> pipe_processing.log
+else 
+	echo "step4.2.3, all peak enrichment ratio process fail......" >> pipe_processing.log
+fi
+echo -e "name\ttotal_reads\tcoverage\treads_under_peak\tall_peak_enrichment" > 'all_peak_enrichment_'$name'.result'
+echo -e "$name\t$total_reads\t$peak_length\t$reads_under_peak\t$all_peak_enrichment" >> 'all_peak_enrichment_'$name'.result'
+echo "the enrichment for $name is $all_peak_enrichment"
+mv 'all_peak_enrichment_'$name'.result' ./data_collection_*
+unset peak bed
+
 
 # 4.3 PBC calculation
 methylQA atac -r -o PBC_calculation  $chrom_size  'step2.2_Trimed_rm_mapq0_chrm_'$name'.bam'

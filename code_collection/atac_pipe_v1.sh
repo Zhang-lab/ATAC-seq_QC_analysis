@@ -645,6 +645,7 @@ cp 'dedup_percentage_'$name'.result'   ../'step1.3_dedup_percentage_'$name'.resu
 cp 'chrom_count_'$name'.result'  ../'step2.2_chrom_count_'$name'.result'
 cp 'insertion_distri_'$name'.result'   ../'step3.1_insertion_distri_'$name'.result'
 mv 'plots_collection_'$name  ../
+mv *_report.txt ../
 cd ..
 
 rm config.txt

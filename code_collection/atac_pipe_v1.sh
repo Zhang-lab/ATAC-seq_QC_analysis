@@ -26,7 +26,7 @@ p) R2="$OPTARG";;    # PE read 2.
 r) types="$OPTARG";;	# PE or SE;
 h) echo "usage:  path-to-pipe/pipe.sh  -g <hg38/hg19/mm10/mm9/danRer10/personal>  -r <PE/SE> -o read_file1  -p read_file2 (if necessary)"
 exit;;
-[?]) "Usage: ./pipe.sh  -g hg38/hg19/mm10/mm9/danRer10 -o read_file1  -r PE/SE";;
+[?]) "Usage: ./pipe.sh  -g <hg38/hg19/mm10/mm9/danRer10> -o <read_file1>  -r <PE/SE>";;
 esac
 done
 
@@ -216,8 +216,8 @@ awk '{$2=int($2*0.5); print}' OFS="\t" temp.txt > 'chrom_count_'$name'.txt'
 fi
 
 # only effect reads
-methylQA density -S $chrom_size  output.sam
-cat output.extended.bed | awk '{print $1}' | uniq -c >  count_unique.txt
+methylQA atac -S $chrom_size  output.sam
+cat output.open.bed | awk '{print $1}' | uniq -c >  count_unique.txt
 awk '! /random/ && ! /Un/ && /chr/  ' count_unique.txt  | awk '{print $2, $1}'  OFS="\t"  | sort  -k1,1 -V -s > 'chrom_count_unique_'$name'.txt'
 
 # mapping status
@@ -259,9 +259,9 @@ else
 	exit 1
 fi
 
-useful_reads=`grep 'non-redundant'  Trimed_rm_mapq0_chrm_*report | awk '{print $6}'`
+useful_reads=`wc -l  Trimed_rm_mapq0_chrm_*open.bed | awk '{print $1}'`
 mv 'Trimed_rm_mapq0_chrm_'$name'.bam'   'step2.2_Trimed_rm_mapq0_chrm_'$name'.bam'
-mv 'Trimed_rm_mapq0_chrm_'$name'.genomeCov.pdf'  'step2.2_Trimed_rm_mapq0_chrm_'$name'.genomeCov'
+mv 'Trimed_rm_mapq0_chrm_'$name'.genomeCov.pdf'  'step2.2_Trimed_rm_mapq0_chrm_'$name'.genomeCov.pdf'
 awk '$1<=500'  'Trimed_'*$name'.insertdistro'  | sort -n | uniq -c | awk '{print $2,$1}' > 'insertion_distri_'$name'.result'
 mv 'insertion_distri_'$name'.result'  ./'data_collection_'$name
 rm 'Trimed_rm_mapq0_chrm_'$name'.insertdistro'*
@@ -315,83 +315,38 @@ mv 'peak_length_distri_'$name'.result'  ./'data_collection_'$name
 # step4, additional analysis
 # 4.1 get reads under peak data
 total=`wc -l 'Trimed_rmbl_'$name'.open.bed'|awk '{print $1}'`
-echo "calculating reads under peak ratio......"
-python $pipe_path'/try_compare.py'  data/   'Trimed_rmbl_'$name'.open.bed'    'peakcall_'$name'_peaks.narrowPeak'
-
-if [ $? == 0 ] 
-	then
-	echo "step4.1, calculate reads under peak process sucessful!" >> pipe_processing.log
-else 
-	echo "step4.1, calculate reads under peak process fail......" >> pipe_processing.log
-fi
-
-sum=`awk '{s+=$5}END{print s}' reads.txt`
+sum=`intersectBed -a 'Trimed_rmbl_'$name'.open.bed' -b 'peakcall_'$name'_peaks.narrowPeak' -f 0.5 -u | wc -l`
 ratio=`echo "scale=2; $sum*100/$total" | bc -l`
-
-
-# 4.2 enrichment ratio
-# 4.2.1, top 20k peaks enrichment (it looks that this depends on depth)
-noise_read=`intersectBed -a 'Trimed_rmbl_'$name'.open.bed'  -b 'peakcall_'$name'_peaks.narrowPeak' -f 0.5 -v | wc -l`  
-denominator=`echo "scale=10; $noise_read / $genome_size " | bc -l`
-
-sort -k1,1V -k2,2n reads.txt > sorted_read.txt
-sort -k1,1V -k2,2n 'peakcall_'$name'_peaks.narrowPeak' | awk '{print $9}' | paste sorted_read.txt - | awk '{print $0}' OFS='\t' > rpkm_for_all_peak.Peak
-sort  -k 7 -nr rpkm_for_all_peak.Peak  > sorted_rpkm_all_peak.Peak
-
-peak_number=`wc -l sorted_rpkm_all_peak.Peak | awk '{print $1}'`
-
-cal_enrich() {
-rm top_peak.txt  2> /dev/null
-rm top_ratio.txt  2> /dev/null
-rm 'enrichment_'$name'.result'  2> /dev/null
-start=$1
-max=$2
-for i in `seq $start 1000 $max`
-do
-	head -$i sorted_rpkm_all_peak.Peak > 'top_'$i'_peaks_by_qvalue.Peak'
-	peak_length=`awk -F " " '{s+=($3-$2+1)}END{print s}' 'top_'$i'_peaks_by_qvalue.Peak'`
-	read_number=`awk -F " " '{s+=$5}END{print s}' 'top_'$i'_peaks_by_qvalue.Peak'`
-	echo $i >> top_peak.txt
-	echo "scale=2; $read_number / $peak_length / $denominator" | bc -l >> top_ratio.txt
-	rm 'top_'$i'_peaks_by_qvalue.Peak'
-done
-cut -f1 top_peak.txt  | paste -s | awk '{print "file",$0}' OFS="\t"  > enrich_peak.txt
-cut -f1 top_ratio.txt  | paste -s | awk -v file=$name '{print file,$0}' OFS="\t"  > enrich_ratio.txt
-cat enrich_peak.txt enrich_ratio.txt  > 'enrichment_'$name'.result'
-}
-
-if [ $peak_number -lt 1000 ]; then
-	cal_enrich $peak_number $peak_number
-elif [ $peak_number -ge 1000 ]; then
-	bins=`echo "$peak_number / 1000" | bc`
-	if [ $bins -ge 20 ]; then
-	bins=20
-	fi
-	max=`echo "$bins * 1000" | bc`
-	cal_enrich 1000 $max
-fi
-
 if [ $? == 0 ] 
 	then
-	echo "step4.2.1, calculate top20k enrichment ratio process sucessful!" >> pipe_processing.log
+	echo "step4.1, reads unpder peak ratio calculation process sucessful!" >> pipe_processing.log
 else 
-	echo "step4.2.1, calculate top20k enrichment ratio process fail......" >> pipe_processing.log
+	echo "step4.1, reads unpder peak ratio calculation process fail......" >> pipe_processing.log
 fi
 
-mv 'enrichment_'$name'.result'  ./'data_collection_'$name
-rm *rpkm*
-rm top*
-rm enrich_*.txt
 
-# 4.2.3, all peak enrichment (similar to 4.2.1, depends on depth)
-# 4.2.2, coding promoter enrichment (better than previous 2)
-# coding enrichment = ( reads in promoter / promoter length)  /  (total reads / genome size)
+# 4.2 enrichment ratio 
 peak='peakcall_'$name'_peaks.narrowPeak'
 bed='Trimed_rmbl_'$name'.open.bed'
-echo "the bed file is $bed......"
-echo "the peak file is $peak......"
-total_reads=`wc -l $bed | awk '{print $1}'`
-denominator=`echo "scale=10; $total_reads / $genome_size" | bc -l`
+# 4.2.1, new enrichment from RUP and 20M normalization
+# e= (# of reads under peak / total peak length) / ( 20M*(1-RUP)/(genome_size-total peak length))
+peak_length=`awk '{s+=$3-$2+1}END{print s}' $peak`
+enrichment=`echo "scale=5; ($sum / $peak_length) / (20000000*(1- $ratio / 100) / ($genome_size - $peak_length))" | bc -l`
+
+if [ $? == 0 ] 
+	then
+	echo "step4.2.1, new peak enrichment ratio process sucessful!" >> pipe_processing.log
+else 
+	echo "step4.2.1, new peak enrichment ratio process fail......" >> pipe_processing.log
+fi
+
+echo -e "total_reads\trupn\trup\tcoverage\tenrichment" > 'new_enrichment_'$name'.result'
+echo -e "$total\t$sum\t$ratio\t$peak_length\t$enrichment"  >> 'new_enrichment_'$name'.result'
+mv 'new_enrichment_'$name'.result' ./data_collection_*
+
+# 4.2.2, coding promoter enrichment
+# coding enrichment = ( reads in promoter / promoter length)  /  (total reads / genome size)
+denominator=`echo "scale=10; $total / $genome_size" | bc -l`
 intersectBed -a $peak -b $coding_promoter -u > promoter_peak.bed
 reads_in_promoter=`intersectBed -a $bed -b promoter_peak.bed -f 0.5 -u | wc -l | awk '{print $1}'`
 promoter_number=`intersectBed -a $coding_promoter -b promoter_peak.bed -F 0.5 -u | wc -l | awk '{print $1}'`
@@ -405,26 +360,7 @@ else
 fi
 echo -e "name\ttotal_reads\tpromoter_number\treads_in_promoter\tenrichment_ratio" > 'enrichment_ratio_in_promoter_'$name'.result'
 echo -e "$name\t$total_reads\t$promoter_number\t$reads_in_promoter\t$enrichment_ratio" >> 'enrichment_ratio_in_promoter_'$name'.result'
-echo "the coding promoter enrichment for $name is $enrichment_ratio"
 mv 'enrichment_ratio_in_promoter_'$name'.result'  'data_collection_'$name
-
-# new all peak enrichment
-# e= (# of reads under peak / total peak length) / ( 20M*(1-RUP)/(genome_size-total peak length))
-total=`wc -l $bed | awk '{print $1}'`
-rupn=`intersectBed -a $bed -b $peak -f 0.5 -u | wc -l`
-rup=`echo "scale=3; $rupn / $total" | bc -l`
-peak_length=`awk '{s+=$3-$2+1}END{print s}' $peak`
-enrichment=`echo "scale=2; $rupn * ($genome_size - $peak_length) / $peak_length / 20000000 / (1- $rup)" | bc -l `
-if [ $? == 0 ] 
-	then
-	echo "step4.2.3, new peak enrichment ratio process sucessful!" >> pipe_processing.log
-else 
-	echo "step4.2.3, new peak enrichment ratio process fail......" >> pipe_processing.log
-fi
-
-echo -e "total_reads\trupn\trup\tpeak_length\tenrichment" > 'new_enrichment_'$name'.result'
-echo -e "$total\t$rupn\t$rup\t$peak_length\t$enrichment"  >> 'new_enrichment_'$name'.result'
-mv 'new_enrichment_'$name'.result' ./data_collection_*
 unset peak bed
 
 

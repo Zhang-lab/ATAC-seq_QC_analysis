@@ -408,22 +408,23 @@ echo -e "$name\t$total_reads\t$promoter_number\t$reads_in_promoter\t$enrichment_
 echo "the coding promoter enrichment for $name is $enrichment_ratio"
 mv 'enrichment_ratio_in_promoter_'$name'.result'  'data_collection_'$name
 
-# all peak enrichment
-# (reads_under_peak/peak_length)/(read_outof_peak/(genome-peak_length))
-reads_under_peak=`intersectBed -a $bed -b $peak -f 0.5 -u | wc -l`
+# new all peak enrichment
+# e= (# of reads under peak / total peak length) / ( 20M*(1-RUP)/(genome_size-total peak length))
+total=`wc -l $bed | awk '{print $1}'`
+rupn=`intersectBed -a $bed -b $peak -f 0.5 -u | wc -l`
+rup=`echo "scale=3; $rupn / $total" | bc -l`
 peak_length=`awk '{s+=$3-$2+1}END{print s}' $peak`
-
-all_peak_enrichment=`echo "scale=3; $reads_under_peak * ($genome_size - $peak_length)  / $peak_length / ($total_reads - $reads_under_peak)" | bc -l`
+enrichment=`echo "scale=2; $rupn * ($genome_size - $peak_length) / $peak_length / 20000000 / (1- $rup)" | bc -l `
 if [ $? == 0 ] 
 	then
-	echo "step4.2.3, all peak enrichment ratio process sucessful!" >> pipe_processing.log
+	echo "step4.2.3, new peak enrichment ratio process sucessful!" >> pipe_processing.log
 else 
-	echo "step4.2.3, all peak enrichment ratio process fail......" >> pipe_processing.log
+	echo "step4.2.3, new peak enrichment ratio process fail......" >> pipe_processing.log
 fi
-echo -e "name\ttotal_reads\tcoverage\treads_under_peak\tall_peak_enrichment" > 'all_peak_enrichment_'$name'.result'
-echo -e "$name\t$total_reads\t$peak_length\t$reads_under_peak\t$all_peak_enrichment" >> 'all_peak_enrichment_'$name'.result'
-echo "the enrichment for $name is $all_peak_enrichment"
-mv 'all_peak_enrichment_'$name'.result' ./data_collection_*
+
+echo -e "total_reads\trupn\trup\tpeak_length\tenrichment" > 'new_enrichment_'$name'.result'
+echo -e "$total\t$rupn\t$rup\t$peak_length\t$enrichment"  >> 'new_enrichment_'$name'.result'
+mv 'new_enrichment_'$name'.result' ./data_collection_*
 unset peak bed
 
 

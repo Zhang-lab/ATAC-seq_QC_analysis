@@ -28,8 +28,7 @@ elif [[ $species == mm9 ]];
 	black_list="/home/Resource/Genome/mm9/mm9-blacklist.bed"
 	genome_size=2725765481
 	promoter_file="/home/shaopengliu/resources/mm9/mm9_promoter_bystream_2kb.bed"
-	echo "please add coding promoter file!!!!!!"
-	exit
+	coding_promoter="/home/shaopengliu/resources/mm9/coding_promoter_mm9.bed"
 	macs2_genome='mm'
 elif [[ $species == hg38 ]];
 	then

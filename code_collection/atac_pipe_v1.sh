@@ -585,9 +585,6 @@ mv 'plots_collection_'$name  ../
 mv *_report.txt ../
 cd ..
 
-rm config.txt
-rm -r data/
-rm sorted_read.txt
 rm chr.peak
 rm -r 'saturation_'$name
 rm temp.txt

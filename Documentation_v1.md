@@ -72,17 +72,15 @@ note: methylQA atac would do a PE->SE transformation based on insertion site for
 
 ### Step4, Post alignment analysis:  
 #### 4.1, Reads under peak ratio  
-tool: Python script   
+tool: bash
 input: reads file as $reads.open.bed, and peak file as $peak  
 output: reads under peak ratio  
-script summary:  
-	1, for each peak we called in step4 from $peak, find the reads of which at least half length(75bp) is in the peak range  
-	2, devided by total reads number, get reads under peak ratio  
+code: rup_number=`intersectBed -a $bed -b $peak -u -f 0.5 | wc -l` 
 QC to report: reads under peak ratio  
 
 #### 4.2, Calculate enrichment ration of top 20k peaks against overall background  
 tool: bash  
-input: peak file with calculated RPKM value  
+input: reads enrichment in coding promoters, and normalized enrichment for all peak region
 output: enrichment ratio file  
 QC to report: enrichment ratio for top 20k peak   
   

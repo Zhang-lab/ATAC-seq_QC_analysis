@@ -78,3 +78,4 @@ fi
 # 2, fastqc v0.11.5
 # 3, bwa v0.7.16a
 # 4, methylQA v0.1.9
+# 5, R version > v3.2.3

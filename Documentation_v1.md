@@ -1,6 +1,6 @@
 # Documentation v1
 ATAC-seq quality control matrix for Bo Zhang's lab  
-Last edit: 09/25/2017  
+Last edit: 10/15/2017  
 shaopeng.liu@wustl.edu  											   
 
 ## Before use the pipe:  
@@ -13,7 +13,7 @@ Optional parameter:   -t <threads>  -m <marker>  -h for help
 
 ## Caveats in method selection
 ### 1, reads distribution count in each chromosome  
-We do **NOT** use samtools index directly, because "bwa" would assign reads of which has mapQ=0 to chr1, the results are not accurate. What we perform is to remove those reads first and count directly by "uniq" command.
+We do **NOT** use samtools index directly, because "bwa" would assign reads of which has mapQ=0 to chr1, the results are not accurate. What we perform is to remove those reads first and count directly by "uniq" command. (This part is consistent with samtools index results)  
 
 ### 2, generate random regions from genome  
 We do **NOT** use "bedtools random" because it's hard to determine how many regions we need. Especially for Zebra fish data, those peaks(extended to 10kb at each side) would cover most of genome so it's very hard to get enough hits. So we simply shutter the whole genome and take all regions.

@@ -216,8 +216,8 @@ awk '{$2=int($2*0.5); print}' OFS="\t" temp.txt > 'chrom_count_'$name'.txt'
 fi
 
 # only effect reads
-methylQA atac -S $chrom_size  output.sam
-cat output.open.bed | awk '{print $1}' | uniq -c >  count_unique.txt
+methylQA density -S $chrom_size  output.sam
+cat output.extended.bed | awk '{print $1}' | uniq -c >  count_unique.txt
 awk '! /random/ && ! /Un/ && /chr/  ' count_unique.txt  | awk '{print $2, $1}'  OFS="\t"  | sort  -k1,1 -V -s > 'chrom_count_unique_'$name'.txt'
 
 # mapping status

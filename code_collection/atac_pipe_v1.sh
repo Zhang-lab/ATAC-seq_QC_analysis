@@ -95,7 +95,7 @@ if [[ $types == PE ]];
 elif [[ $types == SE ]];
 	then
 	echo 'trimming ATAC SE reads by cutadapt'
-	cutadapt -a $adatper_1 --quality-cutoff=15,10 --minimum-length=36  -o  'Trimed_'$name'.fastq' $raw1 > 'step1.1_'$name'_cutadapt_SE.trimlog'  
+	cutadapt -a $adapter_1 --quality-cutoff=15,10 --minimum-length=36  -o  'Trimed_'$name'.fastq' $raw1 > 'step1.1_'$name'_cutadapt_SE.trimlog'  
 	temp=`grep "Total reads processed:" step1.1_*trimlog | awk '{print $4}'`
 	raw_reads=`echo ${temp//,}` 
 fi

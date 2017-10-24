@@ -259,12 +259,21 @@ else
 	exit 1
 fi
 
-useful_reads=`wc -l  Trimed_rm_mapq0_chrm_*open.bed | awk '{print $1}'`
+useful_reads=`grep 'non-redundant'  Trimed_rm_mapq0_chrm_*.report | awk '{print $6}'`
+single_end=`wc -l *open.bed | awk '{print $1}'`
+uf_ratio=`echo "scale=3; $useful / $raw_reads" | bc -l`
+echo -e "file\ttotal\tuseful\tuseful_ratio\tsingle_end" > 'useful_reads_'$name.result
+echo -e "$name\t$raw_reads\t$useful_reads\t$uf_ratio\t$single_end" >> 'useful_reads_'$name.result
+mv 'useful_reads_'$name.result  ./'data_collection_'$name
+
 mv 'Trimed_rm_mapq0_chrm_'$name'.bam'   'step2.2_Trimed_rm_mapq0_chrm_'$name'.bam'
 mv 'Trimed_rm_mapq0_chrm_'$name'.genomeCov.pdf'  'step2.2_Trimed_rm_mapq0_chrm_'$name'.genomeCov.pdf'
 awk '$1<=500'  'Trimed_'*$name'.insertdistro'  | sort -n | uniq -c | awk '{print $2,$1}' > 'insertion_distri_'$name'.result'
 mv 'insertion_distri_'$name'.result'  ./'data_collection_'$name
 rm 'Trimed_rm_mapq0_chrm_'$name'.insertdistro'*
+rm *genomeCov
+
+
 
 
 # 3.2 normalization of *.bedGraph file by 10 Million reads
@@ -551,9 +560,9 @@ rm background
 mv bin.txt 'bin_'$name'.result'
 
 bg_total=`wc -l background*.result | awk '{print $1}'`  
-bg_half_thres=`awk '$6<=0.15 {print $0}' background*.result | wc -l`  
-bg_less=`awk '$6<=0.3 {print $0}' background*.result | wc -l`  
-bg_more=`awk '$6>0.3 {print $0}' background*.result | wc -l` 
+bg_half_thres=`awk '$6<=0.188 {print $0}' background*.result | wc -l`  
+bg_less=`awk '$6<=0.377 {print $0}' background*.result | wc -l`  
+bg_more=`awk '$6>0.377 {print $0}' background*.result | wc -l` 
 ra_half_thres=`echo "scale=2; $bg_half_thres*100 / $bg_total" | bc -l`  
 ra_less=`echo "scale=2; $bg_less*100 / $bg_total" | bc -l`  
 ra_more=`echo "scale=2; $bg_more*100 / $bg_total" | bc -l`  

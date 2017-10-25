@@ -268,11 +268,11 @@ else
 	exit 1
 fi
 
-useful_reads=`grep 'non-redundant'  Trimed_rm_mapq0_chrm_*.report | awk '{print $6}'`
+useful=`grep 'non-redundant'  Trimed_rm_mapq0_chrm_*.report | awk '{print $6}'`
 single_end=`wc -l *open.bed | awk '{print $1}'`
 uf_ratio=`echo "scale=3; $useful / $raw_reads" | bc -l`
 echo -e "file\ttotal\tuseful\tuseful_ratio\tsingle_end" > 'useful_reads_'$name.result
-echo -e "$name\t$raw_reads\t$useful_reads\t$uf_ratio\t$single_end" >> 'useful_reads_'$name.result
+echo -e "$name\t$raw_reads\t$useful\t$uf_ratio\t$single_end" >> 'useful_reads_'$name.result
 mv 'useful_reads_'$name.result  ./'data_collection_'$name
 
 mv 'Trimed_rm_mapq0_chrm_'$name'.bam'   'step2.2_Trimed_rm_mapq0_chrm_'$name'.bam'

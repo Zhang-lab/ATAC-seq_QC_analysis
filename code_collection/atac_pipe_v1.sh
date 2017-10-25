@@ -245,14 +245,14 @@ rm chrom_count*txt
 mv 'Trimed_'$name'.bam'  'step2.1_Trimed_'$name'.bam'
 
 # step2.3, preseq
-$preseq lc_extrap -o 'yield_'$name'.txt' -B  'step2.1_Trimed_'$name'.bam'
+$preseq lc_extrap -o 'yield_'$name'.result' -B  'step2.1_Trimed_'$name'.bam'
 if [ $? == 0 ] 
 	then
 	echo "step2.3, preseq lc_extrap estimate process sucessful!" >> pipe_processing.log
 else 
 	echo "step2.3, preseq lc_extrap estimate process fail......" >> pipe_processing.log
 fi
-mv 'yield_'$name'.txt'   ./'data_collection_'$name
+mv 'yield_'$name'.result'   ./'data_collection_'$name
 
 ###################################################################################################
 # step3,QC and peak calling
@@ -280,7 +280,7 @@ mv 'Trimed_rm_mapq0_chrm_'$name'.genomeCov.pdf'  'step2.2_Trimed_rm_mapq0_chrm_'
 awk '$1<=500'  'Trimed_'*$name'.insertdistro'  | sort -n | uniq -c | awk '{print $2,$1}' > 'insertion_distri_'$name'.result'
 mv 'insertion_distri_'$name'.result'  ./'data_collection_'$name
 rm 'Trimed_rm_mapq0_chrm_'$name'.insertdistro'*
-rm *genomeCov
+rm *genomeCov  2> /dev/null
 
 
 

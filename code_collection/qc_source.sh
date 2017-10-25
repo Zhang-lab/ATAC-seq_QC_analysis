@@ -10,6 +10,7 @@ idr_file=$pipe_path'/idr_folder'
 adapter_1="CTGTCTCTTATACACATCT"
 adapter_2="CTGTCTCTTATACACATCT"
 fastq_dump_tool='fastq-dump.2.8.2'
+preseq="/home/zhangbo/Tools/preseq/preseq"
 
 # genome specific resources:
 if [[ $species == mm10 ]]; 

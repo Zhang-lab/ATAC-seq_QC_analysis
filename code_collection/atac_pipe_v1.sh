@@ -252,6 +252,7 @@ if [ $? == 0 ]
 else 
 	echo "step2.3, preseq lc_extrap estimate process fail......" >> pipe_processing.log
 fi
+mv 'yield_'$name'.txt'   ./'data_collection_'$name
 
 ###################################################################################################
 # step3,QC and peak calling

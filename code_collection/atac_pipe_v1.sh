@@ -349,7 +349,7 @@ bed='Trimed_rmbl_'$name'.open.bed'
 # 4.2.1, new enrichment from RUP and 20M normalization
 # e= (# of reads under peak / total peak length) / ( 20M*(1-RUP)/(genome_size-total peak length))
 peak_length=`awk '{s+=$3-$2+1}END{print s}' $peak`
-enrichment=`echo "scale=5; ($sum / $peak_length) / (20000000*(1- $ratio / 100) / ($genome_size - $peak_length))" | bc -l`
+enrichment=`echo "scale=5; ($sum / $peak_length) / (40000000*(1- $ratio / 100) / ($genome_size - $peak_length))" | bc -l`
 
 if [ $? == 0 ] 
 	then

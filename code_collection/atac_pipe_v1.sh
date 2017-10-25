@@ -244,6 +244,14 @@ fi
 rm chrom_count*txt
 mv 'Trimed_'$name'.bam'  'step2.1_Trimed_'$name'.bam'
 
+# step2.3, preseq
+$preseq lc_extrap -o 'yield_'$name'.txt' -B  'step2.1_Trimed_'$name'.bam'
+if [ $? == 0 ] 
+	then
+	echo "step2.3, preseq lc_extrap estimate process sucessful!" >> pipe_processing.log
+else 
+	echo "step2.3, preseq lc_extrap estimate process fail......" >> pipe_processing.log
+fi
 
 ###################################################################################################
 # step3,QC and peak calling

@@ -377,7 +377,7 @@ else
 	echo "step4.2.2, coding promoter enrichment ratio process fail......" >> pipe_processing.log
 fi
 echo -e "name\ttotal_reads\tpromoter_number\treads_in_promoter\tenrichment_ratio" > 'enrichment_ratio_in_promoter_'$name'.result'
-echo -e "$name\t$total_reads\t$promoter_number\t$reads_in_promoter\t$enrichment_ratio" >> 'enrichment_ratio_in_promoter_'$name'.result'
+echo -e "$name\t$total\t$promoter_number\t$reads_in_promoter\t$enrichment_ratio" >> 'enrichment_ratio_in_promoter_'$name'.result'
 mv 'enrichment_ratio_in_promoter_'$name'.result'  'data_collection_'$name
 unset peak bed
 

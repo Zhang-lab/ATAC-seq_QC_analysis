@@ -604,6 +604,7 @@ mv $name'.json' ../
 
 mkdir 'plots_collection_'$name
 mv *png 'plots_collection_'$name
+cp idr_plot*ps  'plots_collection_'$name
 cp 'dedup_percentage_'$name'.result'   ../'step1.3_dedup_percentage_'$name'.result'
 cp 'chrom_count_'$name'.result'  ../'step2.2_chrom_count_'$name'.result'
 cp 'insertion_distri_'$name'.result'   ../'step3.1_insertion_distri_'$name'.result'

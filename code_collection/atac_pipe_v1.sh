@@ -92,12 +92,16 @@ if [[ $types == PE ]];
 	cutadapt -a $adapter_1 -A $adapter_2 --quality-cutoff=15,10 --minimum-length=36  -o 'Trimed_'$name'_1.fastq' -p  'Trimed_'$name'_2.fastq'  $raw1 $raw2  > 'step1.1_'$name'_cutadapt_PE.trimlog'  
 	temp=`grep "Total read pairs processed:" step1.1_*trimlog | awk '{print $5}'`  
 	raw_reads=`echo ${temp//,}`  
+	temp2=`grep "Pairs that were too short" step1.1_*trimlog | awk '{print $6}'`
+	removed_reads=`echo ${temp2//,}`
 elif [[ $types == SE ]];
 	then
 	echo 'trimming ATAC SE reads by cutadapt'
 	cutadapt -a $adapter_1 --quality-cutoff=15,10 --minimum-length=36  -o  'Trimed_'$name'.fastq' $raw1 > 'step1.1_'$name'_cutadapt_SE.trimlog'  
 	temp=`grep "Total reads processed:" step1.1_*trimlog | awk '{print $4}'`
 	raw_reads=`echo ${temp//,}` 
+	temp2=`grep "Reads that were too short" step1.1_*trimlog | awk '{print $6}'`
+	removed_reads=`echo ${temp2//,}`
 fi
 
 if [ $? == 0 ] 
@@ -586,13 +590,17 @@ mv bin*.result ./'data_collection_'$name
 # clean result
 find . -name "*.result" | xargs sed -i 's/^-e //'
 cd ./'data_collection_'$name
-Rscript $pipe_path'/visualization.R' $name $pipe_path'/atac_ref/mm10_encode_pe'  $species
+Rscript $pipe_path'/visualization.R' $name $pipe_path'/atac_ref/mm10_encode_pe'  $species  $removed_reads
 if [ $? == 0 ] 
 	then
 	echo "step4.7, plot process sucessful!" >> ../pipe_processing.log
 else 
 	echo "step4.7, plot process fail......" >> ../pipe_processing.log
 fi
+sed 's|    "\(.*\[\)|    //\1|' $name'_report.json' | \
+sed 's/": \[//g' | sed 's/\],/,/g' | sed '/\]/d' | sed 's/^  }/  \]/g' |\
+sed 's/: {/: \[/g' | sed 's/"!/{/g' | sed 's/!"/}/g' | sed 's/@/"/g' > $name'.json'
+mv $name'.json' ../
 
 mkdir 'plots_collection_'$name
 mv *png 'plots_collection_'$name
@@ -603,6 +611,7 @@ mv 'plots_collection_'$name  ../
 mv *_report.txt ../
 cd ..
 
+rm promoter_peak.bed
 rm chr.peak
 rm -r 'saturation_'$name
 rm temp.txt

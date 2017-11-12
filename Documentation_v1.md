@@ -1,9 +1,9 @@
 # Documentation v1
 ATAC-seq quality control matrix for Bo Zhang's lab  
-Last edit: 10/24/2017  
+Last edit: 11/12/2017  
 shaopeng.liu@wustl.edu  											   
 
-## Before use the pipe:  
+## Before use the pipe (Please ignore this part if you are running Docker image):  
 1, please download [**code_collection**](https://github.com/ShaopengLiu1/Atac-seq_Quality_Control_pipe/tree/master/code_collection).  
 2, Please check the [**qc_pipe_source.sh**](https://github.com/ShaopengLiu1/Atac-seq_Quality_Control_pipe/blob/master/code_collection/qc_pipe_source.sh) file to make sure all necessary support files are correctly connected.  
 There are 4 species, with an additional whatever-youlike feature. After downloading that file, please revise the link to the resource file in your local server. It's okay to change only 1 of them, as long as you don't need the rest.  
@@ -19,7 +19,6 @@ We do **NOT** use samtools index directly, because "bwa" would assign reads of w
 
 ### 2, generate random regions from genome  
 We do **NOT** use "bedtools random" because it's hard to determine how many regions we need. Especially for Zebra fish data, those peaks(extended to 10kb at each side) would cover most of genome so it's very hard to get enough hits. So we simply shutter the whole genome and take all regions.
-
 
 
 
@@ -92,7 +91,7 @@ input: mapped reads file
 output: PBC 1  
 QC to report: PBC 1  
   
-#### 4.4, IDR calculation  
+#### 4.4, IDR calculation  (Deleted from pipe)
 tool: bash and R  
 See: [**ENCODE Introduction of IDR**](https://sites.google.com/site/anshulkundaje/projects/idr#TOC-Intuitive-Explanation-of-IDR-and-IDR-plots) for more details  
 input: chrom_size file, and pseudo replicates peak file  

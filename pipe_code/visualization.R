@@ -5,16 +5,8 @@ name=args[6]
 name=paste(name,"result",sep=".")
 refpath=args[7]
 
-test=try(library(ggplot2),silent=T)
-if(class(test)=='try-error') {
-	install.packages('ggplot2')
-	library(ggplot2)
-}
-test=try(library(cowplot),silent=T)
-if(class(test)=='try-error') {
-	install.packages('cowplot')
-	library(cowplot)
-}
+library(ggplot2)
+library(cowplot)
 
 # chromosome distribution
 chr=read.table(paste("chrom_count",name,sep="_"))
@@ -342,10 +334,9 @@ useful=read.table(paste("useful_reads",name,sep="_"),header=T,sep='\t')
 ref.map=read.table(paste(refpath,'merged_mapping_status.txt',sep='/'),header=T,sep='\t') ####
 refer=c(paste(round(mean(ref.map$total)),'(SD:',round(sd(ref.map$total)),')',sep=''))
 refer=c(refer,paste(round(mean(ref.map$mapped)),'(SD:',round(sd(ref.map$mapped)),')',sep=''))
-refer=c(refer,paste(round(mean(ref.map[,6])),'(SD:',round(sd(ref.map[,6])),')',sep=''))
 
 map=read.table(paste("mapping_status",name,sep="_"),header=T,sep='\t')
-samples=as.numeric(c(map$total,map$mapped,map[,6]))
+samples=as.numeric(c(map$total,map$mapped))
 
 ref.chr=read.table(paste(refpath,'merged_chrom_count.txt',sep='/'),header=T,sep='\t')
 rownames(ref.chr)=ref.chr$chrom
@@ -354,26 +345,28 @@ ref.chr=as.matrix(ref.chr[,seq(4,269,5)])
 
 chr=read.table(paste("chrom_count",name,sep="_"),sep='\t')
 if(genome!="danRer10") {
-	refer=c(refer,paste(round(mean(ref.chr[20,]/ref.map[,6]),4)*100,'%(SD:',round(sd(ref.chr[20,]/ref.map[,6]),4)*100,'%)',sep=''))
+	refer=c(refer,"8.02%(SD:4.61%)")
+	refer=c(refer,paste(round(mean(ref.map[,6])),'(SD:',round(sd(ref.map[,6])),')',sep=''))
 	refer=c(refer,paste(round(mean(ref.chr[21,]/ref.map[,6]),4)*100,'%(SD:',round(sd(ref.chr[21,]/ref.map[,6]),4)*100,'%)',sep=''))
 	refer=c(refer,paste(round(mean(ref.chr[22,]/ref.map[,6]),4)*100,'%(SD:',round(sd(ref.chr[22,]/ref.map[,6]),4)*100,'%)',sep=''))
 	refer=c(refer,paste(round(mean(ref.map[,8])),'(SD:',round(sd(ref.map[,8])),')',sep=''))
 	refer=c(refer,paste(round(mean(ref.useful[,5])),'(SD:',round(sd(ref.useful[,5])),')',sep=''))
 
-	samples=c(samples,paste(round(chr[which(chr[,1]=='chrM'),3]/map[,6],4)*100,'%',sep=''),paste(round(chr[which(chr[,1]=='chrX'),3]/map[,6],4)*100,'%',sep=''),paste(round(chr[which(chr[,1]=='chrY'),3]/map[,6],4)*100,'%',sep=''),map[,8],useful[,5])
+	samples=c(samples,paste(round(as.numeric(args[10]),4)*100,'%',sep=''),as.numeric(map[,6]),paste(round(chr[which(chr[,1]=='chrX'),3]/map[,6],4)*100,'%',sep=''),paste(round(chr[which(chr[,1]=='chrY'),3]/map[,6],4)*100,'%',sep=''),map[,8],useful[,5])
 	library=data.frame(samples,refer)
 	colnames(library)=c("Sample","ENCODE PE")
-	rownames(library)=c("Total reads","Mapped reads","Non-redundant uniquely mapped reads","Percentage of reads in chrM","Percentage of reads in chrX","Percentage of reads in chrY","Useful reads","Useful single ends")
+	rownames(library)=c("Total reads","Mapped reads","Percentage of uniquely mapped reads in chrM","Non-redundant uniquely mapped reads","Percentage of reads in chrX","Percentage of reads in chrY","Useful reads","Useful single ends")
 	report=append(report,list(Library.size=library))
 	} else {
-		refer=c(refer,paste(round(mean(ref.chr[20,]/ref.map[,6]),4)*100,'%(SD:',round(sd(ref.chr[20,]/ref.map[,6]),4)*100,'%)',sep=''))
+		refer=c(refer,"8.02%(SD:4.61%)")
+		refer=c(refer,paste(round(mean(ref.map[,6])),'(SD:',round(sd(ref.map[,6])),')',sep=''))
 		refer=c(refer,paste(round(mean(ref.map[,8])),'(SD:',round(sd(ref.map[,8])),')',sep=''))
 		refer=c(refer,paste(round(mean(ref.useful[,5])),'(SD:',round(sd(ref.useful[,5])),')',sep=''))
 
-		samples=c(samples,paste(round(chr[which(chr[,1]=='chrM'),3]/map[,6],4)*100,'%',sep=''),map[,8],useful[,5])
+		samples=c(samples,paste(round(as.numeric(args[10]),4)*100,'%',sep=''),as.numeric(map[,6]),map[,8],useful[,5])
 		library=data.frame(samples,refer)
 		colnames(library)=c("Sample","ENCODE PE")
-		rownames(library)=c("Total reads","Mapped reads","Non-redundant uniquely mapped reads","Percentage of reads in chrM","Useful reads","Useful single ends")
+		rownames(library)=c("Total reads","Mapped reads","Percentage of uniquely mapped reads in chrM","Non-redundant uniquely mapped reads","Useful reads","Useful single ends")
 		report=append(report,list(Library.size=library))
 	}
 
@@ -443,16 +436,16 @@ autosome=paste(autosome$V1,autosome$V3,sep=": ")
 autosome=paste("!",paste(autosome,sep="",collapse=", "),"!",sep="")
 
 if(genome!="danRer10") {
-	part5=data.frame(round(chr[which(chr[,1]=='chrM'),3]/map[,6],4),round(chr[which(chr[,1]=='chrX'),3]/map[,6],4),round(chr[which(chr[,1]=='chrY'),3]/map[,6],4),autosome)
-	colnames(part5)=c("chrM reads percentage","chrX reads percentage","chrY reads percentage","autosome")
+	part5=data.frame(round(as.numeric(args[10]),4),round(chr[which(chr[,1]=='chrX'),3]/map[,6],4),round(chr[which(chr[,1]=='chrY'),3]/map[,6],4),autosome)
+	colnames(part5)=c("Percentage of uniquely mapped reads in chrM","Percentage of non-redundant uniquely mapped reads in chrX","Percentage of non-redundant uniquely mapped reads in chrY","Percentage of non-redundant uniquely mapped reads in autosome")
 	file=append(file,list(`mapping distribution`=part5))
 } else {
-	part5=data.frame(round(chr[which(chr[,1]=='chrM'),3]/map[,6],4),autosome)
-	colnames(part5)=c("chrM reads percentage","autosome")
+	part5=data.frame(round(as.numeric(args[10]),4),autosome)
+	colnames(part5)=c("Percentage of uniquely mapped reads in chrM","Percentage of non-redundant uniquely mapped reads in autosome")
 	file=append(file,list(`mapping distribution`=part5))
 }
 
-part6=data.frame("macs2","--keep-dup 1000 --nomodel --shift 0 --extsize 150","qvaule",0.01,map$rup_ratio,map[,11])
+part6=data.frame("macs2","--keep-dup 1000 --nomodel --shift 0 --extsize 150","qvaule",0.01,map$rup_ratio/100.0,map[,11])
 colnames(part6)=c("peak calling software","peak calling parameters","peak threshold parameter","peak threshold","reads percentage under peaks","reads number under peaks")
 file=append(file,list(`peak analysis`=part6))
 
@@ -474,6 +467,5 @@ names(file)=name
 test=try(library(jsonlite),silent=T)
 
 capture.output(toJSON(file,pretty=T),file=paste(name,"report.json",sep='_'))
-
 
 

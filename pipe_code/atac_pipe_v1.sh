@@ -232,6 +232,12 @@ mapped_ratio=`echo "scale=2; $map_mapped/$raw_reads" | bc -l`
 effect_ratio=`echo "scale=2; $map_effect/$raw_reads" | bc -l`
 nodup_ratio=`echo "scale=2; $map_effect/$map_uniq" | bc -l`
 
+# get chrM count in uniquely mapped reads
+methylQA density -S -r -o temp $chrom_size  output.sam 
+unique_chrM=`grep chrM temp.extended.bed | wc -l`
+mv temp.extended.bed  'step2.2_Uniquely_mapped_record_'$name'.extended.bed'
+rm temp*
+
 # rm chrM and other 
 awk '$3!="chrM"' output.sam | samtools view -bS - > 'Trimed_rm_mapq0_chrm_'$name'.bam'
 rm output*
@@ -405,39 +411,8 @@ fi
 
 
 # 4.4 IDR: Irreproducible Discovery Rate (IDR) based on statistical model
-## 1), get 2 pseudoreplicates by random sampling bed file without replacement (original bed -> 2 new bed)
-shuf 'Trimed_rmbl_'$name'.open.bed'  -o  random_reads.bed
-n=`wc -l random_reads.bed | awk '{print $1}' `
-size=$(( n/2 ))
-head -$size random_reads.bed > sample1.bed
-tail -$size random_reads.bed > sample2.bed
-macs2 callpeak -t sample1.bed  -g $macs2_genome -q 0.01 -n   sample1_macs2 --keep-dup 1000 --nomodel --shift 0 --extsize 150
-macs2 callpeak -t sample2.bed  -g $macs2_genome -q 0.01 -n   sample2_macs2 --keep-dup 1000 --nomodel --shift 0 --extsize 150
-
-cp -r $idr_file  ./idr
-mv sample*Peak  ./idr
-cd ./idr
-rm genome_table.txt
-cp $chrom_size  ./genome_table.txt
-Rscript batch-consistency-analysis.r  sample1_macs2_peaks.narrowPeak  sample2_macs2_peaks.narrowPeak  -1  $name'_self_IDR' 0 F p.value
-if [ $? == 0 ] 
-	then
-	echo "step4.4, IDR process sucessful!" >> ../pipe_processing.log
-else 
-	echo "step4.4, IDR process fail......" >> ../pipe_processing.log
-fi
-Rscript batch-consistency-plot.r  1  plot_IDR  $name'_self_IDR' 
-mkdir $name'_self_IDR'
-mv $name'_self'*  ./$name'_self_IDR'  2> /dev/null
-mv plot_IDR*  ./$name'_self_IDR'
-mv $name'_self_IDR' ../
-cd ..
-rm -r ./idr
-rm random_reads.bed
-rm sample*
-rm *zip
-cp ./$name'_self_IDR'/plot_IDR-plot.ps  ./'data_collection_'$name/'idr_plot_'$name'.ps'
-
+# removed!
+echo "step4.4, IDR process was removed from pipe" >> pipe_processing.log
 
 # 4.5 saturation analysis
 # subsampling:
@@ -486,10 +461,12 @@ rm temp1.txt
 
 total_region=`awk '{s+=$3-$2+1}END{print s}' 'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak'`
 
-for file in `ls *narrowPeak`
+
+for number in 5 10 20 30 40 50 60 70 80 90
 do
+file='peakcall_Trimed_rmbl_'$name'_sample'$number'.open.bed_peaks.narrowPeak'
 peak_number=`wc -l $file | awk '{print $1}'`
-peak_region=`intersectBed -a $file -b 'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak' | awk '{s+=$3-$2+1}END{print s}'`
+peak_region=`intersectBed -a $file -b 'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak' -u | awk '{s+=$3-$2+1}END{print s}'`
 if [ -z "$peak_region" ]; then
 peak_region=0
 fi
@@ -504,11 +481,10 @@ else
 	echo "step4.5, saturation results collection process fail......" >> ../pipe_processing.log
 fi
 
-
-sort -k1,1n temp2.txt > saturation_peak.txt
-sort -k1,1n temp3.txt > saturation_ratio.txt
-rm temp2.txt
-rm temp3.txt
+echo `wc -l 'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak' | awk '{print $1}'` >> temp2.txt
+mv temp2.txt  saturation_peak.txt
+echo 1 >> temp3.txt
+mv temp3.txt  saturation_ratio.txt
 paste saturation_points.txt  saturation_reads.txt  saturation_peak.txt   saturation_ratio.txt  > temp4.txt
 
 echo -e "file\t$name'_read'\t$name'_peak'\t$name'_ratio'\tmarker"  > 'saturation_'$name'.result'  
@@ -590,7 +566,7 @@ mv bin*.result ./'data_collection_'$name
 # clean result
 find . -name "*.result" | xargs sed -i 's/^-e //'
 cd ./'data_collection_'$name
-Rscript $pipe_path'/visualization.R' $name $pipe_path'/atac_ref/mm10_encode_pe'  $species  $removed_reads
+Rscript $pipe_path'/visualization.R' $name $pipe_path'/../atac_ref/mm10_encode_pe'  $species  $removed_reads $unique_chrM
 if [ $? == 0 ] 
 	then
 	echo "step4.7, plot process sucessful!" >> ../pipe_processing.log
@@ -600,11 +576,11 @@ fi
 sed 's|    "\(.*\[\)|    //\1|' $name'_report.json' | \
 sed 's/": \[//g' | sed 's/\],/,/g' | sed '/\]/d' | sed 's/^  }/  \]/g' |\
 sed 's/: {/: \[/g' | sed 's/"!/{/g' | sed 's/!"/}/g' | sed 's/@/"/g' > $name'.json'
+rm $name'_report.json'
 mv $name'.json' ../
 
 mkdir 'plots_collection_'$name
 mv *png 'plots_collection_'$name
-cp idr_plot*ps  'plots_collection_'$name
 cp 'dedup_percentage_'$name'.result'   ../'step1.3_dedup_percentage_'$name'.result'
 cp 'chrom_count_'$name'.result'  ../'step2.2_chrom_count_'$name'.result'
 cp 'insertion_distri_'$name'.result'   ../'step3.1_insertion_distri_'$name'.result'

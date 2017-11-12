@@ -3,10 +3,15 @@ This is for the QC matrix construction and analysis for Atac-seq data.
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
 
+Usage:  
+1, Docker image:  
 Please see the link below for the usage of Docker:  
 [ATAC-seq pipe Docker section](https://hub.docker.com/r/zhanglab/atac-seq/)  
 For more information about Docker, please see:  
 [Docker main page](https://www.docker.com/)  
+
+2, linux script:  
+
 
 For any question, please contact shaopeng.liu@wustl.edu
 

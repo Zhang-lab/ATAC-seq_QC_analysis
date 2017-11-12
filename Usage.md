@@ -1,9 +1,9 @@
 # ATAC-seq QC Pipeline Usage
 
 To start using the ATAC-seq QC pipeline, there are three steps described below:
-1. [Install Docker](#install-docker)
-2. [Configure Docker image](#configure-docker-image)
-3. [Ready to run](#ready-to-run)
+1. [Install Docker](#1-install-docker)
+2. [Configure Docker image](#2-configure-docker-image)
+3. [Ready to run](#3-ready-to-run)
 
 ## 1. Install Docker
 Docker is a great way to run our QC pipeline, as it manages all software installations and allows the pipeline to be run in an identical software environment across a range of systems.
@@ -70,13 +70,34 @@ $ docker pull zhanglab/atac-seq:mm10
 $ docker pull zhanglab/atac-seq:base
 
 # download Dockerfile
-$ mkdir docker/
+$ mkdir docker
 $ cd docker/
-$ curl
+$ curl http://brc.wustl.edu/SPACE/chengl/Docker/Dockerfile_full -o Dockerfile
 
 # build atac-seq:full
-$ docker build -t atac-seq:full .
+$ docker build -t zhanglab/fatac-seq:full .
+
+$ cd ..
+$ rm -r docker/
 ```
+
+#### 3）Downlaod `base` from our sever, and build `full` by youself
+In case that you cannot connect to Docker Hub, or the speed is low, you can download `base` from our server:
+```bash
+# build atac-seq:base
+$ curl -fsSL http://brc.wustl.edu/SPACE/chengl/Docker/atac-seq-base.tar.gz -o ./atac-seq-base.tar.gz
+$ docker load -i atac-seq-base.tar.gz
+$ rm ./atac-seq-base.tar.gz
+
+# download Dockerfile
+$ mkdir docker
+$ cd docker/
+$ curl http://brc.wustl.edu/SPACE/chengl/Docker/Dockerfile_full -o Dockerfile
+
+# build atac-seq:full
+$ docker build -t zhanglab/fatac-seq:full .
+```
+
 
 
 

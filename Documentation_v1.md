@@ -4,7 +4,7 @@ Last edit: 11/12/2017
 shaopeng.liu@wustl.edu  											   
 
 ## Before use the pipe (Please ignore this part if you are running Docker image):  
-1, please download [**code_collection**](https://github.com/ShaopengLiu1/Atac-seq_Quality_Control_pipe/tree/master/code_collection).  
+1, please download [**Thie repo**](https://github.com/ShaopengLiu1/Atac-seq_Quality_Control_pipe).  
 2, Please check the [**qc_pipe_source.sh**](https://github.com/ShaopengLiu1/Atac-seq_Quality_Control_pipe/blob/master/code_collection/qc_pipe_source.sh) file to make sure all necessary support files are correctly connected.  
 There are 4 species, with an additional whatever-youlike feature. After downloading that file, please revise the link to the resource file in your local server. It's okay to change only 1 of them, as long as you don't need the rest.  
 3, to use it, call the "atac_pipe_v1.sh" by bash with proper parameters. Nohup is highly recommended due to the long processing time (approximately 4 hours, the speed limiting process is cutadapt and BWA alignment)

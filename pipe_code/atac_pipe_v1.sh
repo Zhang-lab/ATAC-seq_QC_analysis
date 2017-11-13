@@ -235,7 +235,7 @@ nodup_ratio=`echo "scale=2; $map_effect/$map_uniq" | bc -l`
 # get chrM count in uniquely mapped reads
 methylQA density -S -r -o temp $chrom_size  output.sam 
 unique_chrM=`grep chrM temp.extended.bed | wc -l`
-unique_chrM_ratio=`echo "scale=3; $unique_chrM / $map_uniq" | bc =l`
+unique_chrM_ratio=`echo "scale=4; $unique_chrM / $map_uniq" | bc -l`
 mv temp.extended.bed  'step2.2_Uniquely_mapped_record_'$name'.extended.bed'
 rm temp*
 

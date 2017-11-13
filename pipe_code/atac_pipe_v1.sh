@@ -235,6 +235,7 @@ nodup_ratio=`echo "scale=2; $map_effect/$map_uniq" | bc -l`
 # get chrM count in uniquely mapped reads
 methylQA density -S -r -o temp $chrom_size  output.sam 
 unique_chrM=`grep chrM temp.extended.bed | wc -l`
+unique_chrM_ratio=`echo "scale=3; $unique_chrM / $map_uniq" | bc =l`
 mv temp.extended.bed  'step2.2_Uniquely_mapped_record_'$name'.extended.bed'
 rm temp*
 
@@ -566,7 +567,7 @@ mv bin*.result ./'data_collection_'$name
 # clean result
 find . -name "*.result" | xargs sed -i 's/^-e //'
 cd ./'data_collection_'$name
-Rscript $pipe_path'/visualization.R' $name $pipe_path'/../atac_ref/mm10_encode_pe'  $species  $removed_reads $unique_chrM
+Rscript $pipe_path'/visualization.R' $name $pipe_path'/../atac_ref/mm10_encode_pe'  $species  $removed_reads $unique_chrM_ratio
 if [ $? == 0 ] 
 	then
 	echo "step4.7, plot process sucessful!" >> ../pipe_processing.log

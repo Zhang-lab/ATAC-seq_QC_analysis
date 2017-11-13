@@ -75,7 +75,7 @@ $ cd docker/
 $ curl http://brc.wustl.edu/SPACE/chengl/Docker/Dockerfile_full -o Dockerfile
 
 # build atac-seq:full
-$ docker build -t zhanglab/fatac-seq:full .
+$ docker build -t zhanglab/atac-seq:full .
 
 $ cd ..
 $ rm -r docker/
@@ -95,7 +95,7 @@ $ cd docker/
 $ curl http://brc.wustl.edu/SPACE/chengl/Docker/Dockerfile_full -o Dockerfile
 
 # build atac-seq:full
-$ docker build -t zhanglab/fatac-seq:full .
+$ docker build -t zhanglab/atac-seq:full .
 ```
 
 

@@ -574,9 +574,9 @@ if [ $? == 0 ]
 else 
 	echo "step4.7, plot process fail......" >> ../pipe_processing.log
 fi
-sed 's|    "\(.*\[\)|    //\1|' $name'_report.json' | \
-sed 's/": \[//g' | sed 's/\],/,/g' | sed '/\]/d' | sed 's/^  }/  \]/g' |\
-sed 's/: {/: \[/g' | sed 's/"!/{/g' | sed 's/!"/}/g' | sed 's/@/"/g' > $name'.json'
+sed 's/\[/{/g' $name'_report.json' | sed '/      {/d' | sed '/\]/d' | \
+	sed 's/      }/    },/g' | sed 's/"!/{/g' | sed 's/!"/}/g' | \
+	sed 's/@/"/g' | tac | sed '3s/},/}/g' | tac > $name'.json'
 rm $name'_report.json'
 mv $name'.json' ../
 

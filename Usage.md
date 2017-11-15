@@ -167,6 +167,6 @@ docker cp container_name:/data/  data
 docker stop container_name
 docker rm container_name
 ```
-Now you will have a folder called `data/` which contains several sub-folder of processed file.
+Now you will have a folder called `data/` which contains several sub-folders of processed file.
 
 That's it! Now you are ready to use our pipeline. Have fun!

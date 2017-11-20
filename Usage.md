@@ -112,7 +112,7 @@ rm -r docker/
 If you want to have `mm10` instead, simply replace `Dockerfile_full` by `Dockerfile_mm10`.
 
 ## 3. Ready to run
-A simple way to run our pipeline:
+#### 1) One line solution
 ```bash
 # download our script
 curl http://brc.wustl.edu/SPACE/chengl/Docker/atac_seq.sh -o atac_seq.sh
@@ -129,7 +129,7 @@ Options of our pipe:\
 `-m`: specify the marker, and can be named by user.\
 `-h`: for help.
 
-You can also run our pipeline line by line:
+#### 2) Run it line by line
 ```bash
 # create a container called "container_name", as what ever you want, running in the background
 docker run --name container_name -d -it zhanglab/atac-seq:full

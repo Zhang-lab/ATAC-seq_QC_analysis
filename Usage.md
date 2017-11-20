@@ -112,7 +112,24 @@ rm -r docker/
 If you want to have `mm10` instead, simply replace `Dockerfile_full` by `Dockerfile_mm10`.
 
 ## 3. Ready to run
+A simple way to run our pipeline:
+```bash
+# download our script
+curl http://brc.wustl.edu/SPACE/chengl/Docker/atac_seq.sh -o atac_seq.sh
 
+# run our script in the directory of input files
+bash atac_seq.sh -o input_file -p input_file2 \
+    -g input_genome -r input_type
+```
+Options of our pipe:\
+`-o` and `-p`: specify the input files, accepting format of `.sra`, `.fastq` and `.fastq.gz`, use `-p` for the paired-end data.\
+`-g`: specify the reference genome, including `mm9`, `mm10`, `hg19`, `hg38` and `danRer10`.\
+`-r`: specify the type of input files, including `PE` and `SE`.\
+`-t`: specify the number of threads to be used, defaulted as `24`.\
+`-m`: specify the marker, and can be named by user.\
+`-h`: for help.
+
+You can also run our pipeline line by line:
 ```bash
 # create a container called "container_name", as what ever you want, running in the background
 docker run --name container_name -d -it zhanglab/atac-seq:full
@@ -126,16 +143,7 @@ docker cp input_file2 container_name:/data/input_file2
 docker exec -i container_name bash /atac_seq/pipe_code/atac_pipe_v1.sh \
     -o input_file -p input_file2 \
     -g input_genome -r input_type
-```
-Options of our pipe:\
-`-o` and `-p`: specify the input files, accepting format of `.sra`, `.fastq` and `.fastq.gz`, use `-p` for the paired-end data.\
-`-g`: specify the reference genome, including `mm9`, `mm10`, `hg19`, `hg38` and `danRer10`.\
-`-r`: specify the type of input files, including `PE` and `SE`.\
-`-t`: specify the number of threads to be used, defaulted as `24`.\
-`-m`: specify the marker, and can be named by user.\
-`-h`: for help.
 
-```bash
 # copy results from container to current working directory
 docker cp container_name:/data/ data
 

@@ -121,7 +121,7 @@ curl http://brc.wustl.edu/SPACE/chengl/Docker/atac_seq.sh -o atac_seq.sh
 bash atac_seq.sh -o input_file -p input_file2 \
     -g input_genome -r input_type
 ```
-Options of our pipe:\
+Options of our pipeline:\
 `-o` and `-p`: specify the input files, accepting format of `.sra`, `.fastq` and `.fastq.gz`, use `-p` for the paired-end data.\
 `-g`: specify the reference genome, including `mm9`, `mm10`, `hg19`, `hg38` and `danRer10`.\
 `-r`: specify the type of input files, including `PE` and `SE`.\

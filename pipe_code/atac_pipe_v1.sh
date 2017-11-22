@@ -1,10 +1,6 @@
 #!/bin/bash
 # pipe usage:
-# user@domain: path_to_pipe/pipe.sh -g -r <PE/SE> -o read_file1 -p read_file2 (if PE file)
-# Optional parameter: -t -m -h for help
-# -t for threads number, default 24
-# -m for marker, default 'unmarked'
-# -h for help
+# user@domain: path_to_pipe/pipe.sh -g <mm10/hg38> -r <PE/SE> -o read_file1 -p read_file2 (if PE file)
 # input file: sra file, fastq file, and fastq.gz file
 
 # pipe start
@@ -16,7 +12,7 @@ date
 pipe_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" 
 
 # read parameters
-while getopts m:t:g:o:p:r:  opts
+while getopts m:t:g:o:p:r:h  opts
 do case "$opts" in
 m) marker="$OPTARG";;	# default 'unmarked'
 t) threads="$OPTARG";;	# default 24
@@ -113,11 +109,9 @@ else
 fi
 
 
-
 # 1.2 fastqc
 echo 'fastqc is processing fastq file......'
 fastqc -t $threads 'Trimed_'$name*'.fastq' -o . 
-
 if [ $? == 0 ] 
 	then
 	echo "step1.2, fastqc process sucessful!" >> pipe_processing.log
@@ -133,7 +127,7 @@ mv $zip 'step1.2_'$zip
 done
 
 
-# 1.3 fastqc data collection (rely on the output data structure of Fastqc, double-check if it's updated)
+# 1.3 fastqc data collection 
 echo -e "filename\tdeduplication_percentage\tmarker" > 'dedup_percentage_'$name'.result'
 for file in `ls -d *fastqc/`
 do
@@ -157,8 +151,8 @@ if [ $? == 0 ]
 else 
 	echo "step1.3, fastqc data_collection process fail......" >> pipe_processing.log
 fi
-
 mv 'dedup_percentage_'$name'.result'  ./'data_collection_'$name
+
 
 # 1.4, get PE data R1 R2 deduplication difference percentage 
 if [[ $types == PE ]];
@@ -185,7 +179,6 @@ fi
 # 2.1 alignment by bwa mem
 echo 'alignment by bwa......'
 bwa mem -t $threads $bwa_ref 'Trimed_'$name*'.fastq' | samtools view -bS - | samtools sort - -O 'bam' -o 'Trimed_'$name'.bam' -T temp_aln
-
 if [ $? == 0 ] 
 	then
 	echo "step2.1, bwa alignment process sucessful!" >> pipe_processing.log
@@ -223,6 +216,7 @@ fi
 methylQA density -S $chrom_size  output.sam
 cat output.extended.bed | awk '{print $1}' | uniq -c >  count_unique.txt
 awk '! /random/ && ! /Un/ && /chr/  ' count_unique.txt  | awk '{print $2, $1}'  OFS="\t"  | sort  -k1,1 -V -s > 'chrom_count_unique_'$name'.txt'
+effect_chrM=`grep chrM output.extended.bed | wc -l`
 
 # mapping status
 map_mapped=`grep 'mappable reads' output.report | awk '{print $4}'`
@@ -230,14 +224,21 @@ map_uniq=`grep '(mapQ >= 10)' output.report | awk '{print $8}'`
 map_effect=`grep 'non-redundant'  output.report | awk '{print $6}'`
 mapped_ratio=`echo "scale=2; $map_mapped/$raw_reads" | bc -l`
 effect_ratio=`echo "scale=2; $map_effect/$raw_reads" | bc -l`
-nodup_ratio=`echo "scale=2; $map_effect/$map_uniq" | bc -l`
+# (this one has chrM, now we don't count chrM) 
+# nodup_ratio=`echo "scale=2; $map_effect/$map_uniq" | bc -l`
 
 # get chrM count in uniquely mapped reads
 methylQA density -S -r -o temp $chrom_size  output.sam 
 unique_chrM=`grep chrM temp.extended.bed | wc -l`
 unique_chrM_ratio=`echo "scale=4; $unique_chrM / $map_uniq" | bc -l`
+echo -e "unque_mapped\tchrM\tunique_chrM_ratio" > 'unique_chrM_ratio_'$name'.result'
+echo -e "$map_uniq\t$unique_chrM\t$unique_chrM_ratio" >> 'unique_chrM_ratio_'$name'.result'
+mv 'unique_chrM_ratio_'$name'.result' ./'data_collection_'$name
 mv temp.extended.bed  'step2.2_Uniquely_mapped_record_'$name'.extended.bed'
 rm temp*
+unique_no_chrM=`python -c "print($map_uniq-$unique_chrM)"`
+effect_no_chrM=`python -c "print($map_effect-$effect_chrM)"`
+nodup_ratio=`echo "scale=3; $effect_no_chrM/$unique_no_chrM" | bc -l`
 
 # rm chrM and other 
 awk '$3!="chrM"' output.sam | samtools view -bS - > 'Trimed_rm_mapq0_chrm_'$name'.bam'

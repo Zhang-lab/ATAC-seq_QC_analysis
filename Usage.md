@@ -115,7 +115,7 @@ If you want to have `mm10` instead, simply replace `Dockerfile_full` by `Dockerf
 #### 1) One line solution
 ```bash
 # download our script
-curl http://brc.wustl.edu/SPACE/chengl/Docker/atac_seq.sh -o atac_seq.sh
+curl http://brc.wustl.edu/SPACE/chengl/Docker/atac_seq_full.sh -o atac_seq_full.sh
 
 # run our script in the directory of input files
 bash atac_seq.sh -o input_file -p input_file2 \
@@ -128,6 +128,8 @@ Options of our pipeline:\
 `-t`: specify the number of threads to be used, defaulted as `24`.\
 `-m`: specify the marker, and can be named by user.\
 `-h`: for help.
+
+If you are only interested in mm10, download `http://brc.wustl.edu/SPACE/chengl/Docker/atac_seq_full.sh` instead.
 
 #### 2) Run it line by line
 ```bash

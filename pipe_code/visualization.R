@@ -394,7 +394,7 @@ dicho=data.frame(dicho,class="Sample")
 colnames(dicho)=colnames(ref.dicho)
 ref.dicho=rbind(ref.dicho,dicho)
 colnames(ref.dicho)[1:3]=c("RPKM smaller than 0.15","RPKM smaller than 0.3","RPKM larger than 0.3")
-refer=c(refer,paste(round(mean(ref.dicho[,2]),2),'%(SD:',round(sd(ref.dicho[,2]),2),'%)',sep=''))
+refer=c(refer,paste(round(mean(ref.dicho[,3]),2),'%(SD:',round(sd(ref.dicho[,3]),2),'%)',sep=''))
 
 samples=c(paste(useful[,4]*100,'%',sep=''),as.numeric(saturate[11,2]))
 samples=c(samples,paste(round(map$rup_ratio,2),'%',sep=''),round(ref.enrich2[which(ref.enrich2$class=='Sample'),1],2),round(ref.enrich3[which(ref.enrich3$class=='Sample'),1],2))

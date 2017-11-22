@@ -129,7 +129,7 @@ Options of our pipeline:\
 `-m`: specify the marker, and can be named by user.\
 `-h`: for help.
 
-If you are only interested in mm10, download `http://brc.wustl.edu/SPACE/chengl/Docker/atac_seq_full.sh` instead.
+If you are only interested in mm10, download `http://brc.wustl.edu/SPACE/chengl/Docker/atac_seq_mm10.sh` instead.
 
 #### 2) Run it line by line
 ```bash

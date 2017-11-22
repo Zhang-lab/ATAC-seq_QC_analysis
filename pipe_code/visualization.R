@@ -398,11 +398,11 @@ refer=c(refer,paste(round(mean(ref.dicho[,2]),2),'%(SD:',round(sd(ref.dicho[,2])
 
 samples=c(paste(useful[,4]*100,'%',sep=''),as.numeric(saturate[11,2]))
 samples=c(samples,paste(round(map$rup_ratio,2),'%',sep=''),round(ref.enrich2[which(ref.enrich2$class=='Sample'),1],2),round(ref.enrich3[which(ref.enrich3$class=='Sample'),1],2))
-samples=c(samples,paste(round(dicho[,2],2),'%',sep=''))
+samples=c(samples,paste(round((100-dicho[,2]),2),'%',sep=''))
 
 library=data.frame(samples,refer)
 colnames(library)=c("Sample","ENCODE PE")
-rownames(library)=c("Useful reads ratio","Number of peaks","Reads under peaks ratio","Enrichment ratio in coding promoter regions","Normalized enrichment ratio","Percentage of background RPKM smaller than 0.3777")
+rownames(library)=c("Useful reads ratio","Number of peaks","Reads under peaks ratio","Enrichment ratio in coding promoter regions","Normalized enrichment ratio","Percentage of background RPKM larger than 0.3777")
 report=append(report,list(Enrichment=library))
 
 name=args[6]
@@ -453,8 +453,8 @@ part7=data.frame("plot4.5_saturation.png")
 colnames(part7)="plot_url"
 file=append(file,list(`saturation`=part7))
 
-part8=data.frame(round(ref.enrich2[which(ref.enrich2$class=='Sample'),1],2),round(ref.enrich3[which(ref.enrich3$class=='Sample'),1],2),round(dicho[,2],2)/100)
-colnames(part8)=c("enrichment ratio in coding promoter regions","normalized enrichment ratio","percentage of background RPKM smaller than 0.3777")
+part8=data.frame(round(ref.enrich2[which(ref.enrich2$class=='Sample'),1],2),round(ref.enrich3[which(ref.enrich3$class=='Sample'),1],2),1-round(dicho[,2],2)/100)
+colnames(part8)=c("enrichment ratio in coding promoter regions","normalized enrichment ratio","percentage of background RPKM larger than 0.3777")
 file=append(file,list(`enrichment`=part8))
 
 part10=data.frame(paste("idr_plot_",name,".ps",sep=""))
@@ -467,5 +467,3 @@ names(file)=name
 test=try(library(jsonlite),silent=T)
 
 capture.output(toJSON(file,pretty=T),file=paste(name,"report.json",sep='_'))
-
-

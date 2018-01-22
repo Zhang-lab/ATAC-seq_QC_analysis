@@ -60,6 +60,16 @@ elif [[ $species == danRer10 ]];
 	promoter_file="/home/shaopengliu/resources/danRer10/promoter_region_danRer10_bistream_2k.bed"
 	coding_promoter="/home/shaopengliu/resources/danRer10/danRer10_coding_promoter_bistream_2k.bed"
 	macs2_genome='mm'
+elif [[ $species == dmel ]];
+	then
+	bwa_ref="/home/Resource/Genome/D.melanogaster/d.mel.fa"
+	chrom_size="/home/Resource/Genome/D.melanogaster/d.mel.chrom.sizes"
+	touch pesudo_bl.txt
+	black_list="pesudo_bl.txt"
+	genome_size=122653977
+	promoter_file="/home/shaopengliu/resources/d.mel/promoter_region_from_Dmel.bed"
+	coding_promoter="/home/shaopengliu/resources/d.mel/promoter_region_from_Dmel.bed"
+	macs2_genome='dm'
 elif [[ $species == personalize ]];
 	then
 	echo "please add all your preferred file as reference, please make sure that you are very clear of which file is for which"

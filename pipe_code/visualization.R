@@ -126,12 +126,12 @@ enrich2=data.frame(enrichment_ratio=enrich2[,5],class="Sample")
 ref.enrich2=rbind(ref.enrich2,enrich2)
 ref.enrich2[,3]="Enrichment ratio in coding promoter regions"
 
-ref.enrich3=read.table(paste(refpath,'merged_new_enrichment.txt',sep='/'),header=T,sep='\t') ####
-enrich3=read.table(paste("new_enrichment",name,sep="_"),header=T,sep='\t')
-ref.enrich3=data.frame(enrichment_ratio=ref.enrich3[,6],class="ENCODE PE")
+ref.enrich3=read.table(paste(refpath,'merged_sub10M_enrichment.txt',sep='/'),header=T,sep='\t') ####
+enrich3=read.table(paste("sub10M_enrichment",name,sep="_"),header=T,sep='\t')
+ref.enrich3=data.frame(enrichment_ratio=ref.enrich3[,5],class="ENCODE PE")
 enrich3=data.frame(enrichment_ratio=enrich3[,5],class="Sample")
 ref.enrich3=rbind(ref.enrich3,enrich3)
-ref.enrich3[,3]="Normalized enrichment ratio"
+ref.enrich3[,3]="Subsampled 10M enrichment ratio"
 
 test=rbind(ref.enrich2,ref.enrich3)
 
@@ -402,7 +402,7 @@ samples=c(samples,paste(round((100-dicho[,2]),2),'%',sep=''))
 
 library=data.frame(samples,refer)
 colnames(library)=c("Sample","ENCODE PE")
-rownames(library)=c("Useful reads ratio","Number of peaks","Reads under peaks ratio","Enrichment ratio in coding promoter regions","Normalized enrichment ratio","Percentage of background RPKM larger than 0.3777")
+rownames(library)=c("Useful reads ratio","Number of peaks","Reads under peaks ratio","Enrichment ratio in coding promoter regions","Subsampled 10M enrichment ratio","Percentage of background RPKM larger than 0.3777")
 report=append(report,list(Enrichment=library))
 
 name=args[6]
@@ -454,7 +454,7 @@ colnames(part7)="plot_url"
 file=append(file,list(`saturation`=part7))
 
 part8=data.frame(round(ref.enrich2[which(ref.enrich2$class=='Sample'),1],2),round(ref.enrich3[which(ref.enrich3$class=='Sample'),1],2),1-round(dicho[,2],2)/100)
-colnames(part8)=c("enrichment ratio in coding promoter regions","normalized enrichment ratio","percentage of background RPKM larger than 0.3777")
+colnames(part8)=c("enrichment ratio in coding promoter regions","subsampled 10M enrichment ratio","percentage of background RPKM larger than 0.3777")
 file=append(file,list(`enrichment`=part8))
 
 part10=data.frame(paste("idr_plot_",name,".ps",sep=""))
@@ -467,3 +467,5 @@ names(file)=name
 test=try(library(jsonlite),silent=T)
 
 capture.output(toJSON(file,pretty=T),file=paste(name,"report.json",sep='_'))
+
+

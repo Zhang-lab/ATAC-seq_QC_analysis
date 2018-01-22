@@ -33,8 +33,7 @@ fi
 
 if [ -z "$marker" ]
 then
-echo "you didn't specify the marker, are you sure to keep the default unmarked"
-marker='unmarked'
+marker='no_annotation'
 fi
 
 source $pipe_path'/qc_source.sh' $species
@@ -55,7 +54,7 @@ elif [[ $R1 == *.fastq* ]] && [[ $types == SE ]]
 	name=`echo ${R1%.fastq*}`
 	raw1=$R1
 else
-	echo "please use fastq(or fastq.gz) file or sra file......"
+	echo "please use fastq(fastq.gz) file or sra file......"
 	exit
 fi
 
@@ -102,9 +101,9 @@ fi
 
 if [ $? == 0 ] 
 	then
-	echo "step1.1, trimming process sucessful!" >> pipe_processing.log
+	echo "step1.1, cutadapt trimming done" >> pipe_processing.log
 else 
-	echo "step1.1, trimming process fail......" >> pipe_processing.log
+	echo "step1.1, cutadapt trimming fail......" >> pipe_processing.log
 	exit 1
 fi
 
@@ -114,7 +113,7 @@ echo 'fastqc is processing fastq file......'
 fastqc -t $threads 'Trimed_'$name*'.fastq' -o . 
 if [ $? == 0 ] 
 	then
-	echo "step1.2, fastqc process sucessful!" >> pipe_processing.log
+	echo "step1.2, fastqc process done" >> pipe_processing.log
 else 
 	echo "step1.2, fastqc process fail......" >> pipe_processing.log
 	exit 1
@@ -147,7 +146,7 @@ done
 
 if [ $? == 0 ] 
 	then
-	echo "step1.3, fastqc data_collection process sucessful!" >> pipe_processing.log
+	echo "step1.3, fastqc data_collection process done" >> pipe_processing.log
 else 
 	echo "step1.3, fastqc data_collection process fail......" >> pipe_processing.log
 fi
@@ -166,7 +165,7 @@ fi
 
 if [ $? == 0 ] 
 	then
-	echo "step1.4, calculate replicate difference process sucessful!" >> pipe_processing.log
+	echo "step1.4, calculate replicate difference process done" >> pipe_processing.log
 else 
 	echo "step1.4, calculate replicate difference process fail......" >> pipe_processing.log
 fi
@@ -181,7 +180,7 @@ echo 'alignment by bwa......'
 bwa mem -t $threads $bwa_ref 'Trimed_'$name*'.fastq' | samtools view -bS - | samtools sort - -O 'bam' -o 'Trimed_'$name'.bam' -T temp_aln
 if [ $? == 0 ] 
 	then
-	echo "step2.1, bwa alignment process sucessful!" >> pipe_processing.log
+	echo "step2.1, bwa alignment process done" >> pipe_processing.log
 else 
 	echo "step2.1, bwa alignment process fail......" >> pipe_processing.log
 	exit 1
@@ -189,6 +188,7 @@ fi
 
 # clean folder
 find . -maxdepth 1 -name "Trimed*" ! -name "*bam" ! -name "step*" | xargs rm -r
+rm -r 'Trimed_'$name*'fastq'*
 
 for file in `ls *fastq 2> /dev/null`
 do
@@ -215,7 +215,7 @@ fi
 # only effect reads
 methylQA density -S $chrom_size  output.sam
 cat output.extended.bed | awk '{print $1}' | uniq -c >  count_unique.txt
-awk '! /random/ && ! /Un/ && /chr/  ' count_unique.txt  | awk '{print $2, $1}'  OFS="\t"  | sort  -k1,1 -V -s > 'chrom_count_unique_'$name'.txt'
+awk '{print $2, $1}'  OFS="\t" count_unique.txt | sort  -k1,1 -V -s > 'chrom_count_unique_'$name'.txt'
 effect_chrM=`grep chrM output.extended.bed | wc -l`
 
 # mapping status
@@ -224,8 +224,6 @@ map_uniq=`grep '(mapQ >= 10)' output.report | awk '{print $8}'`
 map_effect=`grep 'non-redundant'  output.report | awk '{print $6}'`
 mapped_ratio=`echo "scale=2; $map_mapped/$raw_reads" | bc -l`
 effect_ratio=`echo "scale=2; $map_effect/$raw_reads" | bc -l`
-# (this one has chrM, now we don't count chrM) 
-# nodup_ratio=`echo "scale=2; $map_effect/$map_uniq" | bc -l`
 
 # get chrM count in uniquely mapped reads
 methylQA density -S -r -o temp $chrom_size  output.sam 
@@ -248,7 +246,7 @@ awk -F "\t"  '{print $2}' 'chrom_count_unique_'$name'.txt'  |  paste 'chrom_coun
 
 if [ $? == 0 ] 
 	then
-	echo "step2.2, count reads distribution process sucessful!" >> pipe_processing.log
+	echo "step2.2, count reads distribution process done" >> pipe_processing.log
 else 
 	echo "step2.2, count reads distribution process fail......" >> pipe_processing.log
 fi
@@ -260,7 +258,7 @@ mv 'Trimed_'$name'.bam'  'step2.1_Trimed_'$name'.bam'
 $preseq lc_extrap -o 'yield_'$name'.result' -B  'step2.1_Trimed_'$name'.bam'
 if [ $? == 0 ] 
 	then
-	echo "step2.3, preseq lc_extrap estimate process sucessful!" >> pipe_processing.log
+	echo "step2.3, preseq lc_extrap estimate process done" >> pipe_processing.log
 else 
 	echo "step2.3, preseq lc_extrap estimate process fail......" >> pipe_processing.log
 fi
@@ -274,7 +272,7 @@ methylQA atac $chrom_size  'Trimed_rm_mapq0_chrm_'$name'.bam'
 
 if [ $? == 0 ] 
 	then
-	echo "step3.1, mathylQA atac process sucessful!" >> pipe_processing.log
+	echo "step3.1, mathylQA atac process done" >> pipe_processing.log
 else 
 	echo "step3.1, mathylQA atac process fail......" >> pipe_processing.log
 	exit 1
@@ -299,14 +297,21 @@ rm *genomeCov  2> /dev/null
 
 # 3.2 normalization of *.bedGraph file by 10 Million reads
 echo 'normalization bedGraph......'
+
+# add a new bigwig file without black list
+intersectBed -a 'Trimed_'*$name'.open.bedGraph'  -b $black_list -v > rmbl.bedGraph
+bedGraphToBigWig rmbl.bedGraph $chrom_size 'step3.2_Trimed_nochrm_rmbl_'$name'.bigWig'
+
+# normalization
 norm=`grep 'non-redundant'  Trimed*report | awk '{print $6}'`
-factor=`echo "scale=2; $norm/10000000" | bc -l`
-awk -v factor=$factor '{print $1,$2,$3,$4/factor}' OFS='\t' 'Trimed_'*$name'.open.bedGraph'  >  'Normalized_per_10M_'$name'.open.bedGraph'
+factor=`echo "scale=3; $norm/10000000" | bc -l`
+awk -v factor=$factor '{print $1,$2,$3,$4/factor}' OFS='\t' rmbl.bedGraph  >  'Normalized_per_10M_'$name'.open.bedGraph'
 bedGraphToBigWig  'Normalized_per_10M_'$name'.open.bedGraph'   $chrom_size  'Normalized_per_10M_'$name'.bigWig'
+rm rmbl.bedGraph
 
 if [ $? == 0 ] 
 	then
-	echo "step3.2, normalization process sucessful!" >> pipe_processing.log
+	echo "step3.2, normalization process done" >> pipe_processing.log
 else 
 	echo "step3.2, normalization process fail......" >> pipe_processing.log
 fi
@@ -314,16 +319,10 @@ fi
 mv 'Normalized_per_10M_'$name'.open.bedGraph'  'step3.2_Normalized_per_10M_'$name'.open.bedGraph'
 mv 'Normalized_per_10M_'$name'.bigWig'  'step3.2_Normalized_per_10M_'$name'.bigWig'
 
-# add a new bigwig file without black list
-intersectBed -a 'Trimed_'*$name'.open.bedGraph'  -b $black_list -v > rmbl.bedGraph
-bedGraphToBigWig rmbl.bedGraph $chrom_size 'step3.2_Trimed_nochrm_rmbl_'$name'.bigWig'
-rm rmbl.bedGraph
-
-
 
 # 3.3 peak calling
 echo 'peak calling......'
-awk '$2 < $3' 'Trimed_rm_mapq0_chrm_'$name'.open.bed' | awk  '{ if ((length($1) < 6) && (length($1) > 1))  print $0}' OFS='\t' > temp.open.bed
+awk '{if ($2 > $3)sub($2, 0); print}' OFS="\t" 'Trimed_rm_mapq0_chrm_'$name'.open.bed' > temp.open.bed
 intersectBed  -a temp.open.bed  -b $black_list   -v > 'Trimed_rmbl_'$name'.open.bed'
 rm temp.open.bed
 rm 'Trimed_rm_mapq0_chrm_'$name'.open.bed'
@@ -331,7 +330,7 @@ macs2 callpeak -t ./'Trimed_rmbl_'$name'.open.bed' -g $macs2_genome -q 0.01 -n '
 
 if [ $? == 0 ] 
 	then
-	echo "step3.3, macs2 peak calling process sucessful!" >> pipe_processing.log
+	echo "step3.3, macs2 peak calling process done" >> pipe_processing.log
 else 
 	echo "step3.3, macs2 peak calling process fail......" >> pipe_processing.log
 	exit 1
@@ -343,36 +342,56 @@ mv 'peak_length_distri_'$name'.result'  ./'data_collection_'$name
 
 ###################################################################################################
 # step4, additional analysis
+peak='peakcall_'$name'_peaks.narrowPeak'
+bed='Trimed_rmbl_'$name'.open.bed'
+
 # 4.1 get reads under peak data
-total=`wc -l 'Trimed_rmbl_'$name'.open.bed'|awk '{print $1}'`
-sum=`intersectBed -a 'Trimed_rmbl_'$name'.open.bed' -b 'peakcall_'$name'_peaks.narrowPeak' -f 0.5 -u | wc -l`
+total=`wc -l $bed |awk '{print $1}'`
+sum=`intersectBed -a $bed -b $peak -f 0.5 -u | wc -l`
 ratio=`echo "scale=2; $sum*100/$total" | bc -l`
 if [ $? == 0 ] 
 	then
-	echo "step4.1, reads unpder peak ratio calculation process sucessful!" >> pipe_processing.log
+	echo "step4.1, reads unpder peak ratio calculation process done" >> pipe_processing.log
 else 
 	echo "step4.1, reads unpder peak ratio calculation process fail......" >> pipe_processing.log
 fi
 
+# 4.2 enrichment 
+# 4.2.1, new enrichment from RUP based on 10M sub-sampling with adjustment
+# numerator =  ($rupn+10000000*$peak_length / $genome_size) / $peak_length
+# denominator = (10000000+$useful_ends) / ($genome_size-$peak_length))
+## $1 for original open.bed, $2 for useful_single ends/sub-sample 10M
+cal_enrich () {
+	shuf $1 | head -10000000  > temp.open.bed
+	macs2 callpeak -t temp.open.bed  -g $macs2_genome -q 0.01 -n temp_peak  --keep-dup 1000 --nomodel --shift 0 --extsize 150
+	peak_length=`awk '{s+=$3-$2+1}END{print s}' 'temp_peak_peaks.narrowPeak'`
+	rupn=`intersectBed -a temp.open.bed -b 'temp_peak_peaks.narrowPeak' -f 0.5 | wc -l`
+	upper=`python -c "print(1.0*($rupn+10000000*$peak_length/$genome_size)/$peak_length)"`
+	lower=`python -c "print(1.0*($2+10000000)/($genome_size-$peak_length))"`
+	enrichment=`python -c "print(1.0*$upper/$lower)"`
+	rup=`python -c "print(1.0*$rupn/10000000)"`
+	echo -e "name\trupn\trup\tcoverage\tenrichment" > 'sub10M_enrichment_'$name'.result'
+	echo -e "$name\t$rupn\t$rup\t$peak_length\t$enrichment" >> 'sub10M_enrichment_'$name'.result'
+	rm temp*
+	mv 'sub10M_enrichment_'$name'.result'  ./'data_collection_'$name
+}
 
-# 4.2 enrichment ratio 
-peak='peakcall_'$name'_peaks.narrowPeak'
-bed='Trimed_rmbl_'$name'.open.bed'
-# 4.2.1, new enrichment from RUP and 20M normalization
-# e= (# of reads under peak / total peak length) / ( 20M*(1-RUP)/(genome_size-total peak length))
-peak_length=`awk '{s+=$3-$2+1}END{print s}' $peak`
-enrichment=`echo "scale=5; ($sum / $peak_length) / (40000000*(1- $ratio / 100) / ($genome_size - $peak_length))" | bc -l`
+if (( $total > 10000000 )) 
+then
+	cal_enrich $bed 10000000
+else
+	cal_enrich $bed $total
+	echo "Warning: the open.bed file contains less than 10M reads" >> pipe_processing.log
+	echo "Warning: the enrichment is calculated by the original bed file, and may not be reliable" >> pipe_processing.log
+fi
 
 if [ $? == 0 ] 
 	then
-	echo "step4.2.1, new peak enrichment ratio process sucessful!" >> pipe_processing.log
+	echo "step4.2.1, sub10M enrichment ratio process done" >> pipe_processing.log
 else 
-	echo "step4.2.1, new peak enrichment ratio process fail......" >> pipe_processing.log
+	echo "step4.2.1, sub10M enrichment ratio process fail......" >> pipe_processing.log
 fi
 
-echo -e "total_reads\trupn\trup\tcoverage\tenrichment" > 'new_enrichment_'$name'.result'
-echo -e "$total\t$sum\t$ratio\t$peak_length\t$enrichment"  >> 'new_enrichment_'$name'.result'
-mv 'new_enrichment_'$name'.result' ./data_collection_*
 
 # 4.2.2, coding promoter enrichment
 # coding enrichment = ( reads in promoter / promoter length)  /  (total reads / genome size)
@@ -384,14 +403,13 @@ promoter_length=`echo "$promoter_number * 2000" | bc -l`
 enrichment_ratio=`echo "scale=3; $reads_in_promoter / $promoter_length / $denominator" | bc -l`
 if [ $? == 0 ] 
 	then
-	echo "step4.2.2, coding promoter enrichment ratio process sucessful!" >> pipe_processing.log
+	echo "step4.2.2, coding promoter enrichment ratio process done" >> pipe_processing.log
 else 
 	echo "step4.2.2, coding promoter enrichment ratio process fail......" >> pipe_processing.log
 fi
 echo -e "name\ttotal_reads\tpromoter_number\treads_in_promoter\tenrichment_ratio" > 'enrichment_ratio_in_promoter_'$name'.result'
 echo -e "$name\t$total\t$promoter_number\t$reads_in_promoter\t$enrichment_ratio" >> 'enrichment_ratio_in_promoter_'$name'.result'
 mv 'enrichment_ratio_in_promoter_'$name'.result'  'data_collection_'$name
-unset peak bed
 
 
 # 4.3 PBC calculation
@@ -408,27 +426,22 @@ if [ -z $name ] || [ -z $raw_reads ] || [ -z $map_mapped ] || [ -z $mapped_ratio
 then
 	echo "step4.3, sumarizing result process fail......" >> pipe_processing.log
 else
-	echo "step4.3, sumarizing result process sucessful!" >> pipe_processing.log
+	echo "step4.3, sumarizing result process done" >> pipe_processing.log
 fi
 
-
-# 4.4 IDR: Irreproducible Discovery Rate (IDR) based on statistical model
-# removed!
-echo "step4.4, IDR process was removed from pipe" >> pipe_processing.log
-
-# 4.5 saturation analysis
+# 4.4 saturation analysis
 # subsampling:
 for number in 5 10 20 30 40 50 60 70 80 90
 do
 	sample_ratio=$(( total * $number / 100 ))
-	shuf 'Trimed_rmbl_'$name'.open.bed' | head -$sample_ratio >  'Trimed_rmbl_'$name'_sample'$number'.open.bed'
+	shuf $bed | head -$sample_ratio >  'Trimed_rmbl_'$name'_sample'$number'.open.bed'
 done
 
 if [ $? == 0 ] 
 	then
-	echo "step4.5, saturation subsampling process sucessful!" >> pipe_processing.log
+	echo "step4.4, saturation subsampling process done" >> pipe_processing.log
 else 
-	echo "step4.5, saturation subsampling process fail......" >> pipe_processing.log
+	echo "step4.4, saturation subsampling process fail......" >> pipe_processing.log
 fi
 
 # call peak
@@ -436,14 +449,15 @@ mkdir saturation_$name
 mv *.open.bed ./saturation_$name/
 cp peakcall_*Peak ./saturation_$name/'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak'
 cd ./saturation_$name
-for file in `ls *sample*.open.bed`;
+for file in `ls 'Trimed_rmbl_'$name'_sample'*'.open.bed'`;
 do
 	macs2 callpeak -t $file -g $macs2_genome -q 0.01 -n 'peakcall_'$file --keep-dup 1000 --nomodel --shift 0 --extsize 150
+	rm $file
 done
 
 if [ $? == 0 ] 
 	then
-	echo "step4.5, saturation call peak process sucessful!" >> ../pipe_processing.log
+	echo "step4.5, saturation call peak process done" >> ../pipe_processing.log
 else 
 	echo "step4.5, saturation call peak process fail......" >> ../pipe_processing.log
 fi
@@ -478,7 +492,7 @@ done
 
 if [ $? == 0 ] 
 	then
-	echo "step4.5, saturation results collection process sucessful!" >> ../pipe_processing.log
+	echo "step4.5, saturation results collection process done" >> ../pipe_processing.log
 else 
 	echo "step4.5, saturation results collection process fail......" >> ../pipe_processing.log
 fi
@@ -493,15 +507,11 @@ echo -e "file\t$name'_read'\t$name'_peak'\t$name'_ratio'\tmarker"  > 'saturation
 awk -v marker=$marker '{print $0,marker}' OFS='\t' temp4.txt >> 'saturation_'$name'.result'  
 rm temp4.txt
 rm saturation*.txt
-rm *sample*.open.bed
-mv *.open.bed ../
+mv $bed ../
 mv 'saturation_'$name'.result'  ../'data_collection_'$name
 cd ..
 
 # 4.6 calculate background
-peak='peakcall_'$name'_peaks.narrowPeak'
-bed='Trimed_rmbl_'$name'.open.bed'
-
 # signal part
 intersectBed -a $peak -b $promoter_file -u | awk '{print $1"\t"$2"\t"$3"\t""1""\t"$9}' > promoter.narrowPeak
 intersectBed -a $peak -b $promoter_file -v | awk '{print $1"\t"$2"\t"$3"\t""0""\t"$9}' > non-promoter.narrowPeak
@@ -537,15 +547,12 @@ python $pipe_path'/rpkm_bin.py' background temp $size
 
 if [ $? == 0 ] 
 	then
-	echo "step4.6, background evaluation process sucessful!" >> ./pipe_processing.log
+	echo "step4.6, background evaluation process done" >> ./pipe_processing.log
 else 
 	echo "step4.6, background evaluation process fail......" >> ./pipe_processing.log
 fi
 
 mv reads.txt 'background_'$name'.result'
-
-
-
 rm temp
 rm background
 mv bin.txt 'bin_'$name'.result'
@@ -571,7 +578,7 @@ cd ./'data_collection_'$name
 Rscript $pipe_path'/visualization.R' $name $pipe_path'/../atac_ref/mm10_encode_pe'  $species  $removed_reads $unique_chrM_ratio
 if [ $? == 0 ] 
 	then
-	echo "step4.7, plot process sucessful!" >> ../pipe_processing.log
+	echo "step4.7, plot process done" >> ../pipe_processing.log
 else 
 	echo "step4.7, plot process fail......" >> ../pipe_processing.log
 fi
@@ -605,6 +612,7 @@ echo "Processing $name done"
 echo "Processing $name done"
 cd ..
 date
+
 
 
 

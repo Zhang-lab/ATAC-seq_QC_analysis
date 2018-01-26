@@ -1,28 +1,62 @@
 # Documentation v1
 ATAC-seq quality control matrix for Bo Zhang's lab  
-Last edit: 01/25/2018
-shaopeng.liu@wustl.edu  											   
+Last edit: 01/25/2018  
+For any question please contact: shaopeng.liu@wustl.edu  											   
 
-## Before use the pipe (Please ignore this part if you are running Docker image):  
-1, please download [**Thie repo**](https://github.com/ShaopengLiu1/Atac-seq_Quality_Control_pipe).  
-2, Please check the [**qc_pipe_source.sh**](https://github.com/ShaopengLiu1/Atac-seq_Quality_Control_pipe/blob/master/pipe_code/qc_source.sh) file to make sure all necessary support files are correctly connected.  
-There are 4 species, and one personalize setting. After downloading that file, please revise the link to the resource file in your local server. It's okay to change only 1 species of them, as long as you don't need the rest.  
-3, to use it, call the "atac_pipe_v1.sh" by bash with proper parameters. Nohup is highly recommended due to the long processing time (approximately 4 hours, the speed limiting process is cutadapt and BWA alignment)
-
-## Pipe Usage:  
-user@domain: nohup bash path_to_pipe/pipe.sh  -g  <mm10/mm9/hg38/hg19/personalize>  -r <PE/SE>  -o read_file1  -p read_file2 (if PE file)  &
-Optional parameter:   -t <threads>  -m <marker>  -h for help  
-
-## Caveats in method selection
-### 1, reads distribution count in each chromosome  
-We do **NOT** use samtools index directly, because "BWA" would assign reads of which has mapQ=0 to chr1, the results are not accurate. What we perform is to remove those reads first and count directly by "uniq" command. (This part is consistent with samtools index results)  
-
-### 2, generate random regions from genome to calculate background  
-We do **NOT** use "bedtools random" because it's hard to determine how many regions we need. Especially for Zebra fish data, those peaks(extended to 10kb at each side) would cover most of genome so it's very hard to get enough hits. So we simply shutter the whole genome and take all regions.
+**Outline**:  
+I, Term and definition  
+II, Output results  
+III, Data processing steps   
 
 
+## I, Term and definition  
+1, coding promoter region definition:  
+> Subtract all coding genes from GTF file  
+> Merge all transcript region to get a rough estimate on TSS  
+> choose 1kb up/downstream of the TSS as the coding promoter region  
 
-## Data Processing:  
+2, enrichment in coding promoter region:  
+coding enrichment = ( reads in promoter / promoter length)  /  (total reads / genome size)  
+
+3, insertion length (from output of methylQA atac):  
+The distance between 2 insertion site from the ATAC-seq reads.  
+
+4, peak length (from output of macs2):  
+The distance between start point and end point of a peak.  
+
+5, unique chrM ratio:  
+The percentage of uniquely mapped chrM reads in all uniquely mapped reads. It's used to measure the sample quality.  
+
+6, mapping status:  
+> total reads: the raw reads of the input fastq file  
+> mapped reads: the reads that can be mapped to reference genome  
+> uniquely mapped reads: the reads that can be mapped uniquely (mapQ > 10)  
+> useful reads: non-redundant uniquely mapped reads  
+> useful single ends: in ATAC-seq, what we care about is the insertion rather than the fregment itself. So we do a transformation on the reads (please see methylQA atac for more information) to focusing on the insertion point only. The reads after this transformation is called "useful single ends".  
+
+7, subsample 10 million enrichment:  
+This is how we estimate the enrichment of reads for each single data.  
+We will subsample the useful single ends down to 10M, and calculate based on the subset of data.
+sub 10M enrichment = (($rupn+10000000*$peak_length / $genome_size) / $peak_length)  /  (20M / ($genome_size-$peak_length))  
+
+8, background RPKM:  
+> Random sample 500bp regions from genome
+> Keep those region that are far from any know peaks (distance > 10kb)  
+> Calculate the RPKM for those kept regions  
+
+
+## II, Output results  
+1, There would be 2 files ended with "report.txt" and "json" that record all related QC information inside.  
+2, For every single results in detail, please go to the folder "result_collection".  
+
+
+## III, Data Processing  
+### Caveats in method selection
+1, reads distribution count in each chromosome  
+We do **NOT** use samtools index directly, because "BWA" would assign reads of which has mapQ=0 to chr1, the results are not accurate. What we perform is to remove those reads first and count directly by "uniq" command. (This part is consistent with samtools index results) 
+2, generate random regions from genome to calculate background  
+We do **NOT** use "bedtools random" because it's hard to determine how many regions we need. Especially for Zebra fish data, those peaks(extended to 10kb at each side) would cover most of genome so it's very hard to get enough hits. So we simply shutter the whole genome and take all regions.  
+
 ### Step1, Pre-alignment   
 #### 1.1, Trimming by cutadapt  
 Tool: cutadapt v1.12  
@@ -51,6 +85,7 @@ input: trimmed fastq file
 output: aligned bam file  
 command:  
 bwa mem -t $threads  $mm10_ref_genome.fa  $trimmed.fastq | samtools view -bS - | samtools sort - -O 'bam' -o  $aln.bam -T temp_aln  
+methylQA density $chrom_size  'Trimed_rm_mapq0_chrm_'$name'.bam'
 QC to report: mapped reads distribution in each chromosome  
 
 
@@ -91,26 +126,17 @@ input: mapped reads file
 output: PBC 1  
 QC to report: PBC 1  
   
-#### 4.4, IDR calculation  (Deleted from pipe)
-tool: bash and R  
-See: [**ENCODE Introduction of IDR**](https://sites.google.com/site/anshulkundaje/projects/idr#TOC-Intuitive-Explanation-of-IDR-and-IDR-plots) for more details  
-input: chrom_size file, and pseudo replicates peak file  
-ouput:  
-  1, IDR peaks   
-  2, plot of peak consistency  
- QC to report: IDR results collection  
- 
- #### 4.5, Saturation analysis  
- tool: macs2 v2.1  
- input: effect reads  
- commands:  
+#### 4.4, Saturation analysis  
+tool: macs2 v2.1  
+input: effect reads  
+commands:  
   1, randomly sampling reads file from 5%, 10%, 20% to 90% of reads file  
   2, call peak and calculate the peaks in sub-sampling file  
- output: saturation result  
- QC to report: saturation plot and table  
+output: saturation result  
+QC to report: saturation plot and table  
   
- #### 4.6, Calculate background  
- tool:   
+#### 4.5, Calculate background  
+tool:   
   1, Python  
   2, intersectBed  
  input: random regions from genome that are at least 10kb from any peak  
@@ -121,9 +147,9 @@ ouput:
  output: background record  
  QC to report: background plot  
    
- #### 4.7, plot all results with reference dataset collection (currently ENCODE mm10 PE data)  
- tool: R  
- QC to report: all plots  
+#### 4.6, plot all results with reference dataset collection (currently ENCODE mm10 PE data)  
+tool: R  
+QC to report: all plots and report file 
  
  
  

@@ -37,7 +37,8 @@ The percentage of uniquely mapped chrM reads in all uniquely mapped reads. It's 
 7, subsample 10 million enrichment:  
 This is how we estimate the enrichment of reads for each single data.  
 We will subsample the useful single ends down to 10M, and calculate based on the subset of data.
-sub 10M enrichment = (($rupn+10000000*$peak_length / $genome_size) / $peak_length)  /  (20M / ($genome_size-$peak_length))  
+sub 10M enrichment =  
+(($rupn+10000000*$peak_length / $genome_size) / $peak_length)   /    (20M / ($genome_size-$peak_length))  
 
 8, background RPKM:  
 > Random sample 500bp regions from genome

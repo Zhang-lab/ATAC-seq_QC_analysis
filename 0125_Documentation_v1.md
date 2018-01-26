@@ -63,8 +63,10 @@ Tool: cutadapt v1.12
 input: fastq file  
 output: trimmed fastq file  
 commands:   
-	for PE data: cutadapt -a adapter1 -A adapter2 -q 10 --minimum-length 36  -o $Trimed_output_1  -p $Trimed_output_2  $input_1 $input_2  
-	for SE data: cutadapt -a adapter1 -q 10 --minimum-length 36  -o $Trimed_output   $input    
+for PE data: 
+> cutadapt -a adapter1 -A adapter2 -q 10 --minimum-length 36  -o $Trimed_output_1  -p $Trimed_output_2  $input_1 $input_2  
+for SE data: 
+> cutadapt -a adapter1 -q 10 --minimum-length 36  -o $Trimed_output   $input    
 (Default adapter for Atac-seq data: CTGTCTCTTATACACATCT)  
 QC to report: cutadapt log  
   
@@ -72,7 +74,8 @@ QC to report: cutadapt log
 tool: FastQC v0.11.5  
 input: trimmed fastq file  
 output: fastqc results  
-commands: fastqc -t $threads -o .  $trimed_fastq  
+commands: 
+> fastqc -t $threads -o .  $trimed_fastq  
 QC to report: fastqc results  
 
 
@@ -84,8 +87,8 @@ tool:
 input: trimmed fastq file  
 output: aligned bam file  
 command:  
-bwa mem -t $threads  $mm10_ref_genome.fa  $trimmed.fastq | samtools view -bS - | samtools sort - -O 'bam' -o  $aln.bam -T temp_aln  
-methylQA density $chrom_size  'Trimed_rm_mapq0_chrm_'$name'.bam'
+> bwa mem -t $threads  $mm10_ref_genome.fa  $trimmed.fastq | samtools view -bS - | samtools sort - -O 'bam' -o  $aln.bam -T temp_aln  
+> methylQA density $chrom_size  'Trimed_rm_mapq0_chrm_'$name'.bam'
 QC to report: mapped reads distribution in each chromosome  
 
 
@@ -98,8 +101,8 @@ input:
   2, effect reads file from 1 as $reads.open.bed  
 output: peak file  
 commands:   
-  1, methylQA atac $mm10_ref_genome_size   $aln.bam   
-  2, macs2 callpeak -t $reads.open.bed  -g mm -q 0.01 -n peakcall_    --keep-dup 1000 --nomodel --shift 0 --extsize 150  
+> methylQA atac $mm10_ref_genome_size   $aln.bam   
+> macs2 callpeak -t $reads.open.bed  -g mm -q 0.01 -n peakcall_    --keep-dup 1000 --nomodel --shift 0 --extsize 150  
 QC to report:   
 	1, mapping status  
 	2, insertion size distribution  
@@ -130,8 +133,8 @@ QC to report: PBC 1
 tool: macs2 v2.1  
 input: effect reads  
 commands:  
-  1, randomly sampling reads file from 5%, 10%, 20% to 90% of reads file  
-  2, call peak and calculate the peaks in sub-sampling file  
+> randomly sampling reads file from 5%, 10%, 20% to 90% of reads file  
+> call peak and calculate the peaks in sub-sampling file  
 output: saturation result  
 QC to report: saturation plot and table  
   
@@ -139,13 +142,13 @@ QC to report: saturation plot and table
 tool:   
   1, Python  
   2, intersectBed  
- input: random regions from genome that are at least 10kb from any peak  
- command:  
-  1, generate random regions from genome  
-  2, remove those with peak in 10kb range  
-  3, calculate RPKM for those region  
- output: background record  
- QC to report: background plot  
+input: random regions from genome that are at least 10kb from any peak  
+command:  
+> generate random regions from genome  
+> remove those with peak in 10kb range  
+> calculate RPKM for those region  
+output: background record  
+QC to report: background plot  
    
 #### 4.6, plot all results with reference dataset collection (currently ENCODE mm10 PE data)  
 tool: R  

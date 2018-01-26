@@ -34,13 +34,16 @@ The percentage of uniquely mapped chrM reads in all uniquely mapped reads. It's 
 > useful reads: non-redundant uniquely mapped reads  
 > useful single ends: in ATAC-seq, what we care about is the insertion rather than the fregment itself. So we do a transformation on the reads (please see methylQA atac for more information) to focusing on the insertion point only. The reads after this transformation is called "useful single ends".  
 
-7, subsample 10 million enrichment:  
+7, reads under peak:  
+Those reads whose center point located inside a peak region.  
+
+8, subsample 10 million enrichment:  
 This is how we estimate the enrichment of reads for each single data.  
-We will subsample the useful single ends down to 10M, and calculate based on the subset of data.
+We will subsample the useful single ends down to 10M, and calculate based on the subset of data.  
 sub 10M enrichment =  
 (($rupn+10000000*$peak_length / $genome_size) / $peak_length)   /    (20M / ($genome_size-$peak_length))  
 
-8, background RPKM:  
+9, background RPKM:  
 > Random sample 500bp regions from genome
 > Keep those region that are far from any know peaks (distance > 10kb)  
 > Calculate the RPKM for those kept regions  

@@ -11,7 +11,7 @@ III, Data processing steps
 
 ## I, Term and definition  
 1, coding promoter region definition:  
-> Subtract all coding genes from GTF file  
+> Abstract all coding genes from GTF file  
 > Merge all transcript region to get a rough estimate on TSS  
 > choose 1kb up/downstream of the TSS as the coding promoter region  
 

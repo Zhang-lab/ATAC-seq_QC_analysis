@@ -188,7 +188,6 @@ fi
 
 # clean folder
 find . -maxdepth 1 -name "Trimed*" ! -name "*bam" ! -name "step*" | xargs rm -r
-rm -r 'Trimed_'$name*'fastq'*
 
 for file in `ls *fastq 2> /dev/null`
 do
@@ -200,7 +199,7 @@ done
 
 # 2.2, count distri after removing mapQ=0 (bwa would assign those reads to dif chr, and results in unreliable number)
 samtools view -h 'Trimed_'$name'.bam' > input.sam
-awk '$5>0' input.sam | sed '/@/d' - | cat <(grep '@' input.sam) - > output.sam
+awk '$5>0' input.sam | sed '/^@/d' - | cat <(grep '^@' input.sam) - > output.sam
 rm input.sam
 
 # all alignment with mapQ > 0, exact same with samtools idxstats
@@ -242,7 +241,7 @@ nodup_ratio=`echo "scale=3; $effect_no_chrM/$unique_no_chrM" | bc -l`
 awk '$3!="chrM"' output.sam | samtools view -bS - > 'Trimed_rm_mapq0_chrm_'$name'.bam'
 rm output*
 rm count*.txt
-awk -F "\t"  '{print $2}' 'chrom_count_unique_'$name'.txt'  |  paste 'chrom_count_'$name'.txt'  - | awk -F "\t" -v marker=$marker '{print $0, marker}' OFS="\t"  > ./'data_collection_'$name/'chrom_count_'$name'.result'
+awk -F "\t"  '{print $2}' 'chrom_count_unique_'$name'.txt'  |  paste 'chrom_count_'$name'.txt'  - | awk -F "\t" -v marker=$marker '{print $1,$2+0,$3+0,marker}' OFS="\t"  > ./'data_collection_'$name/'chrom_count_'$name'.result'
 
 if [ $? == 0 ] 
 	then

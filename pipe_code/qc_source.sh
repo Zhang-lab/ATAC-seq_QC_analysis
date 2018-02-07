@@ -46,9 +46,8 @@ elif [[ $species == hg19 ]];
 	chrom_size="/home/Resource/Genome/hg19/hg19_chromosome.size"
 	black_list="/home/Resource/Genome/hg19/hg19_blacklist.bed"
 	genome_size=3137161264
-	promoter_file="/home/shaopengliu/resources/hg19/hg19_promoter_bystream_2kb.bed"
-	echo "please add coding promoter file!!!!!!"
-	exit
+	promoter_file="/home/shaopengliu/resources/hg19/hg19_promoter_bistream_1kb.bed"
+	coding_promoter="/home/shaopengliu/resources/hg19/hg19_promoter_coding_bystream_1kb.bed"
 	macs2_genome='hs'
 elif [[ $species == danRer10 ]];
 	then

@@ -324,7 +324,6 @@ echo 'peak calling......'
 awk '{if ($2 > $3)sub($2, 0); print}' OFS="\t" 'Trimed_rm_mapq0_chrm_'$name'.open.bed' > temp.open.bed
 intersectBed  -a temp.open.bed  -b $black_list   -v > 'Trimed_rmbl_'$name'.open.bed'
 rm temp.open.bed
-rm 'Trimed_rm_mapq0_chrm_'$name'.open.bed'
 macs2 callpeak -t ./'Trimed_rmbl_'$name'.open.bed' -g $macs2_genome -q 0.01 -n 'peakcall_'$name  --keep-dup 1000 --nomodel --shift 0 --extsize 150
 
 if [ $? == 0 ] 

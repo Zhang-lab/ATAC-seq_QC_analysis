@@ -355,6 +355,17 @@ else
 	echo "step4.1, reads unpder peak ratio calculation process fail......" >> pipe_processing.log
 fi
 
+# 4.1.2, add insertion site bigwig
+awk '{mid=int(($3+$2)/2); if($6=="+") {print $1"\t"mid"\t"mid+1"\t"1} else {print $1"\t"mid-1"\t"mid"\t"1}}'  \
+ $bed |  sort -k1,1V -k2,2n | uniq -c | awk -F " " '{print $2"\t"$3"\t"$4"\t"$1}' > insertion_site.bedGraph
+bedGraphToBigWig  insertion_site.bedGraph  $chrom_size  step4.2_insertion_site_$name'.bigWig'
+if [ $? == 0 ] 
+	then
+	echo "step4.2, insertion site process done" >> pipe_processing.log
+else 
+	echo "step4.2, insertion site process fail......" >> pipe_processing.log
+fi
+
 # 4.2 enrichment 
 # 4.2.1, new enrichment from RUP based on 10M sub-sampling with adjustment
 # numerator =  ($rupn+10000000*$peak_length / $genome_size) / $peak_length

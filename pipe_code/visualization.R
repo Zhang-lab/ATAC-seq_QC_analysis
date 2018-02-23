@@ -409,7 +409,7 @@ name=args[6]
 capture.output(print(report),file=paste(name,"report.txt",sep='_'))
 
 # json file generation
-part1=data.frame("V1",genome,data_type)
+part1=data.frame("V1.1",genome,data_type)
 colnames(part1)=c("pipe version","genome","read type")
 file=list(`data information`=part1)
 

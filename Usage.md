@@ -1,5 +1,28 @@
-# ATAC-seq QC Pipeline Usage
+# ATAC-seq QC Pipeline Usage  
 
+02/25/2018  
+## Singularity solution for cloud usage  
+1, download singularity container (you only need download the containcer for once, then you can use them directly):  
+singularity pull -n zlab_atac.simg shub://ShaopengLiu1/Zhanglab_ATAC-seq_analysis:mm10  
+
+2, process data by the singularity image:  
+singularity exec zlab_atac.simg  -r <SE/PE> -g <mm10/hg38/danRer10>  -o <read_file1>  -p <read_file2>  
+
+#parameters:  
+-r: SE for single-end, PE for paired-end  
+-g: genome reference  
+-o: reads file 1 or the SE reads file, must be ended by .fastq or .fastq.gz or .sra (for both SE and PE)  
+-p: reads file 2 if this is for PE data, must be ended by .fastq or .fastq.gz  
+
+e.g:
+a) mm10 SE data A.fastq  
+singularity exec zlab_atac.simg  -r SE -g mm10 -o A.fastq  
+b) hg38 PE data B_1.fastq B_2.fastq  
+singularity exec zlab_atac.simg  -r PE -g hg38 -o B_1.fastq  -p B_2.fastq  
+c) danRer10 PE data in sra file C.sra
+singularity exec zlab_atac.simg  -r PE -g danRer10 -o C.sra  
+
+#######################################################################  
 To start using the ATAC-seq QC pipeline, there are three steps described below:
 1. [Install Docker](#1-install-docker)
 2. [Configure Docker image](#2-configure-docker-image)

@@ -12,6 +12,8 @@ singularity pull -n zlab_atac.simg shub://ShaopengLiu1/Zhanglab_ATAC-seq_analys
 singularity exec zlab_atac.simg  -r <SE/PE> -g <mm10/hg38/danRer10>  -o <read_file1>  -p <read_file2>  
 ```
 
+That's it! Have fun :)  
+
 #parameters:  
 -r: SE for single-end, PE for paired-end  
 -g: genome reference  

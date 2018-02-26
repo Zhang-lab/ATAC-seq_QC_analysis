@@ -357,7 +357,7 @@ fi
 
 # 4.1.2, add insertion site bigwig
 awk '{mid=int(($3+$2)/2); if($6=="+") {print $1"\t"mid"\t"mid+1"\t"1} else {print $1"\t"mid-1"\t"mid"\t"1}}'  \
- $bed |  sort -k1,1V -k2,2n | uniq -c | awk -F " " '{print $2"\t"$3"\t"$4"\t"$1}' > step4.2_insertion_site_$name.bedGraph
+ $bed |  sort -k1,1 -k2,2n | uniq -c | awk -F " " '{print $2"\t"$3"\t"$4"\t"$1}' > step4.2_insertion_site_$name.bedGraph
 bedGraphToBigWig  step4.2_insertion_site_$name.bedGraph  $chrom_size  step4.2_insertion_site_$name'.bigWig'
 if [ $? == 0 ] 
 	then

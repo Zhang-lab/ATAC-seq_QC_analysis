@@ -17,6 +17,24 @@ singularity exec zlab_atac.simg  -r <SE/PE> -g <mm10/hg38/danRer10>  -o <read_fi
 
 That's it!
 
+#parameters:  
+-r: SE for single-end, PE for paired-end  
+-g: genome reference  
+-o: reads file 1 or the SE reads file, must be ended by .fastq or .fastq.gz or .sra (for both SE and PE)  
+-p: reads file 2 if this is for PE data, must be ended by .fastq or .fastq.gz  
+
+e.g:
+a) mm10 SE data A.fastq  
+```bash
+singularity exec zlab_atac.simg  -r SE -g mm10 -o A.fastq  
+```
+b) hg38 PE data B_1.fastq B_2.fastq  
+```bash
+singularity exec zlab_atac.simg  -r PE -g hg38 -o B_1.fastq  -p B_2.fastq  
+```
+c) danRer10 PE data in sra file C.sra  
+```bash
+singularity exec zlab_atac.simg  -r PE -g danRer10 -o C.sra  
 
 
 For any question, please contact Wustl.Zhanglab@gmail.com  

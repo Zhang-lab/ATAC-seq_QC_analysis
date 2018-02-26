@@ -101,18 +101,18 @@ docker rmi <repository>:<tag>
 ```
 
 ## 2. Configure Docker image
-Our images are available in [Docker Hub](https://hub.docker.com/r/zhanglab/atac-seq/). For the version control purpose, we assign an unique tag, such as `feb252018`, for each version of Docker images and the corresponding scripts. Simply replace the tag to use the newest version.
+Our images are available in [Docker Hub](https://hub.docker.com/r/zhanglab/atac-seq/). For the version control purpose, we assign an unique id, such as `sha256:816fbf3b0e6e3d853b96d5490b0b434f58fb552645d6cfc118e3ff0e2feba8f6`, for each version of Docker images and the corresponding scripts. Simply replace the tag to use the newest version.
 
 There are 3 ways to configure the required image:
 #### 1) Pull from Docker Hub
 ```bash
-docker pull zhanglab/atac-seq_full:feb252018
+docker pull zhanglab/atac-seq:full
 ```
 `full` contain all available reference genomes including mm9, mm10, hg19, hg38 and danRer10, and it is so large that you make take some time to do it.
 
 If you are only interested in mm10, you can download `mm10` instead:
 ```bash
-docker pull zhanglab/atac-seq_mm10:feb252018
+docker pull zhanglab/atac-seq:mm10
 ```
 
 #### 2) Pull `base` from Docker Hub, and build `full` by yourself
@@ -125,7 +125,7 @@ cd docker/
 curl http://brc.wustl.edu/SPACE/chengl/Docker/Dockerfile_full -o Dockerfile
 
 # build atac-seq_full:feb252018
-docker build -t zhanglab/atac-seq_full:feb252018 .
+docker build -t zhanglab/atac-seq:full .
 
 cd ..
 rm -r docker/
@@ -145,7 +145,7 @@ cd docker/
 curl http://brc.wustl.edu/SPACE/chengl/Docker/Dockerfile_full -o Dockerfile
 
 # build atac-seq_full:feb252018
-docker build -t zhanglab/atac-seq_full:feb252018 .
+docker build -t zhanglab/atac-seq:full .
 
 cd ..
 rm -r docker/
@@ -157,10 +157,10 @@ If you want to have `mm10` instead, simply replace `Dockerfile_full` by `Dockerf
 #### 1) One line solution
 ```bash
 # download our script
-curl http://brc.wustl.edu/SPACE/chengl/Docker/atac-seq_full_feb252018.sh -o atac-seq_full_feb252018.sh
+curl http://brc.wustl.edu/SPACE/chengl/Docker/atac-seq_full.sh -o atac-seq_full.sh
 
 # run our script in the directory of input files
-bash atac-seq_full_feb252018.sh -o input_file -p input_file2 \
+bash atac-seq_full.sh -o input_file -p input_file2 \
     -g input_genome -r input_type
 ```
 Options of our pipeline:\
@@ -171,12 +171,12 @@ Options of our pipeline:\
 `-m`: specify the marker, and can be named by user.\
 `-h`: for help.
 
-If you are only interested in mm10, download `http://brc.wustl.edu/SPACE/chengl/Docker/atac-seq_mm10_feb252018.sh` instead.
+If you are only interested in mm10, download `http://brc.wustl.edu/SPACE/chengl/Docker/atac-seq_mm10.sh` instead.
 
 #### 2) Run it line by line
 ```bash
 # create a container called "container_name", as what ever you want, running in the background
-docker run --name container_name -d -it zhanglab/atac-seq_full:feb252018
+docker run --name container_name -d -it zhanglab/atac-seq:full
 
 # copy input files into container atac
 docker cp input_file container_name:/data/input_file
@@ -184,7 +184,7 @@ docker cp input_file container_name:/data/input_file
 docker cp input_file2 container_name:/data/input_file2
 
 # run our QC pipeline
-docker exec -i container_name bash /atac_seq/pipe_code/atac_pipe_v1.sh \
+docker exec -i container_name bash /atac_seq/pipe_code/atac_v1.1a.sh \
     -o input_file -p input_file2 \
     -g input_genome -r input_type
 
@@ -200,7 +200,7 @@ What if you want to run a bunch of files? Here is an example of how you can do i
 ```bash
 date
 # create a container
-docker run --name container_name -d -it zhanglab/atac-seq_full:feb252018
+docker run --name container_name -d -it zhanglab/atac-seq:full
 
 # run loop in the current directory which contains all the files to be run
 for file in `ls *_1.fastq.gz`
@@ -210,7 +210,7 @@ do
     docker cp $name'_1.fastq.gz' container_name:/data/$name'_1.fastq.gz'
     docker cp $name'_2.fastq.gz' container_name:/data/$name'_2.fastq.gz'
 
-    docker exec -i container_name bash /atac_seq/pipe_code/atac_pipe_v1.sh \
+    docker exec -i container_name bash /atac_seq/pipe_code/atac_v1.1a.sh \
        -o input_file -p input_file2 \
        -g input_genome -r input_type
 done

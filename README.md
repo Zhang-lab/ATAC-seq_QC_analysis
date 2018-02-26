@@ -1,7 +1,10 @@
 # Atac-seq_Quality_Control_pipe
-This is for the QC matrix construction and analysis for Atac-seq data.  
+This is for the QC matrix construction, data analysis and visualization for Atac-seq data.  
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
+
+For any question, please contact Wustl.Zhanglab@gmail.com  
+
 
 ## Usage:  
 Singularity solution (easiest way)  
@@ -35,9 +38,8 @@ singularity exec zlab_atac.simg  -r PE -g hg38 -o B_1.fastq  -p B_2.fastq
 c) danRer10 PE data in sra file C.sra  
 ```bash
 singularity exec zlab_atac.simg  -r PE -g danRer10 -o C.sra  
+```
 
-
-For any question, please contact Wustl.Zhanglab@gmail.com  
 
 
 

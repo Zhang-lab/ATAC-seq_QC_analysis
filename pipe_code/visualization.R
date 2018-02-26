@@ -4,6 +4,9 @@ args=commandArgs()
 name=args[6]
 name=paste(name,"result",sep=".")
 refpath=args[7]
+beta=args[11]
+rtime=args[12]
+image_id=args[13]
 
 library(ggplot2)
 library(cowplot)
@@ -21,20 +24,20 @@ chr=data.frame(chr[1],stack(chr[2:3]))
 
 png("plot2.2_reads_distri_in_chrom.png",height=640,width=6600,res=300)
 ggplot(chr,aes(x=ind,y=values,fill=chromosome))+
-	ggtitle("Stacked barplotm of reads percentage in each chromosome")+
-	geom_bar(stat="identity",color="black")+
-	scale_y_continuous(name="Percentage of reads")+
-	scale_x_discrete(name="")+
-	guides(fill=guide_legend(nrow=1,byrow=TRUE,reverse=T))+
-	theme_bw()+theme_classic()+coord_flip()+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,family="Tahoma"),
-		axis.title=element_text(face="bold"),
-		axis.text.x=element_text(size=10,face="bold"),
-		axis.text.y=element_text(size=10,face="bold"),
-		legend.text=element_text(size=10,face="bold"),
-		legend.title=element_text(size=10,face="bold"),
-		legend.position="bottom")
+  ggtitle("Stacked barplotm of reads percentage in each chromosome")+
+  geom_bar(stat="identity",color="black")+
+  scale_y_continuous(name="Percentage of reads")+
+  scale_x_discrete(name="")+
+  guides(fill=guide_legend(nrow=1,byrow=TRUE,reverse=T))+
+  theme_bw()+theme_classic()+coord_flip()+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,family="Tahoma"),
+        axis.title=element_text(face="bold"),
+        axis.text.x=element_text(size=10,face="bold"),
+        axis.text.y=element_text(size=10,face="bold"),
+        legend.text=element_text(size=10,face="bold"),
+        legend.title=element_text(size=10,face="bold"),
+        legend.position="bottom")
 dev.off()
 
 # saturation analysis
@@ -44,21 +47,21 @@ colnames(saturate)=c("depth","peak","percentage","marker")
 
 png("plot4.5_saturation.png",height=2300,width=2800,res=300)
 plot=ggplot(saturate,aes(x=depth,y=100*percentage))+
-	geom_point()+geom_line(size=1)+expand_limits(x=0,y=0)+
-	geom_text(aes(label=peak),hjust=0,vjust=1.4,family="Tahoma",fontface=2,size=3)+
-	ggtitle("Line chart of recaptured coverage ratio labeled with \n numbers of peaks by subsampling original library")+
-	scale_x_continuous(name="Percentage of original library size",breaks=seq(0,100,by=10))+
-	geom_vline(xintercept=50,linetype="dotted",size=1)+
-	theme_bw()+theme_classic()+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,family="Tahoma"),
-		axis.title=element_text(face="bold"),
-		axis.text.x=element_text(size=10,face="bold"),
-		axis.text.y=element_text(size=10,face="bold"))
+  geom_point()+geom_line(size=1)+expand_limits(x=0,y=0)+
+  geom_text(aes(label=peak),hjust=0,vjust=1.4,family="Tahoma",fontface=2,size=3)+
+  ggtitle("Line chart of recaptured coverage ratio labeled with \n numbers of peaks by subsampling original library")+
+  scale_x_continuous(name="Percentage of original library size",breaks=seq(0,100,by=10))+
+  geom_vline(xintercept=50,linetype="dotted",size=1)+
+  theme_bw()+theme_classic()+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,family="Tahoma"),
+        axis.title=element_text(face="bold"),
+        axis.text.x=element_text(size=10,face="bold"),
+        axis.text.y=element_text(size=10,face="bold"))
 if(max(saturate$percentage)<=1) {
-	plot+scale_y_continuous(name="Percentage of coverage ratio in original peaks",limits=c(0,100))
+  plot+scale_y_continuous(name="Percentage of coverage ratio in original peaks",limits=c(0,100))
 } else {
-	plot+scale_y_continuous(name="Percentage of coverage ratio in original peaks")
+  plot+scale_y_continuous(name="Percentage of coverage ratio in original peaks")
 }
 dev.off()
 
@@ -69,15 +72,15 @@ peakl$V2=peakl$V2/sum(peakl$V2)
 
 png("plot3.3_peak_length.png",height=2000,width=3000,res=300)
 ggplot(peakl,aes(x=V1,y=..scaled..,weight=V2))+geom_density(size=1,adjust=0.2)+
-	ggtitle("Density plot of peaks length distribution (Adjust=0.2)")+
-	theme_bw()+theme_classic()+expand_limits(x=0,y=0)+
-	scale_y_continuous(name="Density",limits=c(0,1))+
-	scale_x_continuous(name="Length of peaks",breaks=seq(0,max(peakl$V1),by=150))+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,family="Tahoma"),
-		axis.title=element_text(face="bold"),
-		axis.text.x=element_text(size=10,face="bold"),
-		axis.text.y=element_text(size=10,face="bold"))
+  ggtitle("Density plot of peaks length distribution (Adjust=0.2)")+
+  theme_bw()+theme_classic()+expand_limits(x=0,y=0)+
+  scale_y_continuous(name="Density",limits=c(0,1))+
+  scale_x_continuous(name="Length of peaks",breaks=seq(0,max(peakl$V1),by=150))+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,family="Tahoma"),
+        axis.title=element_text(face="bold"),
+        axis.text.x=element_text(size=10,face="bold"),
+        axis.text.y=element_text(size=10,face="bold"))
 dev.off()
 
 # insertion distribution
@@ -86,15 +89,15 @@ insert$V2=insert$V2/sum(insert$V2)
 
 png("plot3.1_insertion_size.png",height=1800,width=2400,res=300)
 ggplot(insert,aes(x=V1,y=..scaled..,weight=V2))+geom_density(size=1,adjust=0.2)+
-	ggtitle("Density plot of insertion size distribution (Adjust=0.2)")+
-	theme_bw()+theme_classic()+
-	scale_y_continuous(name="Density",limits=c(0,1))+
-	scale_x_continuous(name="Insertion size",limits=c(0,500))+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,family="Tahoma"),
-		axis.title=element_text(face="bold"),
-		axis.text.x=element_text(size=10,face="bold"),
-		axis.text.y=element_text(size=10,face="bold"))
+  ggtitle("Density plot of insertion size distribution (Adjust=0.2)")+
+  theme_bw()+theme_classic()+
+  scale_y_continuous(name="Density",limits=c(0,1))+
+  scale_x_continuous(name="Insertion size",limits=c(0,500))+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,family="Tahoma"),
+        axis.title=element_text(face="bold"),
+        axis.text.x=element_text(size=10,face="bold"),
+        axis.text.y=element_text(size=10,face="bold"))
 dev.off()
 
 # dedup
@@ -103,18 +106,18 @@ i=1
 filename=c()
 ratio=c() 
 while(i<=dim(ref.dedup)[1]) {
-	filename=c(filename,strsplit(as.character(ref.dedup[i,1]),'_1',fixed=T)[[1]][1])
-	ratio=c(ratio,100-(ref.dedup[i,2]+ref.dedup[i+1,2])/2)
-	i=i+2
+  filename=c(filename,strsplit(as.character(ref.dedup[i,1]),'_1',fixed=T)[[1]][1])
+  ratio=c(ratio,100-(ref.dedup[i,2]+ref.dedup[i+1,2])/2)
+  i=i+2
 }
 ref.dedup=data.frame(filename,ratio,class="ENCODE PE")
 dedup=read.table(paste("dedup_percentage",name,sep="_"),header=T,sep='\t')
 if(dim(dedup)[1]>1) {
-	dedup=data.frame(filename=strsplit(as.character(dedup[1,1]),'_1',fixed=T)[[1]][1],ratio=100-(dedup[1,2]+dedup[2,2])/2,class='Sample')
-	data_type="Paired-end data"
+  dedup=data.frame(filename=strsplit(as.character(dedup[1,1]),'_1',fixed=T)[[1]][1],ratio=100-(dedup[1,2]+dedup[2,2])/2,class='Sample')
+  data_type="Paired-end data"
 } else {
-	dedup=data.frame(filename=strsplit(as.character(dedup[1,1]),'_1',fixed=T)[[1]][1],ratio=100-dedup[1,2],class='Sample')
-	data_type="Single-end data"
+  dedup=data.frame(filename=strsplit(as.character(dedup[1,1]),'_1',fixed=T)[[1]][1],ratio=100-dedup[1,2],class='Sample')
+  data_type="Single-end data"
 }
 ref.dedup=rbind(ref.dedup,dedup)
 
@@ -138,23 +141,23 @@ test=rbind(ref.enrich2,ref.enrich3)
 png("plot4.2.2_peaks_enrichment_ratio.png",height=1800,width=2800,res=300)
 options(warn=-1)
 plot=ggplot(test,aes(x=class,y=enrichment_ratio,fill=class))+
-	stat_boxplot(geom="errorbar",size=1,width=0.3,aes(colour=class))+
-    geom_boxplot(outlier.shape=NA,width=0.3,lwd=1,fatten=1,aes(colour=class))+
-    scale_x_discrete(name="")+
-	ggtitle("Boxplot of peaks enrichment ratio")+
-	scale_fill_manual(values=c(`ENCODE PE`="grey",Sample="red"))+
-	scale_colour_manual(values=c(`ENCODE PE`="black",Sample="red"))+
-	facet_grid(.~V3)+theme(legend.position="none")+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,family="Tahoma"),
-		strip.text.x=element_text(size=12,face="bold"),
-		axis.title=element_text(face="bold"),
-		axis.text.x=element_text(size=10,face="bold",colour=c(`ENCODE PE`="black",Sample="red")),
-		axis.text.y=element_text(size=10,face="bold"))
+  stat_boxplot(geom="errorbar",size=1,width=0.3,aes(colour=class))+
+  geom_boxplot(outlier.shape=NA,width=0.3,lwd=1,fatten=1,aes(colour=class))+
+  scale_x_discrete(name="")+
+  ggtitle("Boxplot of peaks enrichment ratio")+
+  scale_fill_manual(values=c(`ENCODE PE`="grey",Sample="red"))+
+  scale_colour_manual(values=c(`ENCODE PE`="black",Sample="red"))+
+  facet_grid(.~V3)+theme(legend.position="none")+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,family="Tahoma"),
+        strip.text.x=element_text(size=12,face="bold"),
+        axis.title=element_text(face="bold"),
+        axis.text.x=element_text(size=10,face="bold",colour=c(`ENCODE PE`="black",Sample="red")),
+        axis.text.y=element_text(size=10,face="bold"))
 if(enrich3[1,1]<130) {
-	plot+scale_y_continuous(name="Enrichment ratio",limits=c(0,100))
+  plot+scale_y_continuous(name="Enrichment ratio",limits=c(0,100))
 } else {
-	plot+scale_y_continuous(name="Enrichment ratio")
+  plot+scale_y_continuous(name="Enrichment ratio")
 }
 options(warn=0)
 dev.off()
@@ -173,22 +176,22 @@ map$nodup_ratio=1-map$nodup_ratio
 png("plot4.3_PCR_duplicates_percentage.png",height=2000,width=1400,res=300)
 options(warn=-1)
 plot=ggplot(ref.map,aes(x=class,y=100*nodup_ratio,fill=class))+
-	stat_boxplot(geom="errorbar",size=1,width=0.3,aes(colour=class))+
-    geom_boxplot(outlier.shape=NA,width=0.3,lwd=1,fatten=1,aes(colour=class))+
-    scale_x_discrete(name="")+
-	ggtitle("Boxplot of PCR duplicates percentage")+
-	scale_fill_manual(values=c(`ENCODE PE`="grey",Sample="red"))+
-	scale_colour_manual(values=c(`ENCODE PE`="black",Sample="red"))+
-	theme_bw()+theme_classic()+theme(legend.position="none")+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,family="Tahoma"),
-		axis.title=element_text(face="bold"),
-		axis.text.x=element_text(size=10,face="bold",colour=c(`ENCODE PE`="black",Sample="red")),
-		axis.text.y=element_text(size=10,face="bold"))
+  stat_boxplot(geom="errorbar",size=1,width=0.3,aes(colour=class))+
+  geom_boxplot(outlier.shape=NA,width=0.3,lwd=1,fatten=1,aes(colour=class))+
+  scale_x_discrete(name="")+
+  ggtitle("Boxplot of PCR duplicates percentage")+
+  scale_fill_manual(values=c(`ENCODE PE`="grey",Sample="red"))+
+  scale_colour_manual(values=c(`ENCODE PE`="black",Sample="red"))+
+  theme_bw()+theme_classic()+theme(legend.position="none")+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,family="Tahoma"),
+        axis.title=element_text(face="bold"),
+        axis.text.x=element_text(size=10,face="bold",colour=c(`ENCODE PE`="black",Sample="red")),
+        axis.text.y=element_text(size=10,face="bold"))
 if(map$nodup_ratio*100<30) {
-	plot+scale_y_continuous(name="Percentage of PCR duplicates",limits=c(0,30))
+  plot+scale_y_continuous(name="Percentage of PCR duplicates",limits=c(0,30))
 } else {
-	plot+scale_y_continuous(name="Percentage of PCR duplicates")
+  plot+scale_y_continuous(name="Percentage of PCR duplicates")
 }
 options(warn=0)
 dev.off()
@@ -196,22 +199,22 @@ dev.off()
 png("plot4.1_RUP.png",height=2000,width=1400,res=300)
 options(warn=-1)
 plot=ggplot(ref.map,aes(x=class,y=rup_ratio,fill=class))+
-	stat_boxplot(geom="errorbar",size=1,width=0.3,aes(colour=class))+
-    geom_boxplot(outlier.shape=NA,width=0.3,lwd=1,fatten=1,aes(colour=class))+
-    scale_x_discrete(name="")+
-	ggtitle("Boxplot of reads under peaks ratio")+
-	scale_fill_manual(values=c(`ENCODE PE`="grey",Sample="red"))+
-	scale_colour_manual(values=c(`ENCODE PE`="black",Sample="red"))+
-	theme_bw()+theme_classic()+theme(legend.position="none")+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,family="Tahoma"),
-		axis.title=element_text(face="bold"),
-		axis.text.x=element_text(size=10,face="bold",colour=c(`ENCODE PE`="black",Sample="red")),
-		axis.text.y=element_text(size=10,face="bold"))
+  stat_boxplot(geom="errorbar",size=1,width=0.3,aes(colour=class))+
+  geom_boxplot(outlier.shape=NA,width=0.3,lwd=1,fatten=1,aes(colour=class))+
+  scale_x_discrete(name="")+
+  ggtitle("Boxplot of reads under peaks ratio")+
+  scale_fill_manual(values=c(`ENCODE PE`="grey",Sample="red"))+
+  scale_colour_manual(values=c(`ENCODE PE`="black",Sample="red"))+
+  theme_bw()+theme_classic()+theme(legend.position="none")+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,family="Tahoma"),
+        axis.title=element_text(face="bold"),
+        axis.text.x=element_text(size=10,face="bold",colour=c(`ENCODE PE`="black",Sample="red")),
+        axis.text.y=element_text(size=10,face="bold"))
 if(map$rup_ratio<50) {
-	plot+scale_y_continuous(name="Reads under peaks ratio",limits=c(0,50))
+  plot+scale_y_continuous(name="Reads under peaks ratio",limits=c(0,50))
 } else {
-	plot+scale_y_continuous(name="Reads under peaks ratio")
+  plot+scale_y_continuous(name="Reads under peaks ratio")
 }
 options(warn=0)
 dev.off()
@@ -221,23 +224,23 @@ test=data.frame(ref.map[5],stack(ref.map[1:2]),row.names=NULL)
 
 png("plot3.1_library_reads_distri.png",height=1800,width=2800,res=300)
 plot=ggplot(test,aes(x=class,y=values,fill=class))+
-	stat_boxplot(geom="errorbar",size=1,width=0.3,aes(colour=class))+
-    geom_boxplot(outlier.shape=NA,width=0.3,lwd=1,fatten=1,aes(colour=class))+
-    scale_x_discrete(name="")+
-	ggtitle("Boxplot of reads distribution")+
-	scale_fill_manual(values=c(`ENCODE PE`="grey",Sample="red"))+
-	scale_colour_manual(values=c(`ENCODE PE`="black",Sample="red"))+
-	facet_grid(.~ind)+theme(legend.position="none")+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,family="Tahoma"),
-		strip.text.x=element_text(size=12,face="bold"),
-		axis.title=element_text(face="bold"),
-		axis.text.x=element_text(size=10,face="bold",colour=c(`ENCODE PE`="black",Sample="red")),
-		axis.text.y=element_text(size=10,face="bold"))
+  stat_boxplot(geom="errorbar",size=1,width=0.3,aes(colour=class))+
+  geom_boxplot(outlier.shape=NA,width=0.3,lwd=1,fatten=1,aes(colour=class))+
+  scale_x_discrete(name="")+
+  ggtitle("Boxplot of reads distribution")+
+  scale_fill_manual(values=c(`ENCODE PE`="grey",Sample="red"))+
+  scale_colour_manual(values=c(`ENCODE PE`="black",Sample="red"))+
+  facet_grid(.~ind)+theme(legend.position="none")+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,family="Tahoma"),
+        strip.text.x=element_text(size=12,face="bold"),
+        axis.title=element_text(face="bold"),
+        axis.text.x=element_text(size=10,face="bold",colour=c(`ENCODE PE`="black",Sample="red")),
+        axis.text.y=element_text(size=10,face="bold"))
 if(map[1,1]<10e+7) {
-	plot+scale_y_continuous(name="Number of reads",limits=c(0,10e+7))
+  plot+scale_y_continuous(name="Number of reads",limits=c(0,10e+7))
 } else {
-	plot+scale_y_continuous(name="Number of reads")
+  plot+scale_y_continuous(name="Number of reads")
 }
 dev.off()
 
@@ -247,22 +250,22 @@ yield=yield[yield$TOTAL_READS<=1e8,]
 
 png("plot2.3_yield_distinction.png",height=1800,width=2600,res=300)
 ggplot(yield,aes(x=TOTAL_READS,y=EXPECTED_DISTINCT))+
-	geom_ribbon(aes(ymin=yield[,3],ymax=yield[,4],x=TOTAL_READS,fill="Range of confidence interval"),alpha=0.5)+
-	geom_point()+geom_line(size=1)+
-	geom_point(aes(x=map[,1],y=map[,2],color="red"),show.legend=F)+
-	ggtitle("Line chart of yield distinction")+
-	scale_x_continuous(name="Total reads")+
-	scale_y_continuous(name="Expected distinction")+
-	theme_bw()+theme_classic()+
-	scale_fill_manual("Reference ribbon",values="grey")+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.6),
-		text=element_text(size=12,family="Tahoma"),
-		axis.title=element_text(face="bold"),
-		axis.text.x=element_text(size=10,face="bold"),
-		axis.text.y=element_text(size=10,face="bold"),
-		legend.text=element_text(size=8,face="bold"),
-		legend.title=element_text(size=12,face="bold"),
-		legend.position="bottom")
+  geom_ribbon(aes(ymin=yield[,3],ymax=yield[,4],x=TOTAL_READS,fill="Range of confidence interval"),alpha=0.5)+
+  geom_point()+geom_line(size=1)+
+  geom_point(aes(x=map[,1],y=map[,2],color="red"),show.legend=F)+
+  ggtitle("Line chart of yield distinction")+
+  scale_x_continuous(name="Total reads")+
+  scale_y_continuous(name="Expected distinction")+
+  theme_bw()+theme_classic()+
+  scale_fill_manual("Reference ribbon",values="grey")+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.6),
+        text=element_text(size=12,family="Tahoma"),
+        axis.title=element_text(face="bold"),
+        axis.text.x=element_text(size=10,face="bold"),
+        axis.text.y=element_text(size=10,face="bold"),
+        legend.text=element_text(size=8,face="bold"),
+        legend.title=element_text(size=12,face="bold"),
+        legend.position="bottom")
 dev.off()
 
 # promoter
@@ -271,32 +274,32 @@ peak=data.frame(group=c("Peaks in promoter region","Peaks in non-promoter region
 read=data.frame(group=c("Reads under peaks in promoter region","Reads under peaks in non-promoter region"),value=as.numeric(promoter[1,3:4]))
 
 blank_theme=theme_minimal()+theme(
-	axis.title.x=element_blank(),
-	axis.title.y=element_blank(),
-	panel.border=element_blank(),
-	panel.grid=element_blank(),
-	axis.ticks=element_blank(),
-	plot.title=element_text(size=14, face="bold"))
+  axis.title.x=element_blank(),
+  axis.title.y=element_blank(),
+  panel.border=element_blank(),
+  panel.grid=element_blank(),
+  axis.ticks=element_blank(),
+  plot.title=element_text(size=14, face="bold"))
 
 p1=ggplot(peak,aes(x="",y=value,fill=group))+
-	geom_bar(width=1,stat="identity")+
-	coord_polar("y",start=0)+
-	ggtitle("Pie chart of peaks distribution")+
-	scale_fill_grey()+blank_theme+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,face="bold",family="Tahoma"),
-		axis.text.x=element_blank())+
-	geom_text(aes(y=value/2+c(0,cumsum(value)[-length(value)]),label=value),size=5,family="Tahoma",fontface="bold")
+  geom_bar(width=1,stat="identity")+
+  coord_polar("y",start=0)+
+  ggtitle("Pie chart of peaks distribution")+
+  scale_fill_grey()+blank_theme+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,face="bold",family="Tahoma"),
+        axis.text.x=element_blank())+
+  geom_text(aes(y=value/2+c(0,cumsum(value)[-length(value)]),label=value),size=5,family="Tahoma",fontface="bold")
 
 p2=ggplot(read,aes(x="",y=value,fill=group))+
-	geom_bar(width=1,stat="identity")+
-	coord_polar("y",start=0)+
-	ggtitle("Pie chart of reads distribution")+
-	scale_fill_grey()+blank_theme+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,face="bold",family="Tahoma"),
-		axis.text.x=element_blank())+
-	geom_text(aes(y=value/2+c(0,cumsum(value)[-length(value)]),label=value),size=5,family="Tahoma",fontface="bold")
+  geom_bar(width=1,stat="identity")+
+  coord_polar("y",start=0)+
+  ggtitle("Pie chart of reads distribution")+
+  scale_fill_grey()+blank_theme+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,face="bold",family="Tahoma"),
+        axis.text.x=element_blank())+
+  geom_text(aes(y=value/2+c(0,cumsum(value)[-length(value)]),label=value),size=5,family="Tahoma",fontface="bold")
 
 png("plot4.6_promoter-peak_count.png",height=1500,width=5000,res=300)
 options(warn=-1)
@@ -309,15 +312,15 @@ top=data.frame(rank=as.numeric(top$V1),index=as.numeric(top$V2))
 
 png("plot4.6_promoter_distribution_among_peaks.png",height=1800,width=3200,res=300)
 ggplot(top,aes(sort(rank),index))+geom_density(stat="identity")+
-	ggtitle("Percentage of promoter regions")+
-	theme_bw()+theme_classic()+
-	scale_y_continuous(name="Percentage of promoter regions",limits=c(0,1))+
-	scale_x_continuous(name="Percentage of Top peaks")+
-	theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-		text=element_text(size=12,family="Tahoma"),
-		axis.title=element_text(face="bold"),
-		axis.text.x=element_text(size=8,face="bold"),
-		axis.text.y=element_text(size=8,face="bold"))
+  ggtitle("Percentage of promoter regions")+
+  theme_bw()+theme_classic()+
+  scale_y_continuous(name="Percentage of promoter regions",limits=c(0,1))+
+  scale_x_continuous(name="Percentage of Top peaks")+
+  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+        text=element_text(size=12,family="Tahoma"),
+        axis.title=element_text(face="bold"),
+        axis.text.x=element_text(size=8,face="bold"),
+        axis.text.y=element_text(size=8,face="bold"))
 dev.off()
 
 # TXT report
@@ -326,7 +329,7 @@ report=list(Library=name)
 name=paste(name,"result",sep=".")
 
 genome=args[8]
-report=append(report,list(Pipeline.version="V1.1a",Genome=genome,Data.type=data_type))
+report=append(report,list(Pipeline.version=beta,Genome=genome,Data.type=data_type))
 
 ref.useful=read.table(paste(refpath,'merged_useful_reads.txt',sep='/'),header=T,sep='\t')
 useful=read.table(paste("useful_reads",name,sep="_"),header=T,sep='\t')
@@ -345,30 +348,30 @@ ref.chr=as.matrix(ref.chr[,seq(4,269,5)])
 
 chr=read.table(paste("chrom_count",name,sep="_"),sep='\t')
 if(genome!="danRer10") {
-	refer=c(refer,"8.02%(SD:4.61%)")
-	refer=c(refer,paste(round(mean(ref.map[,6])),'(SD:',round(sd(ref.map[,6])),')',sep=''))
-	refer=c(refer,paste(round(mean(ref.chr[21,]/ref.map[,6]),4)*100,'%(SD:',round(sd(ref.chr[21,]/ref.map[,6]),4)*100,'%)',sep=''))
-	refer=c(refer,paste(round(mean(ref.chr[22,]/ref.map[,6]),4)*100,'%(SD:',round(sd(ref.chr[22,]/ref.map[,6]),4)*100,'%)',sep=''))
-	refer=c(refer,paste(round(mean(ref.map[,8])),'(SD:',round(sd(ref.map[,8])),')',sep=''))
-	refer=c(refer,paste(round(mean(ref.useful[,5])),'(SD:',round(sd(ref.useful[,5])),')',sep=''))
-
-	samples=c(samples,paste(round(as.numeric(args[10]),4)*100,'%',sep=''),as.numeric(map[,6]),paste(round(chr[which(chr[,1]=='chrX'),3]/map[,6],4)*100,'%',sep=''),paste(round(chr[which(chr[,1]=='chrY'),3]/map[,6],4)*100,'%',sep=''),map[,8],useful[,5])
-	library=data.frame(samples,refer)
-	colnames(library)=c("Sample","ENCODE PE")
-	rownames(library)=c("Total reads","Mapped reads","Percentage of uniquely mapped reads in chrM","Non-redundant uniquely mapped reads","Percentage of reads in chrX","Percentage of reads in chrY","Useful reads","Useful single ends")
-	report=append(report,list(Library.size=library))
-	} else {
-		refer=c(refer,"8.02%(SD:4.61%)")
-		refer=c(refer,paste(round(mean(ref.map[,6])),'(SD:',round(sd(ref.map[,6])),')',sep=''))
-		refer=c(refer,paste(round(mean(ref.map[,8])),'(SD:',round(sd(ref.map[,8])),')',sep=''))
-		refer=c(refer,paste(round(mean(ref.useful[,5])),'(SD:',round(sd(ref.useful[,5])),')',sep=''))
-
-		samples=c(samples,paste(round(as.numeric(args[10]),4)*100,'%',sep=''),as.numeric(map[,6]),map[,8],useful[,5])
-		library=data.frame(samples,refer)
-		colnames(library)=c("Sample","ENCODE PE")
-		rownames(library)=c("Total reads","Mapped reads","Percentage of uniquely mapped reads in chrM","Non-redundant uniquely mapped reads","Useful reads","Useful single ends")
-		report=append(report,list(Library.size=library))
-	}
+  refer=c(refer,"8.02%(SD:4.61%)")
+  refer=c(refer,paste(round(mean(ref.map[,6])),'(SD:',round(sd(ref.map[,6])),')',sep=''))
+  refer=c(refer,paste(round(mean(ref.chr[21,]/ref.map[,6]),4)*100,'%(SD:',round(sd(ref.chr[21,]/ref.map[,6]),4)*100,'%)',sep=''))
+  refer=c(refer,paste(round(mean(ref.chr[22,]/ref.map[,6]),4)*100,'%(SD:',round(sd(ref.chr[22,]/ref.map[,6]),4)*100,'%)',sep=''))
+  refer=c(refer,paste(round(mean(ref.map[,8])),'(SD:',round(sd(ref.map[,8])),')',sep=''))
+  refer=c(refer,paste(round(mean(ref.useful[,5])),'(SD:',round(sd(ref.useful[,5])),')',sep=''))
+  
+  samples=c(samples,paste(round(as.numeric(args[10]),4)*100,'%',sep=''),as.numeric(map[,6]),paste(round(chr[which(chr[,1]=='chrX'),3]/map[,6],4)*100,'%',sep=''),paste(round(chr[which(chr[,1]=='chrY'),3]/map[,6],4)*100,'%',sep=''),map[,8],useful[,5])
+  library=data.frame(samples,refer)
+  colnames(library)=c("Sample","ENCODE PE")
+  rownames(library)=c("Total reads","Mapped reads","Percentage of uniquely mapped reads in chrM","Non-redundant uniquely mapped reads","Percentage of reads in chrX","Percentage of reads in chrY","Useful reads","Useful single ends")
+  report=append(report,list(Library.size=library))
+} else {
+  refer=c(refer,"8.02%(SD:4.61%)")
+  refer=c(refer,paste(round(mean(ref.map[,6])),'(SD:',round(sd(ref.map[,6])),')',sep=''))
+  refer=c(refer,paste(round(mean(ref.map[,8])),'(SD:',round(sd(ref.map[,8])),')',sep=''))
+  refer=c(refer,paste(round(mean(ref.useful[,5])),'(SD:',round(sd(ref.useful[,5])),')',sep=''))
+  
+  samples=c(samples,paste(round(as.numeric(args[10]),4)*100,'%',sep=''),as.numeric(map[,6]),map[,8],useful[,5])
+  library=data.frame(samples,refer)
+  colnames(library)=c("Sample","ENCODE PE")
+  rownames(library)=c("Total reads","Mapped reads","Percentage of uniquely mapped reads in chrM","Non-redundant uniquely mapped reads","Useful reads","Useful single ends")
+  report=append(report,list(Library.size=library))
+}
 
 refer=paste(round(mean(ref.dedup[which(ref.dedup$class=='ENCODE PE'),2]),2),'%(SD:',round(sd(ref.dedup[which(ref.dedup$class=='ENCODE PE'),2]),2),'%)',sep='')
 refer=c(refer,paste(round(mean(1-ref.map$nodup_ratio),4)*100,'%(SD:',round(sd(1-ref.map$nodup_ratio),4)*100,'%)',sep=''))
@@ -409,27 +412,33 @@ name=args[6]
 capture.output(print(report),file=paste(name,"report.txt",sep='_'))
 
 # json file generation
-part1=data.frame("V1.1a","feb252018",genome,data_type)
-colnames(part1)=c("pipe version","Docker tag","genome","read type")
-file=list(`data information`=part1)
+if(is.na(image_id)) {
+  part1=data.frame(name,genome,data_type,beta,rtime)
+  colnames(part1)=c("file_name","genome","read_type","pipe_version","running_time")
+  file=list(`data_information`=part1)
+} else {
+  part1=data.frame(name,genome,data_type,beta,image_id,rtime)
+  colnames(part1)=c("file_name","genome","read_type","pipe_version","Docker_image_id","running_time")
+  file=list(`data_information`=part1)
+}
 
 part2=data.frame("cutadapt","1.12",as.numeric(args[9]),"FastQC","0.11.5")
-colnames(part2)=c("program1","program1 version","Removed reads by cutadapt","program2","program2 version")
-file=append(file,list(`pre alignment stats`=part2))
+colnames(part2)=c("program1","program1_version","removed_reads_by_cutadapt","program2","program2_version")
+file=append(file,list(`pre_alignment_stats`=part2))
 
 part3=data.frame("bwa","0.7.16a","bwa men","methylQA","0.1.9","methylQA atac",map$total,map$mapped,map[,5],map[,6],map[,8],useful[,5])
-colnames(part3)=c("alignment program","alignment program version","alignment program parameters","post alignment program","post alignment program version","post alignment program parameters","total reads","mapped reads","uniquely mapped reads","non-redundant mapped reads","useful reads","useful single ends")
-file=append(file,list(`mapping stats`=part3))
+colnames(part3)=c("alignment_program","alignment_program_version","alignment_program_parameters","post_alignment_program","post_alignment_program_version","post_alignment_program_parameters","total_reads","mapped_reads","uniquely_mapped_reads","non-redundant_mapped_reads","useful_reads","useful_single_ends")
+file=append(file,list(`mapping_stats`=part3))
 
 part9=data.frame(round(ref.dedup[which(ref.dedup$class=='Sample'),2],2)/100,(1-map$nodup_ratio))
-colnames(part9)=c("before alignment library duplicates percentage","after alignment PCR duplicates percentage")
-file=append(file,list(`library complexity`=part9))
+colnames(part9)=c("before_alignment_library_duplicates_percentage","after_alignment_PCR_duplicates_percentage")
+file=append(file,list(`library_complexity`=part9))
 
 insert=read.table(paste("insertion_distri_",name,".result",sep=""))
 
 part4=data.frame(paste("?",paste(insert$V1,sep="",collapse=","),"?",sep=""),paste("?",paste(insert$V2,sep="",collapse=","),"?",sep=""))
-colnames(part4)=c("insertion size","frequency")
-file=append(file,list(`insert size ditribution`=part4))
+colnames(part4)=c("insertion_size","frequency")
+file=append(file,list(`insertion_size_distribution`=part4))
 
 autosome=chr[which(!chr$V1%in%c("chrM","chrX","chrY")),c(1,3)]
 autosome$V3=round(autosome$V3/map[,6],4)
@@ -438,43 +447,41 @@ autosome=paste(autosome$V1,autosome$V3,sep=": ")
 autosome=paste("!",paste(autosome,sep="",collapse=", "),"!",sep="")
 
 if(genome!="danRer10") {
-	part5=data.frame(round(as.numeric(args[10]),4),round(chr[which(chr[,1]=='chrX'),3]/map[,6],4),round(chr[which(chr[,1]=='chrY'),3]/map[,6],4),autosome)
-	colnames(part5)=c("percentage of uniquely mapped reads in chrM","percentage of non-redundant uniquely mapped reads in chrX","percentage of non-redundant uniquely mapped reads in chrY","Percentage of non-redundant uniquely mapped reads in autosome")
-	file=append(file,list(`mapping distribution`=part5))
+  part5=data.frame(round(as.numeric(args[10]),4),round(chr[which(chr[,1]=='chrX'),3]/map[,6],4),round(chr[which(chr[,1]=='chrY'),3]/map[,6],4),autosome)
+  colnames(part5)=c("percentage_of_uniquely_mapped_reads_in_chrM","percentage_of_non-redundant_uniquely_mapped_reads_in_chrX","percentage_of_non-redundant_uniquely_mapped_reads_in_chrY","Percentage_of_non-redundant_uniquely_mapped_reads_in_autosome")
+  file=append(file,list(`mapping_distribution`=part5))
 } else {
-	part5=data.frame(round(as.numeric(args[10]),4),autosome)
-	colnames(part5)=c("percentage of uniquely mapped reads in chrM","percentage of non-redundant uniquely mapped reads in autosome")
-	file=append(file,list(`mapping distribution`=part5))
+  part5=data.frame(round(as.numeric(args[10]),4),autosome)
+  colnames(part5)=c("percentage_of_uniquely_mapped_reads_in_chrM","percentage_of_non-redundant_uniquely_mapped_reads_in_autosome")
+  file=append(file,list(`mapping_distribution`=part5))
 }
 
 part6=data.frame("macs2","--keep-dup 1000 --nomodel --shift 0 --extsize 150","qvaule",0.01,map$rup_ratio/100.0,map[,11],promoter[1,1],promoter[1,2])
-colnames(part6)=c("peak calling software","peak calling parameters","peak threshold parameter","peak threshold","reads percentage under peaks","reads number under peaks","peaks number in promoter regions","peaks number in non-promoter regions")
-file=append(file,list(`peak analysis`=part6))
+colnames(part6)=c("peak_calling_software","peak_calling_parameters","peak_threshold_parameter","peak_threshold","reads_percentage_under_peaks","reads_number_under_peaks","peaks_number_in_promoter_regions","peaks_number_in_non-promoter_regions")
+file=append(file,list(`peak_analysis`=part6))
 
 part7=data.frame(paste("?",paste(saturate[,1],sep="",collapse=","),"?",sep=""),paste("?",paste(saturate[,2],sep="",collapse=","),"?",sep=""),paste("?",paste(saturate[,3],sep="",collapse=","),"?",sep=""))
-colnames(part7)=c("sequence depth","peaks number","percentage of peaks recaptured")
+colnames(part7)=c("sequence_depth","peaks_number","percentage_of_peaks_recaptured")
 file=append(file,list(`saturation`=part7))
 
 part8=data.frame(round(ref.enrich2[which(ref.enrich2$class=='Sample'),1],2),round(ref.enrich3[which(ref.enrich3$class=='Sample'),1],2),1-round(dicho[,2],2)/100)
-colnames(part8)=c("enrichment ratio in coding promoter regions","subsampled 10M enrichment ratio","percentage of background RPKM larger than 0.3777")
+colnames(part8)=c("enrichment_ratio_in_coding_promoter_regions","subsampled_10M_enrichment_ratio","percentage_of_background_RPKM_larger_than_0.3777")
 file=append(file,list(`enrichment`=part8))
 
 part11=data.frame(paste("?",paste(yield[,1],sep="",collapse=","),"?",sep=""),paste("?",paste(yield[,2],sep="",collapse=","),"?",sep=""),paste("?",paste(yield[,3],sep="",collapse=","),"?",sep=""),paste("?",paste(yield[,4],sep="",collapse=","),"?",sep=""))
-colnames(part11)=c("total reads","expected distinction","lower 0.95 confidnece interval","upper 0.95 confidnece interval")
-file=append(file,list(`yield distribution`=part11))
+colnames(part11)=c("total_reads","expected_distinction","lower_0.95_confidnece_interval","upper_0.95_confidnece_interval")
+file=append(file,list(`yield_distribution`=part11))
 
 peakl=read.table(paste("peak_length_distri_",name,".result",sep=""))
 peakl=rbind(peakl[which(peakl$V1<1500),],c(1500,sum(peakl[which(peakl$V1>=1500),2])))
 
 part12=data.frame(paste("?",paste(peakl$V1,sep="",collapse=","),"?",sep=""),paste("?",paste(peakl$V2,sep="",collapse=","),"?",sep=""))
-colnames(part12)=c("peak length","frequency")
-file=append(file,list(`peak length distribution`=part12))
+colnames(part12)=c("peak_length","frequency")
+file=append(file,list(`peak_length_distribution`=part12))
 
 file=list(name=file)
-names(file)=name
+names(file)="Sample_QC_info"
 
 test=try(library(jsonlite),silent=T)
 
 capture.output(toJSON(file,pretty=T),file=paste(name,"report.json",sep='_'))
-
-

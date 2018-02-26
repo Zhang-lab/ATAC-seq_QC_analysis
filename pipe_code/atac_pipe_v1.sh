@@ -7,6 +7,7 @@
 ###################################################################################################
 # Preparation:
 date
+pipe_version="v1.1a"
 
 # get the absolute path
 pipe_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" 
@@ -356,7 +357,7 @@ fi
 
 # 4.1.2, add insertion site bigwig
 awk '{mid=int(($3+$2)/2); if($6=="+") {print $1"\t"mid"\t"mid+1"\t"1} else {print $1"\t"mid-1"\t"mid"\t"1}}'  \
- $bed |  sort -k1,1V -k2,2n | uniq -c | awk -F " " '{print $2"\t"$3"\t"$4"\t"$1}' > step4.2_insertion_site_$name.bedGraph
+ $bed |  sort -k1,1 -k2,2n | uniq -c | awk -F " " '{print $2"\t"$3"\t"$4"\t"$1}' > step4.2_insertion_site_$name.bedGraph
 bedGraphToBigWig  step4.2_insertion_site_$name.bedGraph  $chrom_size  step4.2_insertion_site_$name'.bigWig'
 if [ $? == 0 ] 
 	then
@@ -581,10 +582,21 @@ mv promoter*.result ./'data_collection_'$name
 mv bin*.result ./'data_collection_'$name
 
 # step 4.7, plot on results
+time=`head -1 pipe_processing.log | sed 's/ /_/g'`
+
+if [ `ls /atac_seq/Resource/Genome/ 2> /dev/null | wc -l  ` == "5" ] ; then
+host="zhanglab/atac-seq full"
+elif [ `ls /atac_seq/Resource/Genome/ 2> /dev/null | wc -l  ` == "1" ] ; then
+host="zhanglab/atac-seq mm10"
+fi 
+
+image_id=`bash /atac_seq/pipe_code/find_image_ID_digest.sh $host  2> /dev/null | awk '{print $2}'`
+
+
 # clean result
 find . -name "*.result" | xargs sed -i 's/^-e //'
 cd ./'data_collection_'$name
-Rscript $pipe_path'/visualization.R' $name $pipe_path'/../atac_ref/mm10_encode_pe'  $species  $removed_reads $unique_chrM_ratio
+Rscript $pipe_path'/visualization.R' $name $pipe_path'/../atac_ref/mm10_encode_pe'  $species  $removed_reads $unique_chrM_ratio $pipe_version $time $image_id
 if [ $? == 0 ] 
 	then
 	echo "step4.7, plot process done" >> ../pipe_processing.log
@@ -593,7 +605,7 @@ else
 fi
 sed 's/\[/{/g' $name'_report.json' | sed '/      {/d' | sed '/\]/d' |\
     sed 's/      }/    },/g' | sed 's/"!/{/g' | sed 's/!"/}/g' | sed 's/"?/[/g' | sed 's/?"/]/g' |\
-    sed 's/@/"/g' | tac | sed '3s/},/}/g' | sed '1,2d' | tac | cat - <(echo "  },") <(sed '1d' $pipe_path'/../atac_ref/mm10_encode_pe/encode_pe.json') > $name'.json'
+    sed 's/@/"/g' | tac | sed '3s/},/}/g' | sed '1,2d' | tac | cat - <(echo "  },") <(sed '1d' $pipe_path'/../atac_ref/mm10_encode_pe/encode_pe.json') | sed 's/\\r//g' > $name'.json'
 rm $name'_report.json'
 mv $name'.json' ../
 

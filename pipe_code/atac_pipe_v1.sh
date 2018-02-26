@@ -7,6 +7,7 @@
 ###################################################################################################
 # Preparation:
 date
+pipe_version="v1.1a"
 
 # get the absolute path
 pipe_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" 

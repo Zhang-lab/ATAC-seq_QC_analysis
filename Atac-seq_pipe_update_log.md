@@ -1,4 +1,4 @@
-### Current version: v1.1  
+### Current version: v1.1a  
 Last update: 02/23/2018  
   
   
@@ -9,9 +9,12 @@ Last update: 02/23/2018
   
   
   
-### Update record:  
+### Update record: 
+02/25/2018, v1.1a  
+Change output json file content. Put all raw data inside.  
+
 02/23/2018  
-1, add insertion site record file in bedGraph and bigWig format for the purpose of narrowing down motif finding region  
+Add insertion site record file in bedGraph and bigWig format for the purpose of narrowing down motif finding region  
 
 02/06/2018  
 Miner change in "chrom_count" result, add 0 for each cell so that there won't be error when some chrom has no count (e.g chrY=0).  

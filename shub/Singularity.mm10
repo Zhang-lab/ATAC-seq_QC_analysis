@@ -1,6 +1,6 @@
 Bootstrap: docker
-From: zhanglab/atac-seq:mm10
+From: zhanglab/atac-seq_mm10:feb252018
 IncludeCmd: yes
 
 %runscript
-    bash /atac_seq/pipe_code/atac_pipe_v1.sh $@
+    bash /atac_seq/pipe_code/atac_v1.1a.sh $@

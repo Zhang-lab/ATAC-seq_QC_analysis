@@ -326,7 +326,7 @@ report=list(Library=name)
 name=paste(name,"result",sep=".")
 
 genome=args[8]
-report=append(report,list(Pipeline.version="V1",Genome=genome,Data.type=data_type))
+report=append(report,list(Pipeline.version="V1.1a",Genome=genome,Data.type=data_type))
 
 ref.useful=read.table(paste(refpath,'merged_useful_reads.txt',sep='/'),header=T,sep='\t')
 useful=read.table(paste("useful_reads",name,sep="_"),header=T,sep='\t')
@@ -409,8 +409,8 @@ name=args[6]
 capture.output(print(report),file=paste(name,"report.txt",sep='_'))
 
 # json file generation
-part1=data.frame("V1.1",genome,data_type)
-colnames(part1)=c("pipe version","genome","read type")
+part1=data.frame("V1.1a","feb252018",genome,data_type)
+colnames(part1)=c("pipe version","Docker tag","genome","read type")
 file=list(`data information`=part1)
 
 part2=data.frame("cutadapt","1.12",as.numeric(args[9]),"FastQC","0.11.5")
@@ -425,8 +425,10 @@ part9=data.frame(round(ref.dedup[which(ref.dedup$class=='Sample'),2],2)/100,(1-m
 colnames(part9)=c("before alignment library duplicates percentage","after alignment PCR duplicates percentage")
 file=append(file,list(`library complexity`=part9))
 
-part4=data.frame("plot3.1_insertion_size.png")
-colnames(part4)="plot_url"
+insert=read.table(paste("insertion_distri_",name,".result",sep=""))
+
+part4=data.frame(paste("?",paste(insert$V1,sep="",collapse=","),"?",sep=""),paste("?",paste(insert$V2,sep="",collapse=","),"?",sep=""))
+colnames(part4)=c("insertion size","frequency")
 file=append(file,list(`insert size ditribution`=part4))
 
 autosome=chr[which(!chr$V1%in%c("chrM","chrX","chrY")),c(1,3)]
@@ -437,29 +439,36 @@ autosome=paste("!",paste(autosome,sep="",collapse=", "),"!",sep="")
 
 if(genome!="danRer10") {
 	part5=data.frame(round(as.numeric(args[10]),4),round(chr[which(chr[,1]=='chrX'),3]/map[,6],4),round(chr[which(chr[,1]=='chrY'),3]/map[,6],4),autosome)
-	colnames(part5)=c("Percentage of uniquely mapped reads in chrM","Percentage of non-redundant uniquely mapped reads in chrX","Percentage of non-redundant uniquely mapped reads in chrY","Percentage of non-redundant uniquely mapped reads in autosome")
+	colnames(part5)=c("percentage of uniquely mapped reads in chrM","percentage of non-redundant uniquely mapped reads in chrX","percentage of non-redundant uniquely mapped reads in chrY","Percentage of non-redundant uniquely mapped reads in autosome")
 	file=append(file,list(`mapping distribution`=part5))
 } else {
 	part5=data.frame(round(as.numeric(args[10]),4),autosome)
-	colnames(part5)=c("Percentage of uniquely mapped reads in chrM","Percentage of non-redundant uniquely mapped reads in autosome")
+	colnames(part5)=c("percentage of uniquely mapped reads in chrM","percentage of non-redundant uniquely mapped reads in autosome")
 	file=append(file,list(`mapping distribution`=part5))
 }
 
-part6=data.frame("macs2","--keep-dup 1000 --nomodel --shift 0 --extsize 150","qvaule",0.01,map$rup_ratio/100.0,map[,11])
-colnames(part6)=c("peak calling software","peak calling parameters","peak threshold parameter","peak threshold","reads percentage under peaks","reads number under peaks")
+part6=data.frame("macs2","--keep-dup 1000 --nomodel --shift 0 --extsize 150","qvaule",0.01,map$rup_ratio/100.0,map[,11],promoter[1,1],promoter[1,2])
+colnames(part6)=c("peak calling software","peak calling parameters","peak threshold parameter","peak threshold","reads percentage under peaks","reads number under peaks","peaks number in promoter regions","peaks number in non-promoter regions")
 file=append(file,list(`peak analysis`=part6))
 
-part7=data.frame("plot4.5_saturation.png")
-colnames(part7)="plot_url"
+part7=data.frame(paste("?",paste(saturate[,1],sep="",collapse=","),"?",sep=""),paste("?",paste(saturate[,2],sep="",collapse=","),"?",sep=""),paste("?",paste(saturate[,3],sep="",collapse=","),"?",sep=""))
+colnames(part7)=c("sequence depth","peaks number","percentage of peaks recaptured")
 file=append(file,list(`saturation`=part7))
 
 part8=data.frame(round(ref.enrich2[which(ref.enrich2$class=='Sample'),1],2),round(ref.enrich3[which(ref.enrich3$class=='Sample'),1],2),1-round(dicho[,2],2)/100)
 colnames(part8)=c("enrichment ratio in coding promoter regions","subsampled 10M enrichment ratio","percentage of background RPKM larger than 0.3777")
 file=append(file,list(`enrichment`=part8))
 
-part10=data.frame(paste("idr_plot_",name,".ps",sep=""))
-colnames(part10)="plot_url"
-file=append(file,list(`idr`=part10))
+part11=data.frame(paste("?",paste(yield[,1],sep="",collapse=","),"?",sep=""),paste("?",paste(yield[,2],sep="",collapse=","),"?",sep=""),paste("?",paste(yield[,3],sep="",collapse=","),"?",sep=""),paste("?",paste(yield[,4],sep="",collapse=","),"?",sep=""))
+colnames(part11)=c("total reads","expected distinction","lower 0.95 confidnece interval","upper 0.95 confidnece interval")
+file=append(file,list(`yield distribution`=part11))
+
+peakl=read.table(paste("peak_length_distri_",name,".result",sep=""))
+peakl=rbind(peakl[which(peakl$V1<1500),],c(1500,sum(peakl[which(peakl$V1>=1500),2])))
+
+part12=data.frame(paste("?",paste(peakl$V1,sep="",collapse=","),"?",sep=""),paste("?",paste(peakl$V2,sep="",collapse=","),"?",sep=""))
+colnames(part12)=c("peak length","frequency")
+file=append(file,list(`peak length distribution`=part12))
 
 file=list(name=file)
 names(file)=name

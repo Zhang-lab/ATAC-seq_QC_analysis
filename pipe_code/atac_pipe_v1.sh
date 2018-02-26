@@ -591,9 +591,9 @@ if [ $? == 0 ]
 else 
 	echo "step4.7, plot process fail......" >> ../pipe_processing.log
 fi
-sed 's/\[/{/g' $name'_report.json' | sed '/      {/d' | sed '/\]/d' | \
-	sed 's/      }/    },/g' | sed 's/"!/{/g' | sed 's/!"/}/g' | \
-	sed 's/@/"/g' | tac | sed '3s/},/}/g' | tac > $name'.json'
+sed 's/\[/{/g' $name'_report.json' | sed '/      {/d' | sed '/\]/d' |\
+    sed 's/      }/    },/g' | sed 's/"!/{/g' | sed 's/!"/}/g' | sed 's/"?/[/g' | sed 's/?"/]/g' |\
+    sed 's/@/"/g' | tac | sed '3s/},/}/g' | sed '1,2d' | tac | cat - <(echo "  },") <(sed '1d' $pipe_path'/../atac_ref/mm10_encode_pe/encode_pe.json') > $name'.json'
 rm $name'_report.json'
 mv $name'.json' ../
 

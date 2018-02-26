@@ -8,12 +8,12 @@ For any question, please contact Wustl.Zhanglab@gmail.com
 
 ## Usage:  
 Singularity solution (easiest way)  
-1, download singularity container (you only need download the containcer for once, then you can use them directly):  
+1. download singularity container (you only need download the containcer for once, then you can use them directly):  
 ```bash
 singularity pull -n zlab_atac.simg shub://ShaopengLiu1/Zhanglab_ATAC-seq_analysis:mm10  
 ```
 
-2, process data by the singularity image:  
+2. process data by the singularity image:  
 ```bash
 singularity run zlab_atac.simg  -r <SE/PE> -g <mm10/hg38/danRer10>  -o <read_file1>  -p <read_file2>  
 ```

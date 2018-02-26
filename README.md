@@ -7,7 +7,7 @@ Usage:
 1, Docker image (recommended):  
 Please see the link below for the usage of Docker:  
 [Usage](https://github.com/ShaopengLiu1/Atac-seq_Quality_Control_pipe/blob/master/Usage.md)  
-[ATAC-seq pipe Docker section](https://hub.docker.com/r/zhanglab/atac-seq/)  
+[ATAC-seq pipe Docker section](https://hub.docker.com/u/zhanglab/dashboard/)  
 For more information about Docker, please see:  
 [Docker main page](https://www.docker.com/)  
 

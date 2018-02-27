@@ -15,7 +15,7 @@ For any question, please contact Wustl.Zhanglab@gmail.com
 Singularity solution (easiest way)  
 1. download singularity container (you only need download the containcer for once, then you can use them directly):  
 ```bash
-singularity pull -n zlab_atac.simg shub://ShaopengLiu1/Zhanglab_ATAC-seq_analysis:mm10  
+singularity pull -n zlab_atac.simg shub://Wustl-Zhanglab/ATAC-seq_QC_analysis:mm10  
 ```
 
 2. process data by the singularity image:  

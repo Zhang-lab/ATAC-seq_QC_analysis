@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: zhanglab/atac-seq_mm10:feb252018
+From: zhanglab/atac-seq:mm10
 IncludeCmd: yes
 
 %runscript

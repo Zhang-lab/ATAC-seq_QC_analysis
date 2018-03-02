@@ -23,7 +23,8 @@ singularity pull -n zlab_atac.simg shub://Wustl-Zhanglab/ATAC-seq_QC_analysis:mm
 wget -O zlab_atac.simg http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/simg/zlab_atac_v1.1a_full.simg  
 ```
 
-2. process data by the singularity image:  
+2. process data by the singularity image: 
+### Please run at same directory with your data  
 ```bash
 singularity run -B ./:/scratch zlab_atac.simg  -r <SE/PE> -g <mm10/mm9/hg19/hg38/danRer10>  -o <read_file1>  -p <read_file2>  
 ```

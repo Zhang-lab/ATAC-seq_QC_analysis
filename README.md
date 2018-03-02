@@ -12,9 +12,10 @@ For any question, please contact Wustl.Zhanglab@gmail.com
 
 
 ## Usage:  
-Singularity solution (easiest way)  
-1. download singularity container (you only need download the containcer for once, then you can use them directly):  
-### Please chooice one of them:
+Singularity 2-step solution (easiest way)  
+
+Step1. download singularity container (you only need download the containcer for once, then you can use them directly):  
+###### Please chooice one of them:
 ```bash
 # 1. download from shub (now support mm10 only):  
 singularity pull -n zlab_atac.simg shub://Wustl-Zhanglab/ATAC-seq_QC_analysis:mm10  
@@ -23,8 +24,8 @@ singularity pull -n zlab_atac.simg shub://Wustl-Zhanglab/ATAC-seq_QC_analysis:mm
 wget -O zlab_atac.simg http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/simg/zlab_atac_v1.1a_full.simg  
 ```
 
-2. process data by the singularity image: 
-### Please run at same directory with your data  
+Step2. process data by the singularity image: 
+###### Please run at same directory with your data  
 ```bash
 singularity run -B ./:/scratch zlab_atac.simg  -r <SE/PE> -g <mm10/mm9/hg19/hg38/danRer10>  -o <read_file1>  -p <read_file2>  
 ```

@@ -14,13 +14,18 @@ For any question, please contact Wustl.Zhanglab@gmail.com
 ## Usage:  
 Singularity solution (easiest way)  
 1. download singularity container (you only need download the containcer for once, then you can use them directly):  
+### Please chooice one of them:
 ```bash
+# 1. download from shub (now support mm10 only):  
 singularity pull -n zlab_atac.simg shub://Wustl-Zhanglab/ATAC-seq_QC_analysis:mm10  
+
+# 2. download from local server (support mm10, mm9, hg19, hg38 and danRer10):  
+wget -O zlab_atac.simg http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/simg/zlab_atac_v1.1a_full.simg  
 ```
 
 2. process data by the singularity image:  
 ```bash
-singularity run zlab_atac.simg  -r <SE/PE> -g <mm10/hg38/danRer10>  -o <read_file1>  -p <read_file2>  
+singularity run -B ./:/scratch zlab_atac.simg  -r <SE/PE> -g <mm10/mm9/hg19/hg38/danRer10>  -o <read_file1>  -p <read_file2>  
 ```
 
 That's it!

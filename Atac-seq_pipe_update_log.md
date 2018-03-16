@@ -4,10 +4,7 @@ Last update: 02/25/2018
   
   
 ### To be added soon:  
-1, add pipe version and run time in output json file  
-2, provide all results in ".txt" data format instead of figure directly in json output  
-  
-  
+
   
 ### Update record: 
 02/25/2018, v1.1a  

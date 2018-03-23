@@ -70,8 +70,7 @@ peakl=read.table(paste("peak_length_distri",name,sep="_"))
 peakl=rbind(peakl[which(peakl$V1<1500),],c(1500,sum(peakl[which(peakl$V1>=1500),2])))
 peakl$V2=peakl$V2/sum(peakl$V2)
 
-png("plot3.3_peak_length.png",height=2000,width=3000,res=300)
-ggplot(peakl,aes(x=V1,y=..scaled..,weight=V2))+geom_density(size=1,adjust=0.2)+
+dense_plot=ggplot(peakl,aes(x=V1,y=..scaled..,weight=V2))+geom_density(size=1,adjust=0.2)+
   ggtitle("Density plot of peaks length distribution (Adjust=0.2)")+
   theme_bw()+theme_classic()+expand_limits(x=0,y=0)+
   scale_y_continuous(name="Density",limits=c(0,1))+
@@ -81,14 +80,19 @@ ggplot(peakl,aes(x=V1,y=..scaled..,weight=V2))+geom_density(size=1,adjust=0.2)+
         axis.title=element_text(face="bold"),
         axis.text.x=element_text(size=10,face="bold"),
         axis.text.y=element_text(size=10,face="bold"))
+
+dense_length=as.data.frame(ggplot_build(dense_plot)$data[[1]])
+dense_length=data.frame(length_of_peaks=dense_length$x,density=dense_length$y)
+
+png("plot3.3_peak_length.png",height=2000,width=3000,res=300)
+dense_plot
 dev.off()
 
 # insertion distribution
 insert=read.table(paste("insertion_distri",name,sep="_"))
 insert$V2=insert$V2/sum(insert$V2)
 
-png("plot3.1_insertion_size.png",height=1800,width=2400,res=300)
-ggplot(insert,aes(x=V1,y=..scaled..,weight=V2))+geom_density(size=1,adjust=0.2)+
+dense_plot=ggplot(insert,aes(x=V1,y=..scaled..,weight=V2))+geom_density(size=1,adjust=0.2)+
   ggtitle("Density plot of insertion size distribution (Adjust=0.2)")+
   theme_bw()+theme_classic()+
   scale_y_continuous(name="Density",limits=c(0,1))+
@@ -98,6 +102,12 @@ ggplot(insert,aes(x=V1,y=..scaled..,weight=V2))+geom_density(size=1,adjust=0.2)+
         axis.title=element_text(face="bold"),
         axis.text.x=element_text(size=10,face="bold"),
         axis.text.y=element_text(size=10,face="bold"))
+
+dense_insert=as.data.frame(ggplot_build(dense_plot)$data[[1]])
+dense_insert=data.frame(insertion_size=dense_insert$x,density=dense_insert$y)
+
+png("plot3.1_insertion_size.png",height=1800,width=2400,res=300)
+dense_plot
 dev.off()
 
 # dedup
@@ -323,7 +333,7 @@ ggplot(top,aes(sort(rank),index))+geom_density(stat="identity")+
         axis.text.y=element_text(size=8,face="bold"))
 dev.off()
 
-# TXT report
+# TXT report generation
 name=args[6]
 report=list(Library=name)
 name=paste(name,"result",sep=".")
@@ -411,14 +421,14 @@ report=append(report,list(Enrichment=library))
 name=args[6]
 capture.output(print(report),file=paste(name,"report.txt",sep='_'))
 
-# json file generation
+# JSON file generation
 if(is.na(image_id)) {
-  part1=data.frame(name,genome,data_type,beta,rtime)
-  colnames(part1)=c("file_name","genome","read_type","pipe_version","running_time")
+  part1=data.frame(name,genome,data_type,beta,"MD5ToBeChange",rtime)
+  colnames(part1)=c("file_name","genome","read_type","pipe_version","bash_script_MD5","running_time")
   file=list(`data_information`=part1)
 } else {
-  part1=data.frame(name,genome,data_type,beta,image_id,rtime)
-  colnames(part1)=c("file_name","genome","read_type","pipe_version","Docker_image_id","running_time")
+  part1=data.frame(name,genome,data_type,beta,image_id,"MD5ToBeChange",rtime)
+  colnames(part1)=c("file_name","genome","read_type","pipe_version","Docker_image_id","bash_script_MD5","running_time")
   file=list(`data_information`=part1)
 }
 
@@ -434,10 +444,8 @@ part9=data.frame(round(ref.dedup[which(ref.dedup$class=='Sample'),2],2)/100,(1-m
 colnames(part9)=c("before_alignment_library_duplicates_percentage","after_alignment_PCR_duplicates_percentage")
 file=append(file,list(`library_complexity`=part9))
 
-insert=read.table(paste("insertion_distri_",name,".result",sep=""))
-
-part4=data.frame(paste("?",paste(insert$V1,sep="",collapse=","),"?",sep=""),paste("?",paste(insert$V2,sep="",collapse=","),"?",sep=""))
-colnames(part4)=c("insertion_size","frequency")
+part4=data.frame(paste("?",paste(dense_insert$insertion_size,sep="",collapse=","),"?",sep=""),paste("?",paste(dense_insert$density,sep="",collapse=","),"?",sep=""))
+colnames(part4)=c("insertion_size","density")
 file=append(file,list(`insertion_size_distribution`=part4))
 
 autosome=chr[which(!chr$V1%in%c("chrM","chrX","chrY")),c(1,3)]
@@ -472,11 +480,8 @@ part11=data.frame(paste("?",paste(yield[,1],sep="",collapse=","),"?",sep=""),pas
 colnames(part11)=c("total_reads","expected_distinction","lower_0.95_confidnece_interval","upper_0.95_confidnece_interval")
 file=append(file,list(`yield_distribution`=part11))
 
-peakl=read.table(paste("peak_length_distri_",name,".result",sep=""))
-peakl=rbind(peakl[which(peakl$V1<1500),],c(1500,sum(peakl[which(peakl$V1>=1500),2])))
-
-part12=data.frame(paste("?",paste(peakl$V1,sep="",collapse=","),"?",sep=""),paste("?",paste(peakl$V2,sep="",collapse=","),"?",sep=""))
-colnames(part12)=c("peak_length","frequency")
+part12=data.frame(paste("?",paste(dense_length$length_of_peaks,sep="",collapse=","),"?",sep=""),paste("?",paste(dense_length$density,sep="",collapse=","),"?",sep=""))
+colnames(part12)=c("peak_length","density")
 file=append(file,list(`peak_length_distribution`=part12))
 
 file=list(name=file)

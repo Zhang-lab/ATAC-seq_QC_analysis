@@ -1,5 +1,5 @@
-### Current version: v1.1a  
-Last update: 02/25/2018  
+### Current version: v1.1b  
+Last update: 03/26/2018  
   
   
   
@@ -7,6 +7,10 @@ Last update: 02/25/2018
 
   
 ### Update record: 
+03/26/2018, v1.1b  
+1. add docker image id and md5sum for script file verification  
+2. use soft link instead of mv for raw files (for cases in HTCF)  
+
 02/25/2018, v1.1a  
 Change output json file content. Put all raw data inside.  
 

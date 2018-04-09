@@ -317,21 +317,27 @@ plot_grid(p2,p1,ncol=2,nrow=1,rel_widths=c(1,0.88))
 options(warn=0)
 dev.off()
 
-top=read.table(paste("bin",name,sep="_"),sep='\t')
-top=data.frame(rank=as.numeric(top$V1),index=as.numeric(top$V2))
-
-png("plot4.6_promoter_distribution_among_peaks.png",height=1800,width=3200,res=300)
-ggplot(top,aes(sort(rank),index))+geom_density(stat="identity")+
-  ggtitle("Percentage of promoter regions")+
-  theme_bw()+theme_classic()+
-  scale_y_continuous(name="Percentage of promoter regions",limits=c(0,1))+
-  scale_x_continuous(name="Percentage of Top peaks")+
-  theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
-        text=element_text(size=12,family="Tahoma"),
-        axis.title=element_text(face="bold"),
-        axis.text.x=element_text(size=8,face="bold"),
-        axis.text.y=element_text(size=8,face="bold"))
-dev.off()
+options(warn=-1)
+top=try(read.table(paste("bin",name,sep="_"),sep='\t'),silent=T)
+options(warn=0)
+if(class(top)!="try-error"){
+  top=data.frame(rank=as.numeric(top$V1),index=as.numeric(top$V2))
+  
+  png("plot4.6_promoter_distribution_among_peaks.png",height=1800,width=3200,res=300)
+  print(ggplot(top,aes(sort(rank),index))+geom_density(stat="identity")+
+    ggtitle("Percentage of promoter regions")+
+    theme_bw()+theme_classic()+
+    scale_y_continuous(name="Percentage of promoter regions",limits=c(0,1))+
+    scale_x_continuous(name="Percentage of Top peaks")+
+    theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
+          text=element_text(size=12,family="Tahoma"),
+          axis.title=element_text(face="bold"),
+          axis.text.x=element_text(size=8,face="bold"),
+          axis.text.y=element_text(size=8,face="bold")))
+  dev.off()
+} else {
+  cat("Warning message:\nNumber of peaks in promoter regions is smaller than 100! Skip plot4.6_promoter_distribution_among_peaks.png!")
+}
 
 # TXT report generation
 name=args[6]

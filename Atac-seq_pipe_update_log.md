@@ -1,5 +1,5 @@
-### Current version: v1.1b  
-Last update: 03/26/2018  
+### Current version: v1.2  
+Last update: 04/11/2018  
   
   
   
@@ -7,6 +7,11 @@ Last update: 03/26/2018
 
   
 ### Update record: 
+04/11/2018, v1.2  
+1. add warning for peak files with less than 100 peaks, there would be NO result for promoter percentage on peaks for those data  
+2. reorganize pipe code for modulation  
+
+
 03/26/2018, v1.1b  
 1. add docker image id and md5sum for script file verification  
 2. use soft link instead of mv for raw files (for cases in HTCF)  

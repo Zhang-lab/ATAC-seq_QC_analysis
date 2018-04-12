@@ -1,9 +1,9 @@
 # Atac-seq_Quality_Control_pipe
 This is for the QC matrix construction, data analysis and visualization for Atac-seq data.  
-Current version: `V1.1b`  
+Current version: `V1.2`  
 Current Docker version:   
-zhanglab/atac-seq:full `sha256:b29ab7f3a5caa46c6f84849ecf9a089fda16e82e9efd4054e5d9c74646150cf0`  
-zhanglab/atac-seq:mm10 `sha256:5375b05c39c25c516fb086887e40288c67bfe8f08ea5ca64298f8aa2a06194bc`  
+zhanglab/atac-seq:full `sha256:29f0b04dbcbfa9c1641556a3790f2f6e2f66d9ef923bf26bc5f03c870c97b799`  
+zhanglab/atac-seq:mm10 `sha256:9e45678f6b9c742d114fa2ffb4cb8d4aa32735047297a26dd5ea7761b0ea6a58`  
 
 Advisor: Bo Zhang 
 Contributor: Cheng Lyu and Shaopeng Liu  

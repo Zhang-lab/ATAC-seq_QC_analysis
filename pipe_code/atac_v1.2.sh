@@ -7,7 +7,7 @@
 ###################################################################################################
 # read all necessary parameters and prepare data structure
 date
-pipe_version="v1.1b"
+pipe_version="v1.2"
 
 # get the absolute path
 pipe_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" 

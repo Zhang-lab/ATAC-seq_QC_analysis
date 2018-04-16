@@ -5,7 +5,7 @@ Current Docker version:
 zhanglab/atac-seq:full `sha256:29f0b04dbcbfa9c1641556a3790f2f6e2f66d9ef923bf26bc5f03c870c97b799`  
 zhanglab/atac-seq:mm10 `sha256:9e45678f6b9c742d114fa2ffb4cb8d4aa32735047297a26dd5ea7761b0ea6a58`  
 
-Advisor: Bo Zhang 
+Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
 
 For any question, please contact Wustl.Zhanglab@gmail.com  

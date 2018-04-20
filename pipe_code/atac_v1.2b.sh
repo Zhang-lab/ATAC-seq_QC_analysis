@@ -607,7 +607,10 @@ s4.6_visualization () {
     fi 
 
     image_id=`bash $pipe_path'/find_image_ID_digest.sh' $host  2> /dev/null | awk '{print $2}'`
-
+    if [ -z "$image_id" ]
+	then
+	image_id="didn't get image_id"
+    fi
 
     # clean result
     find . -name "*.result" | xargs sed -i 's/^-e //'

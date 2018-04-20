@@ -171,6 +171,8 @@ s1.2_fastqc () {
     else 
         echo "step1.4, calculate replicate difference process fail......" >> pipe_processing.log
     fi
+
+    rename 's/Trimed_/step1.2_Trimed_/' Trimed_$name*'fastqc'*
 }
 
 # step2.0, files check
@@ -183,7 +185,7 @@ s2.0_ref () {
 # step2.1, BWA MEM alignment
 s2.1_bwa () {
     echo 'alignment by bwa......'
-    bwa mem -t $threads $bwa_ref 'Trimed_'$name*'.fastq' | samtools view -bS - | samtools sort - -O 'bam' -o 'Trimed_'$name'.bam' -T temp_aln
+    bwa mem -t $threads $bwa_ref 'Trimed_'$name*'.fastq' | samtools view -bS - | samtools sort - -O 'bam' -o 'step2.1_Trimed_'$name'.bam' -T temp_aln
     if [ $? == 0 ] 
         then
         echo "step2.1, bwa alignment process done" >> pipe_processing.log
@@ -193,29 +195,21 @@ s2.1_bwa () {
     fi
 
     # clean folder
-    find . -maxdepth 1 -name "Trimed*" ! -name "*bam" ! -name "step*" | xargs rm -r
-
-    for file in `ls *fastq 2> /dev/null`
-    do
-    if [[ $file != $R1 ]] && [[ $file != $R2 ]]
-    then
-    rm $file 2> /dev/null
-    fi
-    done
+    find . -maxdepth 1 -name "Trimed_$name*" ! -name "*bam" ! -name "step*" | xargs rm -r
 }
 
 # step2.2, removing low mapQ reads and count reads distribution (bwa would assign those reads to dif chr, and results in unreliable number)
 s2.2_distri () {
-    samtools view -h 'Trimed_'$name'.bam' > input.sam \
+    samtools view -h 'step2.1_Trimed_'$name'.bam' > input.sam \
         && awk '$5>0' input.sam | sed '/^@/d' - | cat <(grep '^@' input.sam) - > output.sam \
         && rm input.sam \
         && cat output.sam | awk '{print $3}' |  sort  -k1,1V |   uniq -c > count_no_mapq0.txt \
-        && awk '! /random/ && ! /Un/ && /chr/  ' count_no_mapq0.txt  | awk '{print $2, $1}'  OFS="\t"  | sort  -k1,1 -V -s > temp.txt 
+        && awk '! /random/ && ! /Un/ && /chr/  ' count_no_mapq0.txt  | awk '{print $2, $1}'  OFS="\t"  | sort  -k1,1 -V -s > temp2.2.txt 
 
     if [[ $types == SE ]]; then
-    mv temp.txt  'chrom_count_'$name'.txt'
+    mv temp2.2.txt  'chrom_count_'$name'.txt'
     elif [[ $types == PE ]]; then
-    awk '{$2=int($2*0.5); print}' OFS="\t" temp.txt > 'chrom_count_'$name'.txt'
+    awk '{$2=int($2*0.5); print}' OFS="\t" temp2.2.txt > 'chrom_count_'$name'.txt' && rm temp2.2.txt
     fi
 
     # only effect reads
@@ -245,7 +239,7 @@ s2.2_distri () {
     nodup_ratio=`echo "scale=3; $effect_no_chrM/$unique_no_chrM" | bc -l`
 
     # rm chrM and other 
-    awk '$3!="chrM"' output.sam | samtools view -bS - > 'Trimed_rm_mapq0_chrm_'$name'.bam'
+    awk '$3!="chrM"' output.sam | samtools view -bS - > 'step2.2_Trimed_rm_mapq0_chrm_'$name'.bam'
     rm output*
     rm count*.txt
     awk -F "\t"  '{print $2}' 'chrom_count_unique_'$name'.txt'  |  paste 'chrom_count_'$name'.txt'  - | awk -F "\t" -v marker=$marker '{print $1,$2+0,$3+0,marker}' OFS="\t"  > ./'data_collection_'$name/'chrom_count_'$name'.result'
@@ -258,7 +252,6 @@ s2.2_distri () {
     fi
 
     rm chrom_count*txt
-    mv 'Trimed_'$name'.bam'  'step2.1_Trimed_'$name'.bam'
 }
 
 # step2.3, preseq
@@ -276,7 +269,7 @@ s2.3_preseq () {
 # 3.1, methylQA
 s3.1_methylQA () {
     echo 'methylQA processing......'
-    methylQA atac $chrom_size  'Trimed_rm_mapq0_chrm_'$name'.bam'
+    methylQA atac $chrom_size  'step2.2_Trimed_rm_mapq0_chrm_'$name'.bam'
 
     if [ $? == 0 ] 
         then
@@ -285,19 +278,14 @@ s3.1_methylQA () {
         echo "step3.1, mathylQA atac process fail......" >> pipe_processing.log
     fi
 
-    useful=`grep 'non-redundant'  Trimed_rm_mapq0_chrm_*.report | awk '{print $6}'`
+    useful=`grep 'non-redundant'  step2.2_Trimed_rm_mapq0_chrm_*.report | awk '{print $6}'`
     single_end=`wc -l *open.bed | awk '{print $1}'`
     uf_ratio=`echo "scale=3; $useful / $raw_reads" | bc -l`
     echo -e "file\ttotal\tuseful\tuseful_ratio\tsingle_end" > 'useful_reads_'$name.result
     echo -e "$name\t$raw_reads\t$useful\t$uf_ratio\t$single_end" >> 'useful_reads_'$name.result
     mv 'useful_reads_'$name.result  ./'data_collection_'$name
-
-    mv 'Trimed_rm_mapq0_chrm_'$name'.bam'   'step2.2_Trimed_rm_mapq0_chrm_'$name'.bam'
-    mv 'Trimed_rm_mapq0_chrm_'$name'.genomeCov.pdf'  'step2.2_Trimed_rm_mapq0_chrm_'$name'.genomeCov.pdf'
-    awk '$1<=500'  'Trimed_'*$name'.insertdistro'  | sort -n | uniq -c | awk '{print $2,$1}' > 'insertion_distri_'$name'.result'
+    awk '$1<=500'  'step2.2_Trimed_'*$name'.insertdistro'  | sort -n | uniq -c | awk '{print $2,$1}' > 'insertion_distri_'$name'.result'
     mv 'insertion_distri_'$name'.result'  ./'data_collection_'$name
-    rm 'Trimed_rm_mapq0_chrm_'$name'.insertdistro'*
-    rm *genomeCov  2> /dev/null
 }
 
 # 3.2, normalization bedGraph -> 10M
@@ -305,11 +293,11 @@ s3.2_nomral_bg () {
     echo 'normalization bedGraph......'
 
     # add a new bigwig file without black list
-    intersectBed -a 'Trimed_'*$name'.open.bedGraph'  -b $black_list -v > rmbl.bedGraph
+    intersectBed -iobuf 200M -a 'step2.2_Trimed_'*$name'.open.bedGraph'  -b $black_list -v  > rmbl.bedGraph
     bedGraphToBigWig rmbl.bedGraph $chrom_size 'step3.2_Trimed_nochrm_rmbl_'$name'.bigWig'
 
     # normalization
-    norm=`grep 'non-redundant'  Trimed*report | awk '{print $6}'`
+    norm=`grep 'non-redundant'  step2.2_Trimed*report | awk '{print $6}'`
     factor=`echo "scale=3; $norm/10000000" | bc -l`
     awk -v factor=$factor '{print $1,$2,$3,$4/factor}' OFS='\t' rmbl.bedGraph  >  'Normalized_per_10M_'$name'.open.bedGraph'
     bedGraphToBigWig  'Normalized_per_10M_'$name'.open.bedGraph'   $chrom_size  'Normalized_per_10M_'$name'.bigWig'
@@ -329,10 +317,10 @@ s3.2_nomral_bg () {
 # 3.3, peak calling
 s3.3_peakcall () {
     echo 'peak calling......'
-    awk '{if ($2 > $3)sub($2, 0); print}' OFS="\t" 'Trimed_rm_mapq0_chrm_'$name'.open.bed' > temp.open.bed
-    intersectBed  -a temp.open.bed  -b $black_list   -v > 'Trimed_rmbl_'$name'.open.bed'
+    awk '{if ($2 > $3)sub($2, 0); print}' OFS="\t" 'step2.2_Trimed_rm_mapq0_chrm_'$name'.open.bed' > temp.open.bed
+    intersectBed -iobuf 200M  -a temp.open.bed  -b $black_list   -v > 'step3.3_Trimed_rmbl_'$name'.open.bed'
     rm temp.open.bed
-    macs2 callpeak -t ./'Trimed_rmbl_'$name'.open.bed' -g $macs2_genome -q 0.01 -n 'peakcall_'$name  --keep-dup 1000 --nomodel --shift 0 --extsize 150
+    macs2 callpeak -t ./'step3.3_Trimed_rmbl_'$name'.open.bed' -g $macs2_genome -q 0.01 -n 'step3.3_peakcall_'$name  --keep-dup 1000 --nomodel --shift 0 --extsize 150
 
     if [ $? == 0 ] 
         then
@@ -342,20 +330,20 @@ s3.3_peakcall () {
     fi
 
     # peak length distribution:
-    awk '{print $3-$2+1}' 'peakcall_'$name'_peaks.narrowPeak' | sort -n | uniq -c | awk '{print $2,$1}' > 'peak_length_distri_'$name'.result'
+    awk '{print $3-$2+1}' 'step3.3_peakcall_'$name'_peaks.narrowPeak' | sort -n | uniq -c | awk '{print $2,$1}' > 'peak_length_distri_'$name'.result'
     mv 'peak_length_distri_'$name'.result'  ./'data_collection_'$name    
 }
 
 # step4.0, set variable
 s4.0_set () {
-    peak='peakcall_'$name'_peaks.narrowPeak'
-    bed='Trimed_rmbl_'$name'.open.bed'    
+    peak='step3.3_peakcall_'$name'_peaks.narrowPeak'
+    bed='step3.3_Trimed_rmbl_'$name'.open.bed'    
 }
 
 # 4.1, RUP and insertion site
 s4.1_rup () {
     total=`wc -l $bed |awk '{print $1}'`
-    sum=`intersectBed -a $bed -b $peak -f 0.5 -u | wc -l`
+    sum=`intersectBed -iobuf 200M -a $bed -b $peak -f 0.5 -u | wc -l`
     ratio=`echo "scale=2; $sum*100/$total" | bc -l`
     if [ $? == 0 ] 
         then
@@ -386,7 +374,7 @@ s4.2_enrich () {
         shuf $1 | head -10000000  > temp.open.bed
         macs2 callpeak -t temp.open.bed  -g $macs2_genome -q 0.01 -n temp_peak  --keep-dup 1000 --nomodel --shift 0 --extsize 150
         peak_length=`awk '{s+=$3-$2+1}END{print s}' 'temp_peak_peaks.narrowPeak'`
-        rupn=`intersectBed -a temp.open.bed -b 'temp_peak_peaks.narrowPeak' -f 0.5 | wc -l`
+        rupn=`intersectBed -iobuf 200M -a temp.open.bed -b 'temp_peak_peaks.narrowPeak' -f 0.5 | wc -l`
         upper=`python -c "print(1.0*($rupn+10000000*$peak_length/$genome_size)/$peak_length)"`
         lower=`python -c "print(1.0*($2+10000000)/($genome_size-$peak_length))"`
         enrichment=`python -c "print(1.0*$upper/$lower)"`
@@ -417,9 +405,9 @@ s4.2_enrich () {
     # 4.2.2, coding promoter enrichment
     # coding enrichment = ( reads in promoter / promoter length)  /  (total reads / genome size)
     denominator=`echo "scale=10; $total / $genome_size" | bc -l`
-    intersectBed -a $peak -b $coding_promoter -u > promoter_peak.bed
-    reads_in_promoter=`intersectBed -a $bed -b promoter_peak.bed -f 0.5 -u | wc -l | awk '{print $1}'`
-    promoter_number=`intersectBed -a $coding_promoter -b promoter_peak.bed -F 0.5 -u | wc -l | awk '{print $1}'`
+    intersectBed -iobuf 200M -a $peak -b $coding_promoter -u > promoter_peak.bed
+    reads_in_promoter=`intersectBed -iobuf 200M -a $bed -b promoter_peak.bed -f 0.5 -u | wc -l | awk '{print $1}'`
+    promoter_number=`intersectBed -iobuf 200M -a $coding_promoter -b promoter_peak.bed -F 0.5 -u | wc -l | awk '{print $1}'`
     promoter_length=`echo "$promoter_number * 2000+0.001" | bc -l`  
     enrichment_ratio=`echo "scale=3; $reads_in_promoter / $promoter_length / $denominator" | bc -l`
     if [ $? == 0 ] 
@@ -431,6 +419,7 @@ s4.2_enrich () {
     echo -e "name\ttotal_reads\tpromoter_number\treads_in_promoter\tenrichment_ratio" > 'enrichment_ratio_in_promoter_'$name'.result'
     echo -e "$name\t$total\t$promoter_number\t$reads_in_promoter\t$enrichment_ratio" >> 'enrichment_ratio_in_promoter_'$name'.result'
     mv 'enrichment_ratio_in_promoter_'$name'.result'  'data_collection_'$name
+    rm promoter_peak.bed
 }
 
 # 4.3, PBC calculation
@@ -473,7 +462,7 @@ s4.4_saturation () {
     mkdir saturation_$name
     mv *sample*.open.bed ./saturation_$name/
     ln -rs $bed ./saturation_$name/
-    cp peakcall_*Peak ./saturation_$name/'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak'
+    cp step3.3_peakcall_*Peak ./saturation_$name/'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak'
     cd ./saturation_$name
     for file in `ls 'Trimed_rmbl_'$name'_sample'*'.open.bed'`;
     do
@@ -508,7 +497,7 @@ s4.4_saturation () {
     do
     file='peakcall_Trimed_rmbl_'$name'_sample'$number'.open.bed_peaks.narrowPeak'
     peak_number=`wc -l $file | awk '{print $1}'`
-    peak_region=`intersectBed -a $file -b 'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak' -u | awk '{s+=$3-$2+1}END{print s}'`
+    peak_region=`intersectBed -iobuf 200M -a $file -b 'peakcall_Trimed_rmbl_'$name'.open.bed_peaks.narrowPeak' -u | awk '{s+=$3-$2+1}END{print s}'`
     if [ -z "$peak_region" ]; then
     peak_region=0
     fi
@@ -541,15 +530,15 @@ s4.4_saturation () {
 s4.5_background () {
     # the exit singal 1 happens then peak number < 100, thus the 2 "mv bin.txt" command would have minor error, doesn't influence results
     # signal part
-    intersectBed -a $peak -b $promoter_file -u | awk '{print $1"\t"$2"\t"$3"\t""1""\t"$9}' > promoter.narrowPeak
-    intersectBed -a $peak -b $promoter_file -v | awk '{print $1"\t"$2"\t"$3"\t""0""\t"$9}' > non-promoter.narrowPeak
+    intersectBed -iobuf 200M -a $peak -b $promoter_file -u | awk '{print $1"\t"$2"\t"$3"\t""1""\t"$9}' > promoter.narrowPeak
+    intersectBed -iobuf 200M -a $peak -b $promoter_file -v | awk '{print $1"\t"$2"\t"$3"\t""0""\t"$9}' > non-promoter.narrowPeak
 
     echo -e "num_peaks_in_promoter\tnum_peaks_in_non-promoter\tnum_reads_in_promoter_peaks\tnum_reads_in_non-promoter_peaks" > 'promoter_percentage_'$name'.result'
 
     peak1=`wc -l promoter.narrowPeak | awk '{print $1}'`
     peak2=`wc -l non-promoter.narrowPeak | awk '{print $1}'`
-    read1=`intersectBed -a $bed -b promoter.narrowPeak -u -f 0.50 | wc -l`
-    read2=`intersectBed -a $bed -b non-promoter.narrowPeak -u -f 0.50 | wc -l`
+    read1=`intersectBed -iobuf 200M -a $bed -b promoter.narrowPeak -u -f 0.50 | wc -l`
+    read2=`intersectBed -iobuf 200M -a $bed -b non-promoter.narrowPeak -u -f 0.50 | wc -l`
 
     echo -e "$peak1\t$peak2\t$read1\t$read2" >> 'promoter_percentage_'$name'.result'
     sed -i 's/^-e //' 'promoter_percentage_'$name'.result'
@@ -575,8 +564,8 @@ s4.5_background () {
     awk '{print $1"\t"int(($3+$2)/2)-100000"\t"int(($3+$2)/2)+100000"\t"$4}' $peak > temp45
     awk '{if ($2<0) $2=0; print $0}' OFS="\t" temp45 > temp452
     mv temp452 temp45
-    intersectBed -a chr.peak -b temp45 -v | shuf - | head -50000 | sort -k1,1V -k2,2n > background
-    intersectBed -a $bed -b background -u -f 0.5 | sort -k1,1V -k2,2n > temp45
+    intersectBed -iobuf 200M -a chr.peak -b temp45 -v | shuf - | head -50000 | sort -k1,1V -k2,2n > background
+    intersectBed -iobuf 200M -a $bed -b background -u -f 0.5 | sort -k1,1V -k2,2n > temp45
     python $pipe_path'/rpkm_bin.py' background temp45 $size
 
     if [ $? == 0 ] 
@@ -604,6 +593,7 @@ s4.5_background () {
     mv background*.result  ./'data_collection_'$name
     mv promoter*.result ./'data_collection_'$name
     mv bin*.result ./'data_collection_'$name  2> /dev/null
+    rm temp45.txt chr.peak
 }
 
 # step 4.6, visualization
@@ -645,15 +635,8 @@ s4.6_visualization () {
     mv *_report.txt ../
     cd ..
 
-    rm promoter_peak.bed
-    rm chr.peak
-    rm -r 'saturation_'$name
-    rm temp45.txt
     rm pesudo_bl.txt 2> /dev/null
     rm refined_chrom_size.txt
-
-    rename 's/Trimed_/step3.1_Trimed_/' Trimed_*
-    rename 's/peakcall_/step3.3_peakcall_/' peakcall_*
 }
 
 
@@ -691,6 +674,7 @@ echo "Processing $name done"
 echo "Processing $name done"
 cd ..
 date
+
 
 
 

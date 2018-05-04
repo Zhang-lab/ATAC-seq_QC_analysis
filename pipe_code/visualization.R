@@ -438,7 +438,7 @@ if(is.na(image_id)) {
   file=list(`data_information`=part1)
 }
 
-part2=data.frame("cutadapt","1.12",as.numeric(args[9]),"FastQC","0.11.5")
+part2=data.frame("cutadapt","1.16",as.numeric(args[9]),"FastQC","0.11.7")
 colnames(part2)=c("program1","program1_version","removed_reads_by_cutadapt","program2","program2_version")
 file=append(file,list(`pre_alignment_stats`=part2))
 

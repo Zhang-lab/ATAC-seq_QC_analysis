@@ -7,7 +7,7 @@
 ###################################################################################################
 # read all necessary parameters and prepare data structure
 date
-pipe_version="v1.2"
+pipe_version="v1.2b"
 
 # get the absolute path
 pipe_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" 
@@ -16,7 +16,7 @@ md5=`md5sum $0 | awk '{print $1}'`
 # read parameters
 while getopts m:t:g:o:p:r:h  opts
 do case "$opts" in
-m) marker="$OPTARG";;    # default 'unmarked'
+m) marker="$OPTARG";;    # default 'no_annotation'
 t) threads="$OPTARG";;    # default 24
 g) species="$OPTARG";;    # hg19, hg38, mm9, mm10, danRer10
 o) R1="$OPTARG";;    # PE read 1, or the SE file, or the sra file
@@ -599,17 +599,11 @@ s4.5_background () {
 # step 4.6, visualization
 s4.6_visualization () {
     time=`head -1 pipe_processing.log | sed 's/ /_/g'`
-
-    if [ `ls /atac_seq/Resource/Genome/ 2> /dev/null | wc -l  ` == "5" ] ; then
-    host="zhanglab/atac-seq full"
-    elif [ `ls /atac_seq/Resource/Genome/ 2> /dev/null | wc -l  ` == "1" ] ; then
-    host="zhanglab/atac-seq mm10"
-    fi 
-
+    host="zhanglab/atac-seq base"
     image_id=`bash $pipe_path'/find_image_ID_digest.sh' $host  2> /dev/null | awk '{print $2}'`
     if [ -z "$image_id" ]
 	then
-	image_id="didn't get image_id"
+	image_id="failed_to_get_id"
     fi
 
     # clean result

@@ -1,6 +1,6 @@
 # Documentation v1
 ATAC-seq quality control matrix for Bo Zhang's lab  
-Last edit: 01/25/2018  
+Last edit: 05/04/2018  
 For any question please contact: shaopeng.liu@wustl.edu  											   
 
 **Outline**:  
@@ -63,7 +63,7 @@ We do **NOT** use "bedtools random" because it's hard to determine how many regi
 
 ### Step1, Pre-alignment   
 #### 1.1, Trimming by cutadapt  
-Tool: cutadapt v1.12  
+Tool: cutadapt v1.16  
 input: fastq file  
 output: trimmed fastq file  
 commands:   

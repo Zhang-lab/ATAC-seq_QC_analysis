@@ -1,5 +1,5 @@
-### Current version: v1.2b  
-Last update: 04/20/2018  
+### Current version: v2 (targetv2)    
+Last update: 05/07/2018  
   
   
   

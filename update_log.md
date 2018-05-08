@@ -7,6 +7,10 @@ Last update: 04/20/2018
 
   
 ### Update record:  
+`05/07/2018, targetv2` 
+1. fix version for target (v2)  
+2. fix docker image and image id for now  
+
 `04/20/2018, v1.2b`  
 1. modify `intersectBed` cmd for HTCF using, add `-iobuf 200M` for all of them   
 

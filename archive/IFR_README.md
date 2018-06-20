@@ -45,7 +45,7 @@ identified IFR from the peak and search any other possible IFR within the rest p
 ## Parameters Description
 We have incorporated the IFR identication into our ATAC-seq pipeline, and user can simply add `-i` in the bash command to 
 enable IFR identification with default parameters. User can also specify their own parameters by using 
-`-i <min_lfp,max_lfp,step_lfp,min_lsh,max_lsh,step_lsh,method,p_cuttoff>`. **These parameters are positional!!!**
+`-i <min_lfp,max_lfp,step_lfp,min_lsh,max_lsh,step_lsh,method,p_cutoff>`. **These parameters are positional!!!**
 
 (1) `min_lfp`: the minimum value of <img src="https://latex.codecogs.com/svg.latex?\Large&space;l_{FP}/2"/> (default `5`).  
 (2) `max_lfp`: the maximum value of <img src="https://latex.codecogs.com/svg.latex?\Large&space;l_{FP}/2"/> (default `15`).  
@@ -57,7 +57,7 @@ to maximum (default `2`).
 to maximum (default `20`).  
 (7) `method`: the method used for multiple testing adjustment (default `BH`). Possible values include `BH`, `BY`, `fdr`, `holm`, 
 `bonferroni`, `hochberg` and `hommel`.  
-(8) `p_cuttoff`: the threshold of *p*-value (default `0.05`).
+(8) `p_cutoff`: the threshold of *p*-value (default `0.05`).
 
 ## Parallel Processing
 Parallel processing is enabled by [GNU](https://www.gnu.org/software/parallel/parallel_tutorial.html), and shared the same 

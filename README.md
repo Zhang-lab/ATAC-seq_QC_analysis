@@ -1,9 +1,6 @@
 # Atac-seq_Quality_Control_pipe
 This is for the QC matrix construction, data analysis and visualization for Atac-seq data.  
-Current version: `V1.2`  
-Current Docker version:   
-zhanglab/atac-seq:full `sha256:29f0b04dbcbfa9c1641556a3790f2f6e2f66d9ef923bf26bc5f03c870c97b799`  
-zhanglab/atac-seq:mm10 `sha256:9e45678f6b9c742d114fa2ffb4cb8d4aa32735047297a26dd5ea7761b0ea6a58`  
+Current version: `V3.1`   
 
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
@@ -18,7 +15,7 @@ Step1. download singularity container (you only need download the containcer for
 #### Please chooice one of them:
 ```bash
 # 1. download from local server (mm10 image):  
-wget -O zlab_atac.simg http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac_mm10_v1.1b.simg  
+wget -O zlab_atac.simg http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac_mm10_v3.1.simg  
 ```
 
 Step2. process data by the singularity image: 

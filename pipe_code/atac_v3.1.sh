@@ -8,7 +8,7 @@
 # read all necessary parameters and prepare data structure
 date
 pipe_version="v3.1"
-host="zhanglab/atac-seq target"
+host="zhanglab/atac-seq base"
 
 # get the absolute path
 pipe_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" 
@@ -103,7 +103,7 @@ if [[ $R1 == *.sra ]]
         name=`echo ${R1%.fastq*}`
         raw1=$R1
     else
-        echo "please use fastq(fastq.gz) file or sra file......"
+        echo "please use fastq(or fastq.gz) file or sra file......"
         exit
 fi
 
@@ -779,6 +779,7 @@ echo "Processing $name done"
 echo "Processing $name done"
 cd ..
 date
+
 
 
 

@@ -10,7 +10,7 @@ threads=24
 ifr_parameter=
 
 pipe_version="v3.1"
-host="zhanglab/atac-seq target"
+host="zhanglab/atac-seq base"
 
 # get the absolute path
 pipe_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" 
@@ -624,6 +624,7 @@ s4.7_ifr_finding () {
     cat IFR*txt | sed "s/\"//g" | sort -k1,1V -k2,2n | awk '{print $1"\t"$2"\t"$3"\t""found_IFR_"NR"\t"$4"\t"".""\t"$5}' > "step4.7_IFR_"$name".bed"
     rm IFR*txt
 }
+
 ############################
 
 
@@ -692,5 +693,6 @@ do
     echo "processing $name end time is `date`"
 
 done
+
 
 

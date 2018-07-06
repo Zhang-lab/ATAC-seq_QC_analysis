@@ -442,11 +442,11 @@ part2=data.frame("cutadapt","1.16",as.numeric(args[9]),"FastQC","0.11.7")
 colnames(part2)=c("program1","program1_version","written_reads_by_cutadapt","program2","program2_version")
 file=append(file,list(`pre_alignment_stats`=part2))
 
-part3=data.frame("bwa","0.7.16a","bwa men","methylQA","0.1.9","methylQA atac",map$total,map$mapped,map[,6],map[,7],useful[,5])
+part3=data.frame("bwa","0.7.16a","bwa men","methylQA","0.2.1","methylQA atac",map$total,map$mapped,map[,6],map[,7],useful[,5])
 colnames(part3)=c("alignment_program","alignment_program_version","alignment_program_parameters","post_alignment_program","post_alignment_program_version","post_alignment_program_parameters","total_reads","mapped_reads","uniquely_mapped_reads","non-redundant_mapped_reads","useful_single_ends")
 file=append(file,list(`mapping_stats`=part3))
 
-part9=data.frame(round(ref.dedup[which(ref.dedup$class=='Sample'),2],2)/100,(1-map$after_align_dup))
+part9=data.frame(round(ref.dedup[which(ref.dedup$class=='Sample'),2],2)/100,map$after_align_dup)
 colnames(part9)=c("before_alignment_library_duplicates_percentage","after_alignment_PCR_duplicates_percentage")
 file=append(file,list(`library_complexity`=part9))
 
@@ -479,7 +479,7 @@ colnames(part7)=c("sequence_depth","peaks_number","percentage_of_peak_region_rec
 file=append(file,list(`saturation`=part7))
 
 part8=data.frame(round(ref.enrich2[which(ref.enrich2$class=='Sample'),1],2),round(ref.enrich3[which(ref.enrich3$class=='Sample'),1],2),1-round(dicho[,2],2)/100)
-colnames(part8)=c("enrichment_ratio_in_coding_promoter_regions","subsampled_10M_enrichment_ratio","percentage_of_background_RPKM_larger_than_0.3777")
+colnames(part8)=c("enrichment_score_in_coding_promoter_regions","subsampled_10M_enrichment_score","percentage_of_background_RPKM_larger_than_0.3777")
 file=append(file,list(`enrichment`=part8))
 
 part11=data.frame(paste("?",paste(yield[,1],sep="",collapse=","),"?",sep=""),paste("?",paste(yield[,2],sep="",collapse=","),"?",sep=""),paste("?",paste(yield[,3],sep="",collapse=","),"?",sep=""),paste("?",paste(yield[,4],sep="",collapse=","),"?",sep=""))
@@ -496,5 +496,6 @@ names(file)="Sample_QC_info"
 test=try(library(jsonlite),silent=T)
 
 capture.output(toJSON(file,pretty=T),file=paste(name,"report.json",sep='_'))
+
 
 

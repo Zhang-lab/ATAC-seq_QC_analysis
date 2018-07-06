@@ -1,18 +1,18 @@
 ### Current version: v3.1  
-Last update: 07/05/2018  
+Last update: 07/06/2018  
   
   
 ### To be added soon:  
 
   
 ### Update record:  
-`07/05/2018, v3.1`  
+`07/06/2018, v3.1`  
 1. modify QC table: effect reads -> useful single ends; 2 deup -> dup rate    
 2. edit help information  
 3. adjust saturation calculation: use overlapped region coverage  
 4. correct visualization.R percentage calculation  
 5. add R package "data.table" into docker  
-
+6. fix that all "percentage" in json output are numeric values (0.01 for 1%)  
 
 `06/28/2018, v3`  
 1. add insertion free region finding algorithm  

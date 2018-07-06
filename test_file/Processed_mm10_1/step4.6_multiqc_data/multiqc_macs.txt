@@ -1,0 +1,12 @@
+Sample	treatment_redundant_rate	treatment_max_duplicates	treatment_fragments_after_filtering	fragment_size	treatment_fragments_total	d
+peakcall_Trimed_rmbl_mm10_1_sample10.open.bed	0.0	1000.0	41056.0	150.0	41056.0	150.0
+peakcall_Trimed_rmbl_mm10_1_sample20.open.bed	0.0	1000.0	82113.0	150.0	82113.0	150.0
+peakcall_Trimed_rmbl_mm10_1_sample30.open.bed	0.0	1000.0	123170.0	150.0	123170.0	150.0
+peakcall_Trimed_rmbl_mm10_1_sample40.open.bed	0.0	1000.0	164227.0	150.0	164227.0	150.0
+peakcall_Trimed_rmbl_mm10_1_sample5.open.bed	0.0	1000.0	20528.0	150.0	20528.0	150.0
+peakcall_Trimed_rmbl_mm10_1_sample50.open.bed	0.0	1000.0	205284.0	150.0	205284.0	150.0
+peakcall_Trimed_rmbl_mm10_1_sample60.open.bed	0.0	1000.0	246341.0	150.0	246341.0	150.0
+peakcall_Trimed_rmbl_mm10_1_sample70.open.bed	0.0	1000.0	287398.0	150.0	287398.0	150.0
+peakcall_Trimed_rmbl_mm10_1_sample80.open.bed	0.0	1000.0	328455.0	150.0	328455.0	150.0
+peakcall_Trimed_rmbl_mm10_1_sample90.open.bed	0.0	1000.0	369512.0	150.0	369512.0	150.0
+step3.4_peakcall_mm10_1	0.0	1000.0	410569.0	150.0	410569.0	150.0

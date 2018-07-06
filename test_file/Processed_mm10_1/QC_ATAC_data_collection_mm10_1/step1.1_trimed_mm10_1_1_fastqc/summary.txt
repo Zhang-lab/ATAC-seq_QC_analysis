@@ -1,0 +1,12 @@
+PASS	Basic Statistics	step1.1_trimed_mm10_1_1.fastq
+PASS	Per base sequence quality	step1.1_trimed_mm10_1_1.fastq
+PASS	Per tile sequence quality	step1.1_trimed_mm10_1_1.fastq
+PASS	Per sequence quality scores	step1.1_trimed_mm10_1_1.fastq
+FAIL	Per base sequence content	step1.1_trimed_mm10_1_1.fastq
+PASS	Per sequence GC content	step1.1_trimed_mm10_1_1.fastq
+PASS	Per base N content	step1.1_trimed_mm10_1_1.fastq
+WARN	Sequence Length Distribution	step1.1_trimed_mm10_1_1.fastq
+PASS	Sequence Duplication Levels	step1.1_trimed_mm10_1_1.fastq
+PASS	Overrepresented sequences	step1.1_trimed_mm10_1_1.fastq
+PASS	Adapter Content	step1.1_trimed_mm10_1_1.fastq
+WARN	Kmer Content	step1.1_trimed_mm10_1_1.fastq

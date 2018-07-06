@@ -1,0 +1,82 @@
+This is cutadapt 1.16 with Python 3.6.4
+Command line parameters: -a CTGTCTCTTATACACATCT -A CTGTCTCTTATACACATCT --quality-cutoff=15,10 --minimum-length=36 -o step1.1_trimed_mm10_1_1.fastq -p step1.1_trimed_mm10_1_2.fastq mm10_1.fastq.gz mm10_2.fastq.gz
+Running on 1 core
+Trimming 2 adapters with at most 10.0% errors in paired-end mode ...
+Finished in 6.03 s (24 us/read; 2.49 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            250,000
+  Read 1 with adapter:                   2,549 (1.0%)
+  Read 2 with adapter:                   2,807 (1.1%)
+Pairs that were too short:               1,224 (0.5%)
+Pairs written (passing filters):       248,776 (99.5%)
+
+Total basepairs processed:    24,953,942 bp
+  Read 1:    12,478,126 bp
+  Read 2:    12,475,816 bp
+Quality-trimmed:                  38,620 bp (0.2%)
+  Read 1:         9,901 bp
+  Read 2:        28,719 bp
+Total written (filtered):     24,817,528 bp (99.5%)
+  Read 1:    12,419,123 bp
+  Read 2:    12,398,405 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CTGTCTCTTATACACATCT; Type: regular 3'; Length: 19; Trimmed: 2549 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1
+
+Bases preceding removed adapters:
+  A: 20.8%
+  C: 25.9%
+  G: 25.3%
+  T: 28.0%
+  none/other: 0.0%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	1989	3906.2	0	1989
+4	124	976.6	0	124
+5	295	244.1	0	295
+6	27	61.0	0	27
+7	73	15.3	0	73
+8	20	3.8	0	20
+9	1	1.0	0	0 1
+10	5	0.2	1	0 5
+11	9	0.1	1	0 9
+12	1	0.0	1	0 1
+13	4	0.0	1	0 4
+15	1	0.0	1	0 1
+
+=== Second read: Adapter 2 ===
+
+Sequence: CTGTCTCTTATACACATCT; Type: regular 3'; Length: 19; Trimmed: 2807 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1
+
+Bases preceding removed adapters:
+  A: 20.4%
+  C: 28.6%
+  G: 25.8%
+  T: 25.2%
+  none/other: 0.0%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	2125	3906.2	0	2125
+4	179	976.6	0	179
+5	358	244.1	0	358
+6	39	61.0	0	39
+7	56	15.3	0	56
+8	25	3.8	0	25
+9	1	1.0	0	0 1
+10	4	0.2	1	0 4
+11	7	0.1	1	0 7
+12	6	0.0	1	0 6
+13	4	0.0	1	0 4
+15	3	0.0	1	0 3
+

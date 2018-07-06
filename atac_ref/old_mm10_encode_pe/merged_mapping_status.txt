@@ -1,0 +1,6 @@
+file	total	written_reads	mapped	mapped_ratio	uniq_mapped	non-redundant_uniq_mapped	effect_ratio	fsatqc_dedup	after_align_dedup	number_of_reads_under_peak	rup_ratio	sub10M_enrichment	coding_enrichment	bg_gt37_percentage
+Merged_NoIndex_L00X_R1_001.fastq.gz_Ad2.8	394389	378139	290042	.73	231409	228930	.58	96.4035	.886	71760	15.67	10.0087878839	26.963	6.34
+Merged_NoIndex_L00X_R1_001.fastq.gz_Ad2.9	394389	378139	290042	.73	231409	228930	.58	96.4035	.886	71760	15.67	10.0087878839	26.963	6.34
+Merged_NoIndex_L00X_R1_001.fastq.gz_Ad2.1	394389	378139	290042	.73	231409	228930	.58	96.4035	.886	71760	15.67	10.0087878839	26.963	6.34
+Merged_NoIndex_L00X_R1_001.fastq.gz_Ad2.2	394389	378139	290042	.73	231409	228930	.58	96.4035	.886	71760	15.67	10.0087878839	26.963	6.34
+Merged_NoIndex_L00X_R1_001.fastq.gz_Ad2.3	394389	378139	290042	.73	231409	228930	.58	96.4035	.886	71760	15.67	10.0087878839	26.963	6.34

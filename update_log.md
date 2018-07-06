@@ -1,12 +1,24 @@
-### Current version: v2 (targetv2)    
-Last update: 05/07/2018  
-  
+### Current version: v3.1  
+Last update: 07/05/2018  
   
   
 ### To be added soon:  
 
   
 ### Update record:  
+`07/05/2018, v3.1`  
+1. modify QC table: effect reads -> useful single ends; 2 deup -> dup rate    
+2. edit help information  
+3. adjust saturation calculation: use overlapped region coverage  
+4. correct visualization.R percentage calculation  
+5. add R package "data.table" into docker  
+
+
+`06/28/2018, v3`  
+1. add insertion free region finding algorithm  
+2. remove parallel running  
+3. modify QC table and output structure
+
 `05/07/2018, targetv2` 
 1. fix version for target (v2)  
 2. fix docker image and image id for now  

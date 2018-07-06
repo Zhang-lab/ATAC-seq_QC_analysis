@@ -12,10 +12,12 @@ library(ggplot2)
 library(cowplot)
 
 # chromosome distribution
-chr=read.table(paste("chrom_count",name,sep="_"))
-r=as.numeric(rownames(chr[which(chr$V1=='chrM'),]))
-chr=rbind(chr[-r,],chr[r,])
-rownames(chr)=NULL
+chr=read.table(paste("step2.2_chrom_count",name,sep="_"))
+if("chrM"%in%chr$V1==TRUE) {
+  r=as.numeric(rownames(chr[which(chr$V1=='chrM'),]))
+  chr=rbind(chr[-r,],chr[r,])
+  rownames(chr)=NULL
+}
 chr$V1=factor(c(nrow(chr):1),labels=rev(as.character(chr$V1)))
 chr$V2=chr$V2/sum(chr$V2)
 chr$V3=chr$V3/sum(chr$V3)
@@ -41,7 +43,7 @@ ggplot(chr,aes(x=ind,y=values,fill=chromosome))+
 dev.off()
 
 # saturation analysis
-saturate=read.table(paste("saturation",name,sep="_"),header=T,sep='\t')
+saturate=read.table(paste("step4.4_saturation",name,sep="_"),header=T,sep='\t')
 saturate=saturate[,-2]
 colnames(saturate)=c("depth","peak","percentage","marker")
 
@@ -66,7 +68,7 @@ if(max(saturate$percentage)<=1) {
 dev.off()
 
 # peak legth distribution
-peakl=read.table(paste("peak_length_distri",name,sep="_"))
+peakl=read.table(paste("step3.4_peak_length_distri",name,sep="_"))
 peakl=rbind(peakl[which(peakl$V1<1500),],c(1500,sum(peakl[which(peakl$V1>=1500),2])))
 peakl$V2=peakl$V2/sum(peakl$V2)
 
@@ -89,7 +91,7 @@ dense_plot
 dev.off()
 
 # insertion distribution
-insert=read.table(paste("insertion_distri",name,sep="_"))
+insert=read.table(paste("step3.1_insertion_distri",name,sep="_"))
 insert$V2=insert$V2/sum(insert$V2)
 
 dense_plot=ggplot(insert,aes(x=V1,y=..scaled..,weight=V2))+geom_density(size=1,adjust=0.2)+
@@ -121,7 +123,7 @@ while(i<=dim(ref.dedup)[1]) {
   i=i+2
 }
 ref.dedup=data.frame(filename,ratio,class="ENCODE PE")
-dedup=read.table(paste("dedup_percentage",name,sep="_"),header=T,sep='\t')
+dedup=read.table(paste("step1.3_dedup_percentage",name,sep="_"),header=T,sep='\t')
 if(dim(dedup)[1]>1) {
   dedup=data.frame(filename=strsplit(as.character(dedup[1,1]),'_1',fixed=T)[[1]][1],ratio=100-(dedup[1,2]+dedup[2,2])/2,class='Sample')
   data_type="Paired-end data"
@@ -133,14 +135,14 @@ ref.dedup=rbind(ref.dedup,dedup)
 
 # enrichment
 ref.enrich2=read.table(paste(refpath,'merged_coding_promoter_peak_enrichment.txt',sep='/'),header=T,sep='\t') ####
-enrich2=read.table(paste("enrichment_ratio_in_promoter",name,sep="_"),header=T,sep='\t')
+enrich2=read.table(paste("step4.2_enrichment_ratio_in_promoter",name,sep="_"),header=T,sep='\t')
 ref.enrich2=data.frame(enrichment_ratio=ref.enrich2[,5],class="ENCODE PE")
 enrich2=data.frame(enrichment_ratio=enrich2[,5],class="Sample")
 ref.enrich2=rbind(ref.enrich2,enrich2)
 ref.enrich2[,3]="Enrichment ratio in coding promoter regions"
 
 ref.enrich3=read.table(paste(refpath,'merged_sub10M_enrichment.txt',sep='/'),header=T,sep='\t') ####
-enrich3=read.table(paste("sub10M_enrichment",name,sep="_"),header=T,sep='\t')
+enrich3=read.table(paste("step4.2_sub10M_enrichment",name,sep="_"),header=T,sep='\t')
 ref.enrich3=data.frame(enrichment_ratio=ref.enrich3[,5],class="ENCODE PE")
 enrich3=data.frame(enrichment_ratio=enrich3[,5],class="Sample")
 ref.enrich3=rbind(ref.enrich3,enrich3)
@@ -174,18 +176,18 @@ dev.off()
 
 # mapping status
 ref.map=read.table(paste(refpath,'merged_mapping_status.txt',sep='/'),header=T,sep='\t') ####
-ref.map=ref.map[,c(2,6,10,12)]
+ref.map=ref.map[,c(2,7,10,12)]
 ref.map=data.frame(ref.map,class="ENCODE PE")
-map=read.table(paste("mapping_status",name,sep="_"),header=T,sep='\t')
-map=map[,c(2,6,10,12)]
+map=read.table(paste("QC_data_collection",name,sep="_"),header=T,sep='\t')
+map=map[,c(2,7,10,12)]
 map=data.frame(map,class="Sample")
 ref.map=rbind(ref.map,map)
-ref.map$nodup_ratio=1-ref.map$nodup_ratio
-map$nodup_ratio=1-map$nodup_ratio
+#ref.map$after_align_dup=1-ref.map$after_align_dup
+#map$after_align_dup=1-map$after_align_dup
 
 png("plot4.3_PCR_duplicates_percentage.png",height=2000,width=1400,res=300)
 options(warn=-1)
-plot=ggplot(ref.map,aes(x=class,y=100*nodup_ratio,fill=class))+
+plot=ggplot(ref.map,aes(x=class,y=100*after_align_dup,fill=class))+
   stat_boxplot(geom="errorbar",size=1,width=0.3,aes(colour=class))+
   geom_boxplot(outlier.shape=NA,width=0.3,lwd=1,fatten=1,aes(colour=class))+
   scale_x_discrete(name="")+
@@ -198,7 +200,7 @@ plot=ggplot(ref.map,aes(x=class,y=100*nodup_ratio,fill=class))+
         axis.title=element_text(face="bold"),
         axis.text.x=element_text(size=10,face="bold",colour=c(`ENCODE PE`="black",Sample="red")),
         axis.text.y=element_text(size=10,face="bold"))
-if(map$nodup_ratio*100<30) {
+if(1-map$after_align_dup*100<30) {
   plot+scale_y_continuous(name="Percentage of PCR duplicates",limits=c(0,30))
 } else {
   plot+scale_y_continuous(name="Percentage of PCR duplicates")
@@ -255,7 +257,7 @@ if(map[1,1]<10e+7) {
 dev.off()
 
 # Yield plot
-yield=read.table(paste("yield",name,sep="_"),sep='\t',header=T)
+yield=read.table(paste("step2.3_yield",name,sep="_"),sep='\t',header=T)
 yield=yield[yield$TOTAL_READS<=1e8,]
 
 png("plot2.3_yield_distinction.png",height=1800,width=2600,res=300)
@@ -279,7 +281,7 @@ ggplot(yield,aes(x=TOTAL_READS,y=EXPECTED_DISTINCT))+
 dev.off()
 
 # promoter
-promoter=read.table(paste("promoter_percentage",name,sep="_"),header=T,sep='\t')
+promoter=read.table(paste("step4.5_promoter_percentage",name,sep="_"),header=T,sep='\t')
 peak=data.frame(group=c("Peaks in promoter region","Peaks in non-promoter region"),value=as.numeric(promoter[1,1:2]))
 read=data.frame(group=c("Reads under peaks in promoter region","Reads under peaks in non-promoter region"),value=as.numeric(promoter[1,3:4]))
 
@@ -318,7 +320,7 @@ options(warn=0)
 dev.off()
 
 options(warn=-1)
-top=try(read.table(paste("bin",name,sep="_"),sep='\t'),silent=T)
+top=try(read.table(paste("step4.5_bin",name,sep="_"),sep='\t'),silent=T)
 options(warn=0)
 if(class(top)!="try-error"){
   top=data.frame(rank=as.numeric(top$V1),index=as.numeric(top$V2))
@@ -348,13 +350,13 @@ genome=args[8]
 report=append(report,list(Pipeline.version=beta,Genome=genome,Data.type=data_type))
 
 ref.useful=read.table(paste(refpath,'merged_useful_reads.txt',sep='/'),header=T,sep='\t')
-useful=read.table(paste("useful_reads",name,sep="_"),header=T,sep='\t')
+useful=read.table(paste("step3.1_useful_reads",name,sep="_"),header=T,sep='\t')
 
 ref.map=read.table(paste(refpath,'merged_mapping_status.txt',sep='/'),header=T,sep='\t') ####
 refer=c(paste(round(mean(ref.map$total)),'(SD:',round(sd(ref.map$total)),')',sep=''))
 refer=c(refer,paste(round(mean(ref.map$mapped)),'(SD:',round(sd(ref.map$mapped)),')',sep=''))
 
-map=read.table(paste("mapping_status",name,sep="_"),header=T,sep='\t')
+map=read.table(paste("QC_data_collection",name,sep="_"),header=T,sep='\t')
 samples=as.numeric(c(map$total,map$mapped))
 
 ref.chr=read.table(paste(refpath,'merged_chrom_count.txt',sep='/'),header=T,sep='\t')
@@ -362,36 +364,34 @@ rownames(ref.chr)=ref.chr$chrom
 ref.chr=ref.chr[,-1]
 ref.chr=as.matrix(ref.chr[,seq(4,269,5)])
 
-chr=read.table(paste("chrom_count",name,sep="_"),sep='\t')
+chr=read.table(paste("step2.2_chrom_count",name,sep="_"),sep='\t')
 if(genome!="danRer10") {
-  refer=c(refer,"8.02%(SD:4.61%)")
-  refer=c(refer,paste(round(mean(ref.map[,6])),'(SD:',round(sd(ref.map[,6])),')',sep=''))
-  refer=c(refer,paste(round(mean(ref.chr[21,]/ref.map[,6]),4)*100,'%(SD:',round(sd(ref.chr[21,]/ref.map[,6]),4)*100,'%)',sep=''))
-  refer=c(refer,paste(round(mean(ref.chr[22,]/ref.map[,6]),4)*100,'%(SD:',round(sd(ref.chr[22,]/ref.map[,6]),4)*100,'%)',sep=''))
-  refer=c(refer,paste(round(mean(ref.map[,8])),'(SD:',round(sd(ref.map[,8])),')',sep=''))
+  refer=c(refer,"8.34%(SD:5.06%)")
+  refer=c(refer,paste(round(mean(ref.map[,7])),'(SD:',round(sd(ref.map[,7])),')',sep=''))
+  refer=c(refer,paste(round(mean( as.numeric(ref.chr[21,][seq(6, length(ref.chr[21,]), 5)]) ),4),'%(SD:',round(sd( as.numeric(ref.chr[21,][seq(6, length(ref.chr[21,]), 5)]) ),4),'%)',sep=''))
+  refer=c(refer,paste(round(mean( as.numeric(ref.chr[22,][seq(6, length(ref.chr[22,]), 5)]) ),4),'%(SD:',round(sd(  as.numeric(ref.chr[22,][seq(6, length(ref.chr[22,]), 5)]) ),4),'%)',sep=''))
   refer=c(refer,paste(round(mean(ref.useful[,5])),'(SD:',round(sd(ref.useful[,5])),')',sep=''))
   
-  samples=c(samples,paste(round(as.numeric(args[10]),4)*100,'%',sep=''),as.numeric(map[,6]),paste(round(chr[which(chr[,1]=='chrX'),3]/map[,6],4)*100,'%',sep=''),paste(round(chr[which(chr[,1]=='chrY'),3]/map[,6],4)*100,'%',sep=''),map[,8],useful[,5])
+  samples=c(samples,paste(round(as.numeric(args[10]),4)*100,'%',sep=''),as.numeric(map[,7]),paste(round(chr[which(chr[,1]=='chrX'),3]/map[,7],4)*100,'%',sep=''),paste(round(chr[which(chr[,1]=='chrY'),3]/map[,7],4)*100,'%',sep=''),useful[,5])
   library=data.frame(samples,refer)
   colnames(library)=c("Sample","ENCODE PE")
-  rownames(library)=c("Total reads","Mapped reads","Percentage of uniquely mapped reads in chrM","Non-redundant uniquely mapped reads","Percentage of reads in chrX","Percentage of reads in chrY","Useful reads","Useful single ends")
+  rownames(library)=c("Total reads","Mapped reads","Percentage of uniquely mapped reads in chrM","Non-redundant uniquely mapped reads","Percentage of reads in chrX","Percentage of reads in chrY","Useful single ends")
   report=append(report,list(Library.size=library))
 } else {
-  refer=c(refer,"8.02%(SD:4.61%)")
-  refer=c(refer,paste(round(mean(ref.map[,6])),'(SD:',round(sd(ref.map[,6])),')',sep=''))
-  refer=c(refer,paste(round(mean(ref.map[,8])),'(SD:',round(sd(ref.map[,8])),')',sep=''))
+  refer=c(refer,"8.34%(SD:5.06%)")
+  refer=c(refer,paste(round(mean(ref.map[,7])),'(SD:',round(sd(ref.map[,7])),')',sep=''))
   refer=c(refer,paste(round(mean(ref.useful[,5])),'(SD:',round(sd(ref.useful[,5])),')',sep=''))
   
-  samples=c(samples,paste(round(as.numeric(args[10]),4)*100,'%',sep=''),as.numeric(map[,6]),map[,8],useful[,5])
+  samples=c(samples,paste(round(as.numeric(args[10]),4)*100,'%',sep=''),as.numeric(map[,7]),useful[,5])
   library=data.frame(samples,refer)
   colnames(library)=c("Sample","ENCODE PE")
-  rownames(library)=c("Total reads","Mapped reads","Percentage of uniquely mapped reads in chrM","Non-redundant uniquely mapped reads","Useful reads","Useful single ends")
+  rownames(library)=c("Total reads","Mapped reads","Percentage of uniquely mapped reads in chrM","Non-redundant uniquely mapped reads","Useful single ends")
   report=append(report,list(Library.size=library))
 }
 
 refer=paste(round(mean(ref.dedup[which(ref.dedup$class=='ENCODE PE'),2]),2),'%(SD:',round(sd(ref.dedup[which(ref.dedup$class=='ENCODE PE'),2]),2),'%)',sep='')
-refer=c(refer,paste(round(mean(1-ref.map$nodup_ratio),4)*100,'%(SD:',round(sd(1-ref.map$nodup_ratio),4)*100,'%)',sep=''))
-samples=c(paste(round(ref.dedup[which(ref.dedup$class=='Sample'),2],2),'%',sep=''),paste((1-map$nodup_ratio)*100,'%',sep=''))
+refer=c(refer,paste(round(mean(1-ref.map$after_align_dup),4)*100,'%(SD:',round(sd(1-ref.map$after_align_dup),4)*100,'%)',sep=''))
+samples=c(paste(round(ref.dedup[which(ref.dedup$class=='Sample'),2],2),'%',sep=''),paste((1-map$after_align_dup)*100,'%',sep=''))
 library=data.frame(samples,refer)
 colnames(library)=c("Sample","ENCODE PE")
 rownames(library)=c("Before alignment library duplicates percentage","After alignment PCR duplicates percentage")
@@ -408,7 +408,7 @@ refer=c(refer,paste(round(mean(ref.enrich2[which(ref.enrich2$class=='ENCODE PE')
 refer=c(refer,paste(round(mean(ref.enrich3[which(ref.enrich3$class=='ENCODE PE'),1]),2),'(SD:',round(sd(ref.enrich3[which(ref.enrich3$class=='ENCODE PE'),1]),2),')',sep=''))
 ref.dicho=read.table(paste(refpath,'merged_bg_dichoto.txt',sep='/'),header=T,sep='\t')
 ref.dicho=data.frame(ref.dicho[2:4],class="ENCODE PE")
-dicho=read.table(paste("dichoto_bg",name,sep="_"),sep='\t')
+dicho=read.table(paste("step4.5_dichoto_bg",name,sep="_"),sep='\t')
 dicho=data.frame(dicho,class="Sample")
 colnames(dicho)=colnames(ref.dicho)
 ref.dicho=rbind(ref.dicho,dicho)
@@ -439,14 +439,14 @@ if(is.na(image_id)) {
 }
 
 part2=data.frame("cutadapt","1.16",as.numeric(args[9]),"FastQC","0.11.7")
-colnames(part2)=c("program1","program1_version","removed_reads_by_cutadapt","program2","program2_version")
+colnames(part2)=c("program1","program1_version","written_reads_by_cutadapt","program2","program2_version")
 file=append(file,list(`pre_alignment_stats`=part2))
 
-part3=data.frame("bwa","0.7.16a","bwa men","methylQA","0.1.9","methylQA atac",map$total,map$mapped,map[,5],map[,6],map[,8],useful[,5])
-colnames(part3)=c("alignment_program","alignment_program_version","alignment_program_parameters","post_alignment_program","post_alignment_program_version","post_alignment_program_parameters","total_reads","mapped_reads","uniquely_mapped_reads","non-redundant_mapped_reads","useful_reads","useful_single_ends")
+part3=data.frame("bwa","0.7.16a","bwa men","methylQA","0.1.9","methylQA atac",map$total,map$mapped,map[,6],map[,7],useful[,5])
+colnames(part3)=c("alignment_program","alignment_program_version","alignment_program_parameters","post_alignment_program","post_alignment_program_version","post_alignment_program_parameters","total_reads","mapped_reads","uniquely_mapped_reads","non-redundant_mapped_reads","useful_single_ends")
 file=append(file,list(`mapping_stats`=part3))
 
-part9=data.frame(round(ref.dedup[which(ref.dedup$class=='Sample'),2],2)/100,(1-map$nodup_ratio))
+part9=data.frame(round(ref.dedup[which(ref.dedup$class=='Sample'),2],2)/100,(1-map$after_align_dup))
 colnames(part9)=c("before_alignment_library_duplicates_percentage","after_alignment_PCR_duplicates_percentage")
 file=append(file,list(`library_complexity`=part9))
 
@@ -455,13 +455,13 @@ colnames(part4)=c("insertion_size","density")
 file=append(file,list(`insertion_size_distribution`=part4))
 
 autosome=chr[which(!chr$V1%in%c("chrM","chrX","chrY")),c(1,3)]
-autosome$V3=round(autosome$V3/map[,6],4)
+autosome$V3=round(autosome$V3/map[,7],4)
 autosome$V1=paste("@",autosome$V1,"@",sep="")
 autosome=paste(autosome$V1,autosome$V3,sep=": ")
 autosome=paste("!",paste(autosome,sep="",collapse=", "),"!",sep="")
 
 if(genome!="danRer10") {
-  part5=data.frame(round(as.numeric(args[10]),4),round(chr[which(chr[,1]=='chrX'),3]/map[,6],4),round(chr[which(chr[,1]=='chrY'),3]/map[,6],4),autosome)
+  part5=data.frame(round(as.numeric(args[10]),4),round(chr[which(chr[,1]=='chrX'),3]/map[,7],4),round(chr[which(chr[,1]=='chrY'),3]/map[,7],4),autosome)
   colnames(part5)=c("percentage_of_uniquely_mapped_reads_in_chrM","percentage_of_non-redundant_uniquely_mapped_reads_in_chrX","percentage_of_non-redundant_uniquely_mapped_reads_in_chrY","Percentage_of_non-redundant_uniquely_mapped_reads_in_autosome")
   file=append(file,list(`mapping_distribution`=part5))
 } else {
@@ -475,7 +475,7 @@ colnames(part6)=c("peak_calling_software","peak_calling_parameters","peak_thresh
 file=append(file,list(`peak_analysis`=part6))
 
 part7=data.frame(paste("?",paste(saturate[,1],sep="",collapse=","),"?",sep=""),paste("?",paste(saturate[,2],sep="",collapse=","),"?",sep=""),paste("?",paste(saturate[,3],sep="",collapse=","),"?",sep=""))
-colnames(part7)=c("sequence_depth","peaks_number","percentage_of_peaks_recaptured")
+colnames(part7)=c("sequence_depth","peaks_number","percentage_of_peak_region_recaptured")
 file=append(file,list(`saturation`=part7))
 
 part8=data.frame(round(ref.enrich2[which(ref.enrich2$class=='Sample'),1],2),round(ref.enrich3[which(ref.enrich3$class=='Sample'),1],2),1-round(dicho[,2],2)/100)
@@ -496,4 +496,5 @@ names(file)="Sample_QC_info"
 test=try(library(jsonlite),silent=T)
 
 capture.output(toJSON(file,pretty=T),file=paste(name,"report.json",sep='_'))
+
 

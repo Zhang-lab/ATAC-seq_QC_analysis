@@ -1,8 +1,8 @@
 {
   "ENCODE PE refernce": {
     "data information": {
-        "pipe version": "V1.1a",
-        "Docker tag": "feb252018",
+        "pipe version": "V3",
+        "Docker tag": "target",
         "genome": "mm10",
         "read type": "Paired-end data"
     },

@@ -12,16 +12,16 @@ For any question, please contact Wustl.Zhanglab@gmail.com
 Singularity 2-step solution (easiest way)  
 
 Step1. download singularity container (you only need download the containcer for once, then you can use them directly):  
-#### Please chooice one of them:
+####  
 ```bash
-# 1. download from local server (mm10 image):  
+# download image from local server:  
 wget -O zlab_atac.simg http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac_mm10_v3.1.simg  
 ```
 
 Step2. process data by the singularity image: 
-#### Please run at same directory with your data  
+#### Please run at same directory with your data OR the soft link of your data    
 ```bash
-singularity run -B ./:/scratch zlab_atac.simg  -r <SE/PE> -g <mm10/mm9/hg19/hg38/danRer10>  -o <read_file1>  -p <read_file2>  
+singularity run -H ./:/scratch zlab_atac.simg  -r <SE/PE> -g <mm10/mm9/hg19/hg38/danRer10>  -o <read_file1>  -p <read_file2>  
 ```
 
 That's it!
@@ -36,15 +36,15 @@ That's it!
 e.g:
 a) mm10 SE data A.fastq  
 ```bash
-singularity run -B ./:/scratch zlab_atac.simg  -r SE -g mm10 -o A.fastq  
+singularity run -H ./:/scratch zlab_atac.simg  -r SE -g mm10 -o A.fastq  
 ```
 b) hg38 PE data B_1.fastq B_2.fastq  
 ```bash
-singularity run -B ./:/scratch zlab_atac.simg  -r PE -g hg38 -o B_1.fastq  -p B_2.fastq  
+singularity run -H ./:/scratch zlab_atac.simg  -r PE -g hg38 -o B_1.fastq  -p B_2.fastq  
 ```
 c) danRer10 PE data in sra file C.sra  
 ```bash
-singularity run -B ./:/scratch zlab_atac.simg  -r PE -g danRer10 -o C.sra  
+singularity run -H ./:/scratch zlab_atac.simg  -r PE -g danRer10 -o C.sra  
 ```
 
 

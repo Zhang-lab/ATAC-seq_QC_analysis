@@ -34,18 +34,18 @@ That's it!
 `-p`: reads file 2 if input PE data, must be ended by .fastq or .fastq.gz  
 `-t`: (optional) specify number of threads to use, default 24  
 `-i`: (optional) insertion free region finding parameters used by Wellington Algorithm (Jason Piper etc. 2013), see documentation for more details.  
-       If you don NOT want to run IFR finding step, please just ignore the -i option; however IFR finding will use default parameters only if -i specified as 0:  
-      min_lfp=5  
-      max_lfp=15  
-      step_lfp=2  
-      min_lsh=50  
-      max_lsh=200  
-      step_lsh=20  
-      method=BH  
-      p_cutoff=0.05  
-      If you want to specify your own parameter, please make sure they are in the same order and seperated by comma  
-      Example: -i 5,15,2,50,200,20,BH,0.05  
-      You can check the pipe log file for the parameters used by IFR code  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you don NOT want to run IFR finding step, please just ignore the -i option; however IFR finding will use default parameters only if -i specified as 0:  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;min_lfp=5  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max_lfp=15  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;step_lfp=2  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;min_lsh=50  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max_lsh=200  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;step_lsh=20  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;method=BH  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p_cutoff=0.05  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you want to specify your own parameter, please make sure they are in the same order and seperated by comma  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: -i 5,15,2,50,200,20,BH,0.05  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can check the pipe log file for the parameters used by IFR code  
 
 e.g:
 a) mm10 SE data A.fastq  

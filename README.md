@@ -1,5 +1,5 @@
 # Atac-seq_Quality_Control_pipe
-This is for the QC matrix construction, data analysis and visualization for Atac-seq data.  
+This is for the QC matrix construction, data analysis and visualization for ATAC-seq data.  
 Current version: `V3.1`   
 
 Advisor: Bo Zhang  

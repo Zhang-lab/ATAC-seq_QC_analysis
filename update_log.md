@@ -7,7 +7,7 @@ Last update: 07/06/2018
   
 ### Update record:  
 `07/06/2018, v3.1`  
-1. modify QC table: effect reads -> useful single ends; 2 deup -> dup rate    
+1. modify QC table: effect reads -> useful single ends; 2 dedup -> dup rate    
 2. edit help information  
 3. adjust saturation calculation: use overlapped region coverage  
 4. correct visualization.R percentage calculation  

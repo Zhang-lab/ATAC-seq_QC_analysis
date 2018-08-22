@@ -51,15 +51,15 @@ That's it!
 e.g:
 a) mm10 SE data A.fastq  
 ```bash
-singularity run -H ./:/scratch ATAC-seq_v3.1_mm10.simg  -r SE -g mm10 -o A.fastq  
+singularity run -H ./:/scratch <path-to-image>  -r SE -g mm10 -o A.fastq  
 ```
 b) hg38 PE data B_1.fastq B_2.fastq  
 ```bash
-singularity run -H ./:/scratch ATAC-seq_v3.1_hg38.simg  -r PE -g hg38 -o B_1.fastq  -p B_2.fastq  
+singularity run -H ./:/scratch <path-to-image>  -r PE -g hg38 -o B_1.fastq  -p B_2.fastq  
 ```
 c) danRer10 PE data in sra file C.sra  
 ```bash
-singularity run -H ./:/scratch ATAC-seq_v3.1_danRer10.simg  -r PE -g danRer10 -o C.sra  
+singularity run -H ./:/scratch <path-to-image>  -r PE -g danRer10 -o C.sra  
 ```
 
 

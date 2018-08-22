@@ -1,6 +1,6 @@
 # Atac-seq_Quality_Control_pipe
 This is for the QC matrix construction, data analysis and visualization for ATAC-seq data.  
-Current version: `V3.1`   
+Current version: `v4`   
 
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
@@ -15,13 +15,13 @@ Step1. download singularity container (you only need download the containcer for
 ####  
 ```bash
 # download image from local server:  
-wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ATAC-seq_v3.1_mm10.simg  
+wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_seq_mm10_v4.simg  
 ```
 
 Step2. process data by the singularity image: 
 #### Please run at same directory with your data OR the soft link of your data    
 ```bash
-singularity run -H ./:/scratch ATAC-seq_v3.1_mm10.simg  -r <SE/PE> -g <mm10>  -o <read_file1>  -p <read_file2>  
+singularity run -H ./:/scratch <path-to-image> -r <SE/PE> -g <mm10>  -o <read_file1>  -p <read_file2>  
 ```
 
 That's it!
@@ -32,6 +32,7 @@ That's it!
 `-g`: genome reference, one simg is designed for ONLY one species due to the file size. For now the supported genoms are: <mm10/mm9/hg19/hg38/danRer10> (only mm10 in the example).  
 `-o`: reads file 1 or the SE reads file, must be ended by .fastq or .fastq.gz or .sra (for both SE and PE)  
 `-p`: reads file 2 if input PE data, must be ended by .fastq or .fastq.gz  
+`-c`: (optional) specify read length minimum cutoff for methylQA filtering, default 38  
 `-t`: (optional) specify number of threads to use, default 24  
 `-i`: (optional) insertion free region finding parameters used by Wellington Algorithm (Jason Piper etc. 2013), see documentation for more details.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you don NOT want to run IFR finding step, please just ignore the -i option; however IFR finding will use default parameters only if -i specified as 0:  

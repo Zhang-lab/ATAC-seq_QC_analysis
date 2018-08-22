@@ -9,6 +9,8 @@ Last update: 08/23/2018
 `08/23/2018, v4`  
 1. remove chrM reads in "non-redundant-uniquely-mapped reads"  
 2. set default read length cutoff in methylQA to 38 instead of 50, use option -c to specify other numbers  
+3. change unique chrM ratio formula, but resuit is same (now no chrM in report, line 336)  
+4. change nodup_ratio formula, but result is same (now no chrM in report, line 343)  
 
 `07/06/2018, v3.1`  
 !!! Enrichment is overestimated due to chrM reads  

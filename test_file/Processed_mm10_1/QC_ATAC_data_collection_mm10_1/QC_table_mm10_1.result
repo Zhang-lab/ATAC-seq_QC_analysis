@@ -1,2 +1,0 @@
-file	total	written_reads	mapped	mapped_ratio	uniq_mapped	non_redundant_uniq_mapped	effect_ratio	single_end	fastqc_dup	after_align_dup	number_of_reads_under_peak	rup_ratio	sub10M_enrichment	coding_enrichment	bg_gt37_percentage
-mm10_1	250000	248776	237900	.95	211288	208171	.83	416342	0.04518	0.014	17822	4.34	207.772477075	764.915	4.33

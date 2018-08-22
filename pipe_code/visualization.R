@@ -442,7 +442,7 @@ part2=data.frame("cutadapt","1.16",as.numeric(args[9]),"FastQC","0.11.7")
 colnames(part2)=c("program1","program1_version","written_reads_by_cutadapt","program2","program2_version")
 file=append(file,list(`pre_alignment_stats`=part2))
 
-part3=data.frame("bwa","0.7.16a","bwa men","methylQA","0.2.1","methylQA atac",map$total,map$mapped,map[,6],map[,7],useful[,5])
+part3=data.frame("bwa","0.7.16a","bwa mem","methylQA","0.2.1","methylQA atac",map$total,map$mapped,map[,6],map[,7],useful[,5])
 colnames(part3)=c("alignment_program","alignment_program_version","alignment_program_parameters","post_alignment_program","post_alignment_program_version","post_alignment_program_parameters","total_reads","mapped_reads","uniquely_mapped_reads","non-redundant_mapped_reads","useful_single_ends")
 file=append(file,list(`mapping_stats`=part3))
 

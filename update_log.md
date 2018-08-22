@@ -1,12 +1,17 @@
-### Current version: v3.1  
-Last update: 07/06/2018  
+### Current version: v4  
+Last update: 08/23/2018  
   
   
 ### To be added soon:  
 
   
 ### Update record:  
+`08/23/2018, v4`  
+1. remove chrM reads in "non-redundant-uniquely-mapped reads"  
+2. set default read length cutoff in methylQA to 38 instead of 50, use option -c to specify other numbers  
+
 `07/06/2018, v3.1`  
+!!! Enrichment is overestimated due to chrM reads  
 1. modify QC table: effect reads -> useful single ends; 2 dedup -> dup rate    
 2. edit help information  
 3. adjust saturation calculation: use overlapped region coverage  

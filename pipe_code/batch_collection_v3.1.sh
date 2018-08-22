@@ -33,12 +33,15 @@ rm $file
 done
 
 find . -name "QC_table_*.result" | xargs mv -t .  2> /dev/null
-[ ! -f QC_table_*.result ] && sed -n '1p'  `ls QC_table_*.result | head -1` > merged_QC_table.txt 
-for file in `ls QC_table_*.result`
-do
-sed -n '2p' $file >> merged_QC_table.txt
-rm $file
-done
+
+if ls QC_table_*.result 1> /dev/null 2>&1; then
+    sed -n '1p'  `ls QC_table_*.result | head -1` > merged_QC_table.txt
+    for file in `ls QC_table_*.result`
+	do
+	sed -n '2p' $file >> merged_QC_table.txt
+	rm $file
+    done
+fi
 
 [ -f merged_QC_table.txt ] && rm merged_mapping_status.txt
 

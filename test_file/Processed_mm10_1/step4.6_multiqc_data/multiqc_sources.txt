@@ -1,5 +1,0 @@
-Module	Section	Sample Name	Source
-Cutadapt	all_sections	mm10_2	/home/shaopengliu/pipe_script/github/ATAC-seq_QC_analysis/test_file/Processed_mm10_1/step1.1_mm10_1_cutadapt_PE.trimlog
-FastQC	all_sections	step1.1_trimed_mm10_1_1	/home/shaopengliu/pipe_script/github/ATAC-seq_QC_analysis/test_file/Processed_mm10_1/QC_ATAC_data_collection_mm10_1/step1.2_step1.1_trimed_mm10_1_1_fastqc.zip
-FastQC	all_sections	step1.1_trimed_mm10_1_2	/home/shaopengliu/pipe_script/github/ATAC-seq_QC_analysis/test_file/Processed_mm10_1/QC_ATAC_data_collection_mm10_1/step1.2_step1.1_trimed_mm10_1_2_fastqc.zip
-Preseq	all_sections	step2.3_yield_mm10_1.result	/home/shaopengliu/pipe_script/github/ATAC-seq_QC_analysis/test_file/Processed_mm10_1/QC_ATAC_data_collection_mm10_1/step2.3_yield_mm10_1.result

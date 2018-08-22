@@ -1,2 +1,0 @@
-Sample	bp_processed	bp_written	percent_trimmed	quality_trimmed
-mm10_2	24953942	24817528	0.546663128415	38620

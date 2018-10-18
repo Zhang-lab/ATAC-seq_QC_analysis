@@ -365,7 +365,7 @@ ref.chr=ref.chr[,-1]
 ref.chr=as.matrix(ref.chr[,seq(4,269,5)])
 
 chr=read.table(paste("step2.2_chrom_count",name,sep="_"),sep='\t')
-if(genome!="danRer10") {
+if(genome!="danRer10" && genome!="danRer11") {
   refer=c(refer,"8.34%(SD:5.06%)")
   refer=c(refer,paste(round(mean(ref.map[,7])),'(SD:',round(sd(ref.map[,7])),')',sep=''))
   refer=c(refer,paste(round(mean( as.numeric(ref.chr[21,][seq(6, length(ref.chr[21,]), 5)]) ),4),'%(SD:',round(sd( as.numeric(ref.chr[21,][seq(6, length(ref.chr[21,]), 5)]) ),4),'%)',sep=''))
@@ -438,6 +438,17 @@ if(is.na(image_id)) {
   file=list(`data_information`=part1)
 }
 
+score_table=read.table(paste("step4.6_score_calculation_",name,".result", sep=""),sep='\t', header=1, colClasses = c("character", "character", "numeric"))
+score_table=score_table[c('iterm','score')]
+score_table=rbind(c("total_score", sum(score_table$score)), score_table) 
+score_exp=data.frame(t(score_table$score))
+colnames(score_exp)=t(score_table$iterm)
+score_exp[] <- lapply(score_exp, function(x) {
+    if(is.factor(x)) as.numeric(as.character(x)) else x
+})
+part_score=data.frame(score_exp)
+file=append(file, list(`score_matrix`=part_score))
+
 part2=data.frame("cutadapt","1.16",as.numeric(args[9]),"FastQC","0.11.7")
 colnames(part2)=c("program1","program1_version","written_reads_by_cutadapt","program2","program2_version")
 file=append(file,list(`pre_alignment_stats`=part2))
@@ -460,7 +471,7 @@ autosome$V1=paste("@",autosome$V1,"@",sep="")
 autosome=paste(autosome$V1,autosome$V3,sep=": ")
 autosome=paste("!",paste(autosome,sep="",collapse=", "),"!",sep="")
 
-if(genome!="danRer10" && genome!="danRer11"  ) {
+if(genome!="danRer10" && genome!="danRer11") {
   part5=data.frame(round(as.numeric(args[10]),4),round(chr[which(chr[,1]=='chrX'),3]/map[,7],4),round(chr[which(chr[,1]=='chrY'),3]/map[,7],4),autosome)
   colnames(part5)=c("percentage_of_uniquely_mapped_reads_in_chrM","percentage_of_non-redundant_uniquely_mapped_reads_in_chrX","percentage_of_non-redundant_uniquely_mapped_reads_in_chrY","Percentage_of_non-redundant_uniquely_mapped_reads_in_autosome")
   file=append(file,list(`mapping_distribution`=part5))
@@ -496,6 +507,8 @@ names(file)="Sample_QC_info"
 test=try(library(jsonlite),silent=T)
 
 capture.output(toJSON(file,pretty=T),file=paste(name,"report.json",sep='_'))
+
+
 
 
 

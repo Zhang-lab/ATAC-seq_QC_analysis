@@ -1,11 +1,29 @@
-### Current version: v4  
-Last update: 08/23/2018  
+### Current version: IAP v1.00  
+Last update: 10/18/2018  
   
   
 ### To be added soon:  
 
   
 ### Update record:  
+`10/18/2018, ATAC-seq IAP v1.00`  
+1. start to formally name the pipeline as ATAC-seq Intergrative Analysis Pipeline (IAP) and current mature version is recorded as v1.00  
+2. now support soft link of input file, please see the example below in "target_1018" part    
+3. now support various genome, please look and the readme.md to find necessary ref files  
+
+
+`10/18/2018, target_1018`  
+1. modify the score matrix articulation code "\ + &&" combination, because `let` command has unexpected return value when the expr is 0:  
+`Exit Status:
+If the last ARG evaluates to 0, let returns 1; let returns 0 otherwise..`  
+2. reorganize file input code, now the soft link of **ABSOLUTE** path of target files can also be used, but it would be required to add another binding parameter to mount the original position of the file. Singularity would automatcially mount /home/user when running the image, but this is usually **NOT ENOUGH**.
+E.g: if I have read1.fastq and read2.fastq on folder /scratch/data and want to run on another folder /home/temp 
+step1: `ln -s /scratch/data/read*.fastq  /home/temp`  #get soft link  
+step2: `singularity run -B ./:/process -B /scratch:/scratch  <path_2_simage>  <regular parameter......>`  #the binding parameter is slightly different  
+
+`09/26/2018, target_0926`    
+1. modify DOR analysis R code to keep intermediate file that contains all regions  
+
 `08/23/2018, v4`  
 1. remove chrM reads in "non-redundant-uniquely-mapped reads"  
 2. set default read length cutoff in methylQA to 38 instead of 50, use option -c to specify other numbers  

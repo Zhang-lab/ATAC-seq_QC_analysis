@@ -4,7 +4,7 @@
 ###################################################################################################
 # read all necessary parameters and prepare data structure
 date
-pipe_version="v4"
+pipe_version="target_181018"
 host="zhanglab/atac-seq base"
 
 # get the absolute path
@@ -95,18 +95,18 @@ fi
 if [[ $R1 == *.sra ]]
     then name=`echo ${R1%.sra}`
     echo "this is sra file, $fastq_dump_tool would be used......"
-    elif [[ $R1 == *.fastq* || *.fq.gz  ]] && [[ $types == PE  ]]
+elif [[ $R1 == *.fastq* || *.fq.gz  ]] && [[ $types == PE  ]]
         then
         name=`echo ${R1%.fastq*}`
 	name=`echo ${name%.fq.gz}`
         raw1=$R1
         raw2=$R2
-    elif [[ $R1 == *.fastq* || *.fq.gz   ]] && [[ $types == SE ]]
+elif [[ $R1 == *.fastq* || *.fq.gz ]] && [[ $types == SE ]]
         then
         name=`echo ${R1%.fastq*}`
 	name=`echo ${name%.fq.gz}`
         raw1=$R1
-    else
+else
         echo "please use fastq(or fastq.gz) file or sra file......"
         exit
 fi
@@ -119,7 +119,7 @@ fi
 s0_atac_pre () {
     mkdir 'Processed_'$name
     ln -s `realpath $R1`    ./'Processed_'$name/$R1
-    ln -s `realpath $R2 2> /dev/null`  ./'Processed_'$name/$raw2  2> /dev/null
+    ln -s `realpath $R2 2> /dev/null`  ./'Processed_'$name/$R2  2> /dev/null
     cd ./'Processed_'$name/
     source $pipe_path'/qc_source.sh' $species
     mkdir 'QC_ATAC_data_collection_'$name
@@ -290,7 +290,7 @@ s2.2_distri () {
     rm output*
     rm count*.txt
     rm input.sam
-    awk -F "\t"  '{print $2}' 'step2.2_chrom_count_unique_'$name'.txt'  |  paste 'step2.2_chrom_count_'$name'.txt'  - | awk -F "\t" -v marker=$marker '{print $1,$2+0,$3+0,marker}' OFS="\t" | awk 'length($1)<7'  > ./'QC_ATAC_data_collection_'$name/'step2.2_chrom_count_'$name'.result'
+    awk -F "\t"  '{print $2}' 'step2.2_chrom_count_unique_'$name'.txt'  |  paste 'step2.2_chrom_count_'$name'.txt'  - | awk -F "\t" -v marker=$marker '{print $1,$2+0,$3+0,marker}' OFS="\t"  > ./'QC_ATAC_data_collection_'$name/'step2.2_chrom_count_'$name'.result'
 
     if [ $? == 0 ] 
         then
@@ -677,6 +677,45 @@ s4.6_visualization () {
     # clean result
     find . -name "*.result" | xargs sed -i 's/^-e //'
     cd ./'QC_ATAC_data_collection_'$name
+
+    # calculate score
+    ### 1) useful reads
+    cal_score () {
+        score=0
+        echo -e "iterm\tnumber\tscore" > step4.6_score_calculation_${name}.result
+
+        _single=`cut -f 5 step3.1_useful_reads_*.result | sed '1d'` \
+            && if (( $_single >= 40000000 )); then _change=2; elif (( $_single >= 25000000 )) && (( $_single < 40000000 )); then _change=1; else _change=-1; fi \
+            && let "score+=$_change" 
+            echo -e "single_end\t$_single\t$_change" >> step4.6_score_calculation_${name}.result \
+            && unset _change
+
+        _enrp=`cut -f 5 step4.2_enrichment_ratio_in_promoter_*.result | sed '1d'` \
+            && if (( $(echo "$_enrp >= 11" | bc -l) )); then _change=2; elif (( $(echo "$_enrp >= 7" | bc -l) )) && (( $(echo "$_enrp < 11" | bc -l) )); then _change=1; else _change=-1; fi \
+            && let "score+=$_change" 
+            echo -e "enrp\t$_enrp\t$_change" >> step4.6_score_calculation_${name}.result \
+            && unset _change
+
+        _enrs=`cut -f 5 step4.2_sub10M_enrichment_*.result | sed '1d'` \
+            && if (( $(echo "$_enrs>=18" | bc -l) )); then _change=2; elif (( $(echo "$_enrs>=15" | bc -l) )) && (( $(echo "$_enrs<18" | bc -l) )); then _change=1; else _change=-1; fi \
+            && let "score+=$_change" 
+            echo -e "enrs\t$_enrs\t$_change" >> step4.6_score_calculation_${name}.result \
+            && unset _change
+
+        _rup=`cut -f 3 step4.2_sub10M_enrichment_*.result | sed '1d'` \
+            && if (( $(echo "$_rup>=0.2" | bc -l) )); then _change=2; elif (( $(echo "$_rup>=0.12" | bc -l) )) && (( $(echo "$_rup<0.2" | bc -l) )); then _change=1; else _change=-1; fi \
+            && let "score+=$_change" 
+            echo -e "rup\t$_rup\t$_change" >> step4.6_score_calculation_${name}.result \
+            && unset _change
+
+        _bk=`cut -f 3 step4.5_dichoto_bg_*.result` \
+            && if (( $(echo "$_bk<=10" | bc -l) )); then _change=2; elif (( $(echo "$_bk<=20" | bc -l) )) && (( $(echo "$_bk>10" | bc -l) )); then _change=1; else _change=-1; fi \
+            && let "score+=$_change" 
+            echo -e "bk\t$_bk\t$_change" >> step4.6_score_calculation_${name}.result \
+            && unset _change
+    }
+    cal_score
+
     Rscript $pipe_path'/visualization.R' $name $pipe_path'/../atac_ref/mm10_encode_pe'  $species  $written_reads $unique_chrM_ratio $pipe_version $time $image_id 
     if [ $? == 0 ] 
         then
@@ -698,7 +737,7 @@ s4.6_visualization () {
     cd ..
 
     rm pesudo_bl.txt 2> /dev/null
-    rm refined_chrom_size.txt 
+    rm refined_chrom_size.txt nochrM_chrom_size.txt
     find -type l -delete
 
     multiqc .
@@ -763,7 +802,7 @@ s4.7_ifr_finding () {
 
     rm xa*bed list
     cat IFR*txt | sed "s/\"//g" | sort -k1,1V -k2,2n | awk '{print $1"\t"$2"\t"$3"\t""found_IFR_"NR"\t"$4"\t"".""\t"$5}' > "step4.7_IFR_"$name".bed"
-    rm IFR*txt
+    rm IFR*txt 
 }
 
 # run pipe ()
@@ -797,6 +836,7 @@ echo "Processing $name done"
 echo "Processing $name done"
 cd ..
 date
+
 
 
 

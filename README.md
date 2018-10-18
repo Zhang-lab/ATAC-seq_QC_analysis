@@ -1,6 +1,6 @@
-# Atac-seq_Quality_Control_pipe
+# Atac-seq Integrative Analysis Pipeline  
 This is for the QC matrix construction, data analysis and visualization for ATAC-seq data.  
-Current version: `v4`   
+Current version: `v1.00`   
 
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  

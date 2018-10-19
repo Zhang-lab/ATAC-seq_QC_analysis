@@ -15,7 +15,8 @@ Step1. download singularity images and reference files (you only need download t
 ####  
 1. come to our local host, please **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)**  
 2. right click on the image file to "copy link address"  
-3. then download it to your own server by the copied link, for example `wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.00.simg`  
+3. then download it to your own server by the copied link, for example  
+`wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.00.simg`  
 4. then click into the `ref_file` folder, or **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)**  
 5. find your interested genome, for now we have mm9/10, hg19/38, danRer10/11, rn6 and dm6. Right click to copy the link and download to your server by `wget`  
 

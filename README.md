@@ -13,12 +13,9 @@ Singularity 2-step solution (easiest way)
 
 Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually NOT changed:  
 ####  
-1. come to our local host, please **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)**  
-2. right click on the image file to "copy link address"  
-3. then download it to your own server by the copied link, for example  
+1. find and download the image: **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)**, right click to copy the link, and download by wget command. e.g:  
 `wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.00.simg`  
-4. then click into the `ref_file` folder, or **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)**  
-5. find your interested genome, for now we have mm9/10, hg19/38, danRer10/11, rn6 and dm6. Right click to copy the link and download to your server by `wget`  
+2. then **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)** to find your interested genome, for now we have mm9/10, hg19/38, danRer10/11, rn6 and dm6. Use the similar way to download them.  
 
 Step2. process data by the singularity image: 
 #### Please run the cmd on the same directory of your data, if your data is on /home/example, then you may need `cd /home/example` first. The location of image and reference files is up to you.    

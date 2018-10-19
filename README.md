@@ -1,6 +1,6 @@
 # Atac-seq Integrative Analysis Pipeline  
 This is for the QC matrix construction, data analysis and visualization for ATAC-seq data.  
-Current version: `v1.00`   
+Current version: `IAP_v1.00`   
 
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
@@ -34,6 +34,16 @@ c) and your data is read1.fastq.gz and read2.fastq.gz on folder /home/data
 Then you need to:
 1. `cd /home/data` 
 2. `singularity run -B ./:/process -B /home/src:/atac_seq/Resource/Genome  /home/image/ATAC_IAP_v1.00.simg  -r PE -g mm10 -o read1.fastq.gz -p read2.fastq.gz`  
+
+**explaination**:  
+The cmd is in this manner: `singularity run <options> <singularity_image_to_run> <pipeline_parameters>`  
+
+**soft link introduction**:
+If you want to use soft link, which is much more friendly when you have a lot of data, of the data. You will only need to add one bind option for singularity, which is `-B <full-path-of-original-position>:<full-path-of-original-position>`  
+For example, I want to soft link my data from /scratch to run on my own folder /home/example:  
+1. ln -s /scrach/mydata.fastq.gz /home/example; **Please make sure you use the absolute path**  
+2. cd /home/example  
+3. `singularity run -B ./:/process -B /home/src:/atac_seq/Resource/Genome -B /scratch:/scratch  /home/image/ATAC_IAP_v1.00.simg  -r PE -g mm10 -o read1.fastq.gz -p read2.fastq.gz`  
 
 #parameters:  
 `-h`: help information  

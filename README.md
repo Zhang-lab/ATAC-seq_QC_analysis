@@ -26,9 +26,9 @@ Step2. process data by the singularity image:
 singularity run -B ./:/process -B <path-to-parent-folder-of-ref-file>:/atac_seq/Resource/Genome  <path-to-downloaded-image> -r <SE/PE> -g <mm10/mm10/hg38 etc.>  -o <read_file1>  -p <read_file2>  
 ```
 It may looks a little confusing at first time, but when you get familier with Singularity they will be friendly :)  
-For example, if
-a) you download the image on /home/image/ATAC_IAP_v1.00.simg
-b) the reference file on /home/src/mm10 
+For example, if  
+a) you download the image on /home/image/ATAC_IAP_v1.00.simg  
+b) the reference file on /home/src/mm10  
 c) and your data is read1.fastq.gz and read2.fastq.gz on folder /home/data  
 
 Then you need to:

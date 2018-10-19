@@ -11,12 +11,9 @@ For any question, please contact Wustl.Zhanglab@gmail.com
 ## Usage:  
 Singularity 2-step solution (easiest way)  
 
-Step1. download singularity container (you only need download the containcer for once, then you can use them directly):  
+Step1. download singularity images and reference files (you only need download them once, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually NOT changed:  
 ####  
-```bash
-# download image from local server:  
-wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_seq_mm10_v4.simg  
-```
+1. come to our local host, please **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)**  
 
 Step2. process data by the singularity image: 
 #### Please run at same directory with your data OR the soft link of your data    

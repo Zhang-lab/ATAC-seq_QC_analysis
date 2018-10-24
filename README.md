@@ -15,11 +15,12 @@ Singularity 2-step solution (easiest way)
 1. **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)** to find the TaRGET image and download to your server  
 2. then run the code below:  
 `singularity run -B ./:/process <path-to-image> -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`  
+
 Soft link of file is supported, but you need to use **full path** of the file and mount the original location, for example:  
-`ln -s ``pwd``/myfile /scratch/test`
+`ln -s \`pwd\`/myfile /scratch/test`
 `singularity run -B ./:/process -B /scratch/test:/scratch/test <path-to-image>  -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`
 
-
+### If you are using the IAP version  
 Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually NOT changed:  
 ####  
 1. find and download the image: **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)**, right click to copy the link, and download by wget command. e.g:  

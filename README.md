@@ -11,6 +11,13 @@ For any question, please contact Wustl.Zhanglab@gmail.com
 ## Usage:  
 Singularity 2-step solution (easiest way)  
 
+### If you are using mm10 / hg38, you can use the TaRGET specific images directly  
+1. **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)** to find the TaRGET image and download to your server  
+2. then run the code below:  
+`singularity run -B ./:/process <path-to-image> -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`  
+Soft link of file is supported, but you need to use **full path** of the file and mount the original location, for example:  
+`ln -s ``pwd``/myfile /scratch/test`
+`singularity run -B ./:/process -B /scratch/test:/scratch/test <path-to-image>  -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`
 
 
 Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually NOT changed:  
@@ -22,7 +29,7 @@ Step1. download singularity images and reference files (you only need download t
 Step2. process data by the singularity image: 
 #### Please run the cmd on the same directory of your data, if your data is on /home/example, then you may need `cd /home/example` first. The location of image and reference files is up to you.    
 ```bash
-singularity run -B ./:/process -B <path-to-parent-folder-of-ref-file>:/atac_seq/Resource/Genome  <path-to-downloaded-image> -r <SE/PE> -g <mm10/mm10/hg38 etc.>  -o <read_file1>  -p <read_file2>  
+singularity run -B ./:/process -B <path-to-parent-folder-of-ref-file>:/atac_seq/Resource/Genome  <path-to-downloaded-image> -r <SE/PE> -g <mm9/mm10/hg38 etc.>  -o <read_file1>  -p <read_file2>  
 ```
 It may looks a little confusing at first time, but when you get familier with Singularity they will be friendly :)  
 For example, if  

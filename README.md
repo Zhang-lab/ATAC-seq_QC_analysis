@@ -11,6 +11,8 @@ For any question, please contact Wustl.Zhanglab@gmail.com
 ## Usage:  
 Singularity 2-step solution (easiest way)  
 
+
+
 Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually NOT changed:  
 ####  
 1. find and download the image: **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)**, right click to copy the link, and download by wget command. e.g:  

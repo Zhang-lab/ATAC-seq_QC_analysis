@@ -17,7 +17,7 @@ Singularity 2-step solution (easiest way)
 `singularity run -B ./:/process <path-to-image> -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`  
 
 Soft link of file is supported, but you need to use **full path** of the file and mount the original location, for example:  
-`ln -s \`pwd\`/myfile /scratch/test`
+`ln -s `` `pwd`` `/myfile /scratch/test`
 `singularity run -B ./:/process -B /scratch/test:/scratch/test <path-to-image>  -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`
 
 ### If you are using the IAP version  

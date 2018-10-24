@@ -4,7 +4,7 @@
 ###################################################################################################
 # read all necessary parameters and prepare data structure
 date
-pipe_version="v4"
+pipe_version="v1.00"
 host="zhanglab/atac-seq base"
 
 # get the absolute path

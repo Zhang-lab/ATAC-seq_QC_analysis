@@ -9,10 +9,8 @@ For any question, please contact Wustl.Zhanglab@gmail.com
 
 
 ## Usage:  
-Singularity 2-step solution (easiest way)  
-
-### If you are using mm10 / hg38, you can use the TaRGET specific images directly  
-1. **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)** to find the TaRGET image and download to your server  
+### TaRGET version:  
+1. **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/TaRGET/)** to find the TaRGET image and download to your server  
 2. then run the code below:  
 `singularity run -B ./:/process <path-to-image> -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`  
 
@@ -21,10 +19,10 @@ Soft link of file is supported, but you need to use **full path** of the file an
 ln -s `pwd`/myfile* /scratch/test
 cd /scratch/test
 singularity run -B ./:/process -B /scratch/test:/scratch/test <path-to-image>  -r <SE/PE> -g <mm10/hg38>  -o <myfile_1>  -p <myfile_2>
-```
+```  
 
-### If you are using the IAP version  
-Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually NOT changed:  
+### General IAP version:   
+Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually **NOT** changed:  
 ####  
 1. find and download the image: **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)**, right click to copy the link, and download by wget command. e.g:  
 `wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.00.simg`  

@@ -4,7 +4,7 @@
 ###################################################################################################
 # read all necessary parameters and prepare data structure
 date
-pipe_version="target_181018"
+pipe_version="target_181103"
 host="zhanglab/atac-seq base"
 
 # get the absolute path
@@ -702,8 +702,8 @@ s4.6_visualization () {
             echo -e "enrs\t$_enrs\t$_change" >> step4.6_score_calculation_${name}.result \
             && unset _change
 
-        _rup=`cut -f 3 step4.2_sub10M_enrichment_*.result | sed '1d'` \
-            && if (( $(echo "$_rup>=0.2" | bc -l) )); then _change=2; elif (( $(echo "$_rup>=0.12" | bc -l) )) && (( $(echo "$_rup<0.2" | bc -l) )); then _change=1; else _change=-1; fi \
+        _rup=`cut -f 12 QC_data_collection_*.result   | sed '1d'` \
+            && if (( $(echo "$_rup>=20" | bc -l) )); then _change=2; elif (( $(echo "$_rup>=12" | bc -l) )) && (( $(echo "$_rup<20" | bc -l) )); then _change=1; else _change=-1; fi \
             && let "score+=$_change" 
             echo -e "rup\t$_rup\t$_change" >> step4.6_score_calculation_${name}.result \
             && unset _change

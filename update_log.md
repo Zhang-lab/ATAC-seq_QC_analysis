@@ -1,11 +1,14 @@
 ### Current version: IAP v1.00  
-Last update: 10/18/2018  
+Last update: 11/03/2018  
   
   
 ### To be added soon:  
 
   
 ### Update record:  
+`11/03/2018, ATAC-seq TaRGET 181103`  
+1. correct RUP number used to calculate QC score, use the full data RUP instead of sub-sampling data RUP  
+
 `10/18/2018, ATAC-seq IAP v1.00`  
 1. start to formally name the pipeline as ATAC-seq Intergrative Analysis Pipeline (IAP) and current mature version is recorded as v1.00  
 2. now support soft link of input file, please see the example below in "target_1018" part    

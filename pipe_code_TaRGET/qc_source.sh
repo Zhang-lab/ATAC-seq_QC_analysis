@@ -24,8 +24,8 @@ if [[ $species == mm10 ]];
     chrom_size="/home/Resource/Genome/mm10/mm10.chrom.sizes"
     black_list="/home/shaopengliu/resources/black_list/mm10_black_list.bed"
     genome_size=2730871774
-    promoter_file="/home/shaopengliu/resources/promoter_region/mm10_promoter_bistream_2kb.bed"
-    coding_promoter="/home/shaopengliu/resources/promoter_region/mm10_promoter_coding_bistream_1kb.bed"
+    promoter_file="/home/shaopengliu/resources/mm10/mm10_promoter_bistream_2kb.bed"
+    coding_promoter="/home/shaopengliu/resources/mm10/mm10_promoter_coding_bistream_1kb.bed"
     macs2_genome='mm'
 elif [[ $species == mm9 ]];
     then
@@ -42,8 +42,8 @@ elif [[ $species == hg38 ]];
     chrom_size="/home/Resource/Genome/hg38/hg38.25_chromsome.sizes"
     black_list="/home/shaopengliu/resources/black_list/hg38_black_list.bed"
     genome_size=3209286105
-    promoter_file="/home/shaopengliu/resources/promoter_region/hg38_promoter_bistream_2kb.bed"
-    coding_promoter="/home/shaopengliu/resources/promoter_region/hg38_coding_promoter_bistream_1kb.bed"
+    promoter_file="/home/shaopengliu/resources/hg38/hg38_promoter_bistream_1kb.bed"
+    coding_promoter="/home/shaopengliu/resources/hg38/hg38_coding_promoter_bistream_1kb.bed"
     macs2_genome='hs'
 elif [[ $species == hg19 ]];
     then
@@ -91,8 +91,9 @@ elif [[ $species == danRer11 ]];
     touch pesudo_bl.txt
     black_list="pesudo_bl.txt"
     genome_size=1345118429
-    promoter_file=/home/shaopengliu/resources/danRer11/GRCz11_promoter_region.bed
-    coding_promoter=/home/shaopengliu/resources/danRer11/pseudo_GRCz11_promoter_region.bed    macs2_genome='mm'
+    promoter_file="/home/shaopengliu/resources/danRer11/GRCz11_promoter_region.bed"
+    coding_promoter="/home/shaopengliu/resources/danRer11/pseudo_GRCz11_promoter_region.bed"   
+    macs2_genome='mm'
 elif [[ $species == personalize ]];
     then
     echo "please add all your preferred file as reference, please make sure that you are very clear of which file is for which"

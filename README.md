@@ -27,7 +27,9 @@ ln -s `pwd`/myfile* /scratch/test
 cd /scratch/test
 singularity run -B ./:/process -B /scratch/test:/scratch/test <path-to-image>  -r <SE/PE> -g <mm10/hg38>  -o <myfile_1>  -p <myfile_2>
 ```  
+
 <br>
+
 ### General IAP version:   
 Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually **NOT** changed:  
 ####  

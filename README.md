@@ -1,11 +1,23 @@
 # Atac-seq Integrative Analysis Pipeline  
-This is for the QC matrix construction, data analysis and visualization for ATAC-seq data.  
+Pipeline for the QC metrics construction, data analysis and visualization of ATAC-seq data.  
 Current version: `IAP_v1.00`   
 
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
 
-For any question, please contact Wustl.Zhanglab@gmail.com  
+For any question, please contact Wustl.Zhanglab@gmail.com or shaopeng.liu@wustl.edu  
+
+
+
+## Documentation:  
+1. Pipeline documentation: analysis details and QC metrics information  
+Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/Documentation.md)**  
+2. Insertion Free Region prediction algorithm:   
+Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/ifr_documentation.md)**  
+3. Update logfile: pipeline change record  
+Please **[ click here](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/update_log.md)**  
+
+
 
 
 ## Usage:  

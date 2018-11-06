@@ -14,6 +14,8 @@ Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/m
 Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/ifr_documentation.md)**  
 3. Update logfile: pipeline change record  
 Please **[ click here](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/update_log.md)**  
+4. Sample QC output: use ENCODE data as example  
+Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/tree/master/documents/sample_output)**  
 <br><br>
 ## Usage:  
 ### TaRGET II version:  

@@ -1,6 +1,6 @@
-# Documentation v1
+# Documentation v1.00
 ATAC-seq quality control matrix for Bo Zhang's lab  
-Last edit: 05/04/2018  
+Last edit: 11/06/2018  
 For any question please contact: shaopeng.liu@wustl.edu  											   
 
 **Outline**:  
@@ -11,9 +11,7 @@ III, Data processing steps
 
 ## I, Term and definition  
 1, coding promoter region definition:  
-> Abstract all coding genes from GTF file  
-> Merge all transcript region to get a rough estimate on TSS  
-> choose 1kb up/downstream of the TSS as the coding promoter region  
+2kb region (1kb up and 1kb down) of the transcription start site, this is a rough estimate and doesn't account multiple starting point situation.  
 
 2, enrichment in coding promoter region:  
 coding enrichment = ( reads in promoter / promoter length)  /  (total reads / genome size)  
@@ -29,6 +27,7 @@ The percentage of uniquely mapped chrM reads in all uniquely mapped reads. It's 
 
 6, mapping status:  
 > total reads: the raw reads of the input fastq file  
+> written reads: the output reads from trimming  
 > mapped reads: the reads that can be mapped to reference genome  
 > uniquely mapped reads: the reads that can be mapped uniquely (mapQ > 10)  
 > useful reads: non-redundant uniquely mapped reads  
@@ -49,9 +48,11 @@ sub 10M enrichment =
 > Calculate the RPKM for those kept regions  
 
 
-## II, Output results  
-1, There would be 2 files ended with "report.txt" and "json" that record all related QC information inside.  
-2, For every single results in detail, please go to the folder "result_collection".  
+## II, Output results in folder called "Processed_${file}"  
+1, QC_${file}.json: record QC information and ENCODE data results (by pipe version v3.1)    
+2, QC_pipe_processing.log: store the status of each step, and warning messages if any  
+3, QC_data_collection_${file}.result: this table is inside the QC data collection folder, it's a one line table with same information as the json file but easier to collect in batch for review on server  
+4, Single output: for each step, the intermediate files are kept  
 
 
 ## III, Data Processing  
@@ -75,7 +76,7 @@ for SE data:
 QC to report: cutadapt log  
   
 #### 1.2, Fastq file quality assessment  
-tool: FastQC v0.11.5  
+tool: FastQC v0.11.7  
 input: trimmed fastq file  
 output: fastqc results  
 commands: 
@@ -84,17 +85,26 @@ QC to report: fastqc results
 
 
 ### Step2, reads alignment and reads distribution  
-tool:   
-  1, bwa v0.7.12  
-  2, samtools   
-  3, methylQA v0.1.9  
-input: trimmed fastq file  
-output: aligned bam file  
-command:  
-> bwa mem -t $threads  $mm10_ref_genome.fa  $trimmed.fastq | samtools view -bS - | samtools sort - -O 'bam' -o  $aln.bam -T temp_aln  
-> methylQA density $chrom_size  'Trimed_rm_mapq0_chrm_'$name'.bam'
+#### 2.1, BWA MEM aligner  
+tool: bwa v0.7.12  
+input: trimed fastq file  
+commands:  
+> bwa mem $bwa_ref 'step1.1_trimed_'$name*'.fastq' | $samtools view -bS - | $samtools sort - -O 'bam' -o 'step2.1_trimed_'$name'.bam' -T temp_aln  
+output: aligned reads in bam file  
+
+#### 2.2, reads distribution  
+tool: samtools 1.3.1, methylQA v0.2.1    
+input: aligned bam file  
+output: reads distribution count  
 QC to report: mapped reads distribution in each chromosome  
 
+#### 2.3, library complexity estimate  
+tool: preseq 2.0.0 (from subread)  
+input: aligned bam file  
+commands:  
+> preseq lc_extrap -o 'step2.3_yield_'$name'.result' -B  'step2.1_trimed_'$name'.bam'  
+output: library complexity estimate  
+QC to report: library complexity estimate  
 
 ### Step3, peak call  
 tool:   
@@ -127,7 +137,7 @@ input: reads enrichment in coding promoters, and normalized enrichment for all p
 output: enrichment ratio file  
 QC to report: enrichment ratio for top 20k peak   
   
-#### 4.3, PBC calculation (PCR bottlenecking coefficiency)  
+#### 4.3 (deleted), PBC calculation (PCR bottlenecking coefficiency)  
 tool: bash  
 input: mapped reads file   
 output: PBC 1  

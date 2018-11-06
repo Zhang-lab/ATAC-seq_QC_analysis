@@ -6,9 +6,7 @@ Advisor: Bo Zhang
 Contributor: Cheng Lyu and Shaopeng Liu  
 
 For any question, please contact Wustl.Zhanglab@gmail.com or shaopeng.liu@wustl.edu  
-
-
-
+<br><br>
 ## Documentation:  
 1. Pipeline documentation: analysis details and QC metrics information  
 Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/Documentation.md)**  
@@ -16,14 +14,11 @@ Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/m
 Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/ifr_documentation.md)**  
 3. Update logfile: pipeline change record  
 Please **[ click here](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/update_log.md)**  
-
-
-
-
+<br><br>
 ## Usage:  
-### TaRGET version:  
+### TaRGET II version:  
 1. **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/TaRGET/)** to find the TaRGET image and download to your server  
-2. then run the code below:  
+2. then run the code below on the same directory with your data:  
 `singularity run -B ./:/process <path-to-image> -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`  
 
 Soft link of file is supported, but you need to use **full path** of the file and mount the original location, for example:  
@@ -32,7 +27,7 @@ ln -s `pwd`/myfile* /scratch/test
 cd /scratch/test
 singularity run -B ./:/process -B /scratch/test:/scratch/test <path-to-image>  -r <SE/PE> -g <mm10/hg38>  -o <myfile_1>  -p <myfile_2>
 ```  
-
+<br>
 ### General IAP version:   
 Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually **NOT** changed:  
 ####  

@@ -1,6 +1,6 @@
 # Atac-seq Integrative Analysis Pipeline  
 Pipeline for the QC metrics construction, data analysis and visualization of ATAC-seq data.  
-Current version: `IAP_v1.00`   
+Current version: `AIAP_v1.00`   
 
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
@@ -18,20 +18,6 @@ Please **[ click here](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/ma
 Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/tree/master/documents/sample_output)**  
 <br><br>
 ## Usage:  
-### TaRGET II version:  
-1. **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/TaRGET/)** to find the TaRGET image and download to your server  
-2. then run the code below on the same directory with your data:  
-`singularity run -B ./:/process <path-to-image> -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`  
-
-Soft link of file is supported, but you need to use **full path** of the file and mount the original location, for example:  
-```
-ln -s `pwd`/myfile* /scratch/test
-cd /scratch/test
-singularity run -B ./:/process -B /scratch/test:/scratch/test <path-to-image>  -r <SE/PE> -g <mm10/hg38>  -o <myfile_1>  -p <myfile_2>
-```  
-
-<br>
-
 ### General IAP version:   
 Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually **NOT** changed:  
 ####  
@@ -53,6 +39,19 @@ c) and your data is read1.fastq.gz and read2.fastq.gz on folder /home/data
 Then you need to:
 1. `cd /home/data` 
 2. `singularity run -B ./:/process -B /home/src:/atac_seq/Resource/Genome  /home/image/ATAC_IAP_v1.00.simg  -r PE -g mm10 -o read1.fastq.gz -p read2.fastq.gz`  
+
+### TaRGET II version:  
+1. **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/TaRGET/)** to find the TaRGET image and download to your server  
+2. then run the code below on the same directory with your data:  
+`singularity run -B ./:/process <path-to-image> -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`  
+
+Soft link of file is supported, but you need to use **full path** of the file and mount the original location, for example:  
+```
+ln -s `pwd`/myfile* /scratch/test
+cd /scratch/test
+singularity run -B ./:/process -B /scratch/test:/scratch/test <path-to-image>  -r <SE/PE> -g <mm10/hg38>  -o <myfile_1>  -p <myfile_2>
+```  
+<br>
 
 **explaination**:  
 The cmd is in this manner: `singularity run <options> <singularity_image_to_run> <pipeline_parameters>`  

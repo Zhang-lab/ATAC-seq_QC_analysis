@@ -19,6 +19,8 @@ After running the pipeline, there will be a folder called **Processed_${name}**,
 
 &nbsp;
 &nbsp;
+&nbsp;
+&nbsp;
 There should be 15 files in total, and please feel free to **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/Processed_mm10_liver_embryo_d11.5_PE_bio1_ENCLB441LCB_1/)** to explore them.  
  
 File name | Content
@@ -38,6 +40,11 @@ File name | Content
 *step4.2_insertion_site_${name}.bigWig* | same to previous file but for visulization use
 *step4.6_multiqc_data* | output folder from **multiqc**, please see its help page for more details
 *step4.6_multiqc_report.html* | together with previous folder, this html visulize many quality control information
+
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
 
 If you happens to open the first folder which record intermediate files, you will see:
 ![QC image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/QC_col_folder.png)  

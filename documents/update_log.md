@@ -1,11 +1,10 @@
 ### Current version: IAP v1.00  
-Last update: 11/03/2018  
-  
-  
-### To be added soon:  
+Last update: 02/11/2019  
 
   
 ### Update record:  
+`02/11/2019, update documentation`  
+
 `11/03/2018, ATAC-seq TaRGET 181103`  
 1. correct RUP number used to calculate QC score, use the full data RUP instead of sub-sampling data RUP  
 
@@ -13,7 +12,6 @@ Last update: 11/03/2018
 1. start to formally name the pipeline as ATAC-seq Intergrative Analysis Pipeline (IAP) and current mature version is recorded as v1.00  
 2. now support soft link of input file, please see the example below in "target_1018" part    
 3. now support various genome, please look and the readme.md to find necessary ref files  
-
 
 `10/18/2018, target_1018`  
 1. modify the score matrix articulation code "\ + &&" combination, because `let` command has unexpected return value when the expr is 0:  

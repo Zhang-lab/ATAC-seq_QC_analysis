@@ -1,15 +1,22 @@
 # Documentation v1.00
-ATAC-seq quality control matrix for Bo Zhang's lab  
-Last edit: 11/06/2018  
-For any question please contact: shaopeng.liu@wustl.edu  											   
+ATAC-seq quality control and analysis pipeline for Bo Zhang's lab  
+Last edit: 02/11/2019  
+For any question please contact: shaopeng.liu@wustl.edu  
 
-**Outline**:  
-I, Term and definition  
-II, Output results  
-III, Data processing steps   
+**Outline**  
+I, Output example and annotation  
+II, Terms  
+III, Data processing details  
 
+## I, Output example  
+After running the pipeline, there will be a folder called "Processed_${name}", all intermediate files and final output files are stored there. And it looks like this (using an ENCODE data for example):  
+![output image](https://drive.google.com/open?id=1reaO5LDW2hZ-gKyD9ha0sjCARJGszr5S)
+1, QC_${file}.json: record QC information and ENCODE data results (by pipe version v3.1)    
+2, QC_pipe_processing.log: store the status of each step, and warning messages if any  
+3, QC_data_collection_${file}.result: this table is inside the QC data collection folder, it's a one line table with same information as the json file but easier to collect in batch for review on server  
+4, Single output: for each step, the intermediate files are kept  
 
-## I, Term and definition  
+## II, Term and definition  
 1, coding promoter region definition:  
 2kb region (1kb up and 1kb down) of the transcription start site, this is a rough estimate and doesn't account multiple starting point situation.  
 
@@ -46,13 +53,6 @@ sub 10M enrichment =
 > Random sample 500bp regions from genome
 > Keep those region that are far from any know peaks (distance > 10kb)  
 > Calculate the RPKM for those kept regions  
-
-
-## II, Output results in folder called "Processed_${file}"  
-1, QC_${file}.json: record QC information and ENCODE data results (by pipe version v3.1)    
-2, QC_pipe_processing.log: store the status of each step, and warning messages if any  
-3, QC_data_collection_${file}.result: this table is inside the QC data collection folder, it's a one line table with same information as the json file but easier to collect in batch for review on server  
-4, Single output: for each step, the intermediate files are kept  
 
 
 ## III, Data Processing  

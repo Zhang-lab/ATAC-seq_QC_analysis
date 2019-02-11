@@ -5,8 +5,9 @@ For any question please contact: shaopeng.liu@wustl.edu
 
 **Outline**  
 I, Output example and annotation  
-II, Terms  
-III, Data processing details  
+II, Visulization through qATACViewer
+III, Terms  
+IV, Data processing details  
 
 ## I, Output example  
 After running the pipeline, there will be a folder called **Processed_${name}**, all intermediate files and final output files are stored there. And it looks like this (using an ENCODE data for example):  
@@ -18,15 +19,49 @@ File name | Content
 --------- | -------
 *QC_ATAC_data_collection_${name}* | stores all intermediate output files from each step, and they are merged into one output json file and txt file in the pipeline
 *QC_${name}.json* | record all QC information of current data and ENCODE reference data (by pipe v3.1, will update soon)
+*QC_pipe_processing.log* | record the failure status of each step, this signal is captured by $?
+*step1.1_${name}_cutadapt_PE.trimlog* | cutadapt trimming report
+*step2.1_trimed_${name}.bam* | aligned bam file from **BWA MEM**, keep this one only for backup purpose
+*step3.1_normalized_per_10M_${name}.bigWig* | normalized signal per 10M input single ends for visualization purpose
+*step3.2_rmbl_${name}.bigWig* | full signal for visualization purpose
+*step3.3_rmbl_${name}.open.bed* | bed file after quality filtering on aligned bam file and signal shifting, this is the input for **macs2**
+*step3.4_peakcall_${name}_peaks.narrowPeak* | macs2 output, bed file that records peaks called by the software
+*step3.4_peakcall_${name}_peaks.xls* | macs2 output, record the command and corresponding output
+*step3.4_peakcall_${name}_summits.bed* | macs2 output, bed file that record summits only for each peak
+*step4.2_insertion_site_${name}.bedGraph* | bedGraph file that stores all insertion sites
+*step4.2_insertion_site_${name}.bigWig* | same to previous file but for visulization use
+*step4.6_multiqc_data* | output folder from **multiqc**, please see its help page for more details
+*step4.6_multiqc_report.html* | together with previous folder, this html visulize many quality control information
 
+If you happens to open the first folder which record intermediate files, you will see:
+![QC image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/QC_col_folder.png)  
 
+There will be 33 files, but don't worry, all of them are summaized together in the json file. You might be interested some figures stored in the first folder "plots_collection_${name}". If you open it, you will get this.
+![plot collection](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/plot_collection.png)  
 
-   
-2, QC_pipe_processing.log: store the status of each step, and warning messages if any  
-3, QC_data_collection_${file}.result: this table is inside the QC data collection folder, it's a one line table with same information as the json file but easier to collect in batch for review on server  
-4, Single output: for each step, the intermediate files are kept  
+File name | Content
+--------- | -------
+*plot2.2_reads_distri_in_chrom.png* | distribution of each chromosome
+*plot2.3_yield_distinction.png* | expected library complexity from **preseq**
+*plot3.1_insertion_size.png* | smoothed density plot of insertion size (length between 2 insertion points)
+*plot3.1_library_reads_distri.png* | library size compared with ENCODE reference
+*plot3.3_peak_length.png* | peak length distribution
+*plot4.1_RUP.png* | reads under peak ratio compared with ENCODE reference
+*plot4.2.2_peaks_enrichment_ratio.png* | enrichment ratio compared with ENCODE reference
+*plot4.3_PCR_duplicates_percentage.png* | PCR duplicate ratio compared with ENCODE reference
+*plot4.5_saturation.png* | saturation plot
+*plot4.6_promoter-peak_count.png* | pie plot of reads and peaks distribution in / out promoter regions
+*plot4.6_promoter_distribution_among_peaks.png* | percentage of peaks that cover a promoter in ranked peaks (by qvalue)
 
-## II, Term and definition  
+## II, Visulization through qATACViewer
+To make better visulization, we have also prepared a tool named **qATACViewer**, please **[click here](https://github.com/lidaof/qATACviewer/tree/localjson)** to find its github page. 
+
+**Usage**
+1. copy the git repository to local: `git clone -b localjson https://github.com/lidaof/qATACviewer.git` (please makesure to use the `localjson` branch)  
+2. update the path in `./qATACViewer/frontend/src/data.json` **(we are improving this part)**    
+3. follow the instruction on the the **Readme** of it  
+
+## III, Term and definition  
 1, coding promoter region definition:  
 2kb region (1kb up and 1kb down) of the transcription start site, this is a rough estimate and doesn't account multiple starting point situation.  
 
@@ -65,7 +100,7 @@ sub 10M enrichment =
 > Calculate the RPKM for those kept regions  
 
 
-## III, Data Processing  
+## IV, Data Processing  
 ### Caveats in method selection
 1, reads distribution count in each chromosome  
 We do **NOT** use samtools index directly, because "BWA" would assign reads of which has mapQ=0 to chr1, the results are not accurate. What we perform is to remove those reads first and count directly by "uniq" command. (This part is consistent with samtools index results)   

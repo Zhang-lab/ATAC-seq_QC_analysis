@@ -14,7 +14,7 @@ After running the pipeline, there will be a folder called **Processed_${name}**,
 
 There should be 15 files in total, and please feel free to **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/Processed_mm10_liver_embryo_d11.5_PE_bio1_ENCLB441LCB_1/)** to explore them.  
 
-Regarding each file (${name} refers to the file name, at here it's "mm10_liver_embryo_d11.5_PE_bio1_ENCLB441LCB_1"):  
+For each file (${name} refers to the file name, at here it's "mm10_liver_embryo_d11.5_PE_bio1_ENCLB441LCB_1"):  
 File name | Content  
 --------- | -------  
 *QC_ATAC_data_collection_${name}* | stores all intermediate output files from each step, and they are merged into one output json file and txt file in the pipeline  

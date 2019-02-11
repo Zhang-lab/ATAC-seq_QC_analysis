@@ -16,7 +16,8 @@ IV, Data processing details
 ## I, Output example  
 After running the pipeline, there will be a folder called **Processed_${name}**, all intermediate files and final output files are stored there. And it looks like this (using an ENCODE data for example):  
 ![output image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/ATAC_output.png)  
-
+&nbsp;
+&nbsp;
 There should be 15 files in total, and please feel free to **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/Processed_mm10_liver_embryo_d11.5_PE_bio1_ENCLB441LCB_1/)** to explore them.  
  
 File name | Content
@@ -58,7 +59,10 @@ File name | Content
 *plot4.6_promoter_distribution_among_peaks.png* | percentage of peaks that cover a promoter in ranked peaks (by qvalue)
 
 
-
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
 ## II, Visulization through qATACViewer
 To make better visulization, we have also prepared a tool named **qATACViewer**, please **[click here](https://github.com/lidaof/qATACviewer/tree/localjson)** to find its github page. 
 
@@ -67,8 +71,10 @@ To make better visulization, we have also prepared a tool named **qATACViewer**,
 2. update the path in `./qATACViewer/frontend/src/data.json` **(we are improving this part)**    
 3. follow the instruction on the the **Readme** of it  
 
-
-
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
 ## III, Term and definition  
 1, coding promoter region definition:  
 2kb region (1kb up and 1kb down) of the transcription start site, this is a rough estimate and doesn't account multiple starting point situation.  
@@ -107,7 +113,10 @@ sub 10M enrichment =
 > Keep those region that are far from any know peaks (distance > 10kb)  
 > Calculate the RPKM for those kept regions  
 
-
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
 ## IV, Data Processing  
 ### Caveats in method selection
 1, reads distribution count in each chromosome  

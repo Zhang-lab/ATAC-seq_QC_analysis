@@ -53,6 +53,8 @@ File name | Content
 *plot4.6_promoter-peak_count.png* | pie plot of reads and peaks distribution in / out promoter regions
 *plot4.6_promoter_distribution_among_peaks.png* | percentage of peaks that cover a promoter in ranked peaks (by qvalue)
 
+
+
 ## II, Visulization through qATACViewer
 To make better visulization, we have also prepared a tool named **qATACViewer**, please **[click here](https://github.com/lidaof/qATACviewer/tree/localjson)** to find its github page. 
 
@@ -60,6 +62,8 @@ To make better visulization, we have also prepared a tool named **qATACViewer**,
 1. copy the git repository to local: `git clone -b localjson https://github.com/lidaof/qATACviewer.git` (please makesure to use the `localjson` branch)  
 2. update the path in `./qATACViewer/frontend/src/data.json` **(we are improving this part)**    
 3. follow the instruction on the the **Readme** of it  
+
+
 
 ## III, Term and definition  
 1, coding promoter region definition:  

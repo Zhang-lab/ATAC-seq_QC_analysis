@@ -11,6 +11,10 @@ III, Data processing details
 ## I, Output example  
 After running the pipeline, there will be a folder called "Processed_${name}", all intermediate files and final output files are stored there. And it looks like this (using an ENCODE data for example):  
 ![output image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/AIAP_output_example.png)  
+
+There should be 15 files in total, and please feel free to **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/Processed_mm10_liver_embryo_d11.5_PE_bio1_ENCLB441LCB_1/)** to explore them.  
+
+Regarding each file:  
 1, QC_${file}.json: record QC information and ENCODE data results (by pipe version v3.1)    
 2, QC_pipe_processing.log: store the status of each step, and warning messages if any  
 3, QC_data_collection_${file}.result: this table is inside the QC data collection folder, it's a one line table with same information as the json file but easier to collect in batch for review on server  

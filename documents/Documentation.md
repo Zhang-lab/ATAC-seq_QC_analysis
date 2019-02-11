@@ -21,6 +21,7 @@ After running the pipeline, there will be a folder called **Processed_${name}**,
 &nbsp;
 &nbsp;
 &nbsp;
+
 There should be 15 files in total, and please feel free to **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/Processed_mm10_liver_embryo_d11.5_PE_bio1_ENCLB441LCB_1/)** to explore them.  
  
 File name | Content
@@ -46,7 +47,7 @@ File name | Content
 &nbsp;
 &nbsp;
 
-If you happens to open the first folder which record intermediate files, you will see:
+If you happens to open the first folder which record intermediate files, you will see:  
 ![QC image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/QC_col_folder.png)  
 
 There will be 33 files, but don't worry, all of them are summaized together in the json file. You might be interested some figures stored in the first folder "plots_collection_${name}". If you open it, you will get this.

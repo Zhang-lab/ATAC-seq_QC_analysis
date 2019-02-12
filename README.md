@@ -10,7 +10,7 @@ For any question, please contact shaopeng.liu@wustl.edu
 ## Documentation:  
 1. Pipeline documentation: analysis details and QC metrics information  
 Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/Documentation.md)**  
-2. Insertion Free Region prediction algorithm:   
+2. Potential transcription factor binding region prediction algorithm:   
 Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/ifr_documentation.md)**  
 3. Update logfile: pipeline change record  
 Please **[ click here](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/update_log.md)**  

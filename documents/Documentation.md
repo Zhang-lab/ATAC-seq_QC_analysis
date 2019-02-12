@@ -5,8 +5,8 @@ For any question please contact: shaopeng.liu@wustl.edu
 
 **Outline**  
 I, Output example and annotation  
-II, Downstream analysis
-III, Visulization through qATACViewer
+II, Downstream analysis  
+III, Visulization through qATACViewer  
 IV, Terms  
 V, Data processing details  
 
@@ -77,6 +77,7 @@ File name | Content
 1. merge QC data for a batch of files  
 ```
 # come to the parent folder where you store all those files
+
 singularity exec <path-2-singularity-image> bash /atac_seq/pipe_code/batch_collection_v3.1.sh
 ```
 
@@ -87,6 +88,7 @@ Borrowing the idea of Differentially Expressed Genes (DEG) analysis, we utilize 
 # similar to DEG, you will need 2 conditions and sample size for each condition is 2, unbalanced design is supported.
 # please put bed and peak file (*step3.3_rmbl_${name}.open.bed*, and *step3.4_peakcall_${name}_peaks.narrowPeak*) of each data into same folder
 # please make sure for each condition, there is a keyword to group them together, e.g. group1 group2 as prefix. You can add it if necessary.
+
 singularity exec <path-2-singularity-image> bash /atac_seq/pipe_code/DOR_analysis.sh ${group1_key} ${group2_key}
 ```
 
@@ -97,6 +99,8 @@ singularity exec <path-2-singularity-image> bash /atac_seq/pipe_code/DOR_analysi
 &nbsp;
 ## III, Visulization through qATACViewer
 To make better visulization, we have also prepared a tool named **qATACViewer**, please **[click here](https://github.com/lidaof/qATACviewer/tree/localjson)** to find its github page. 
+
+**[click here](https://qa.targetepigenomics.org/)** for examples.
 
 **Usage**
 1. copy the git repository to local: `git clone -b localjson https://github.com/lidaof/qATACviewer.git` (please makesure to use the `localjson` branch)  

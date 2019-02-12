@@ -16,7 +16,7 @@ V, Data processing details
 &nbsp;
 ## I, Output example  
 After running the pipeline, there will be a folder called **Processed_${name}**, all intermediate files and final output files are stored there. And it looks like this (using an ENCODE data for example):  
-![output image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/AIAP_output_example.png)  
+![output image]()  
 
 &nbsp;
 &nbsp;

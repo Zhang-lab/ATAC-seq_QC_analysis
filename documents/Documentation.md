@@ -16,14 +16,14 @@ V, Data processing details
 &nbsp;
 ## I, Output example  
 After running the pipeline, there will be a folder called **Processed_${name}**, all intermediate files and final output files are stored there. And it looks like this (using an ENCODE data for example):  
-![output image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/ATAC_output.png)  
+![output image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/AIAP_output_example.png)  
 
 &nbsp;
 &nbsp;
 &nbsp;
 &nbsp;
 
-There should be 15 files in total, and please feel free to **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/Processed_mm10_liver_embryo_d11.5_PE_bio1_ENCLB441LCB_1/)** to explore them.  
+There should be 15 files in total, and the contents are listed below.  
  
 File name | Content
 --------- | -------
@@ -49,10 +49,10 @@ File name | Content
 &nbsp;
 
 If you happens to open the first folder which record intermediate files, you will see:  
-![QC image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/QC_col_folder.png)  
+![QC image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/QC_col_folder_example.png)  
 
 There will be 33 files, but don't worry, all of them are summaized together in the json file. You might be interested some figures stored in the first folder "plots_collection_${name}". If you open it, you will get this.
-![plot collection](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/plot_collection.png)  
+![plot collection](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/plot_example.png)  
 
 File name | Content
 --------- | -------
@@ -393,8 +393,6 @@ s4.2_enrich () {
 }
 ``` 
   
-#### 4.3 (deleted), PBC calculation (PCR bottlenecking coefficiency)  
-
 #### 4.4, Saturation analysis  
 tool: macs2 v2.1  
 input: effect reads  

@@ -98,9 +98,9 @@ singularity exec <path-2-singularity-image> bash /atac_seq/pipe_code/DOR_analysi
 &nbsp;
 &nbsp;
 ## III, Visulization through qATACViewer
-To make better visulization, we have also prepared a tool named **qATACViewer**, please **[click here](https://github.com/lidaof/qATACviewer/tree/localjson)** to find its github page. 
+To make better visulization, we have also prepared a tool named **qATACViewer**, please **[click here](https://github.com/lidaof/qATACviewer/tree/localjson)** to find its github page.  
 
-**[click here](https://qa.targetepigenomics.org/)** for examples.
+And please **[click here](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/QAViewer_ENCODE_liver.pdf)** for examples.
 
 **Usage**
 1. copy the git repository to local: `git clone -b localjson https://github.com/lidaof/qATACviewer.git` (please makesure to use the `localjson` branch)  

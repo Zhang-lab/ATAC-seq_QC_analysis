@@ -1,6 +1,6 @@
-# Documentation v1.00
+# Documentation v1.1
 ATAC-seq quality control and analysis pipeline for Bo Zhang's lab  
-Last edit: 02/11/2019  
+Last edit: 12/05/2019  
 For any question please contact: shaopeng.liu@wustl.edu  
 
 **Outline**  

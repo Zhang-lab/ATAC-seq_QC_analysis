@@ -214,7 +214,7 @@ plot=ggplot(ref.map,aes(x=class,y=rup_ratio,fill=class))+
   stat_boxplot(geom="errorbar",size=1,width=0.3,aes(colour=class))+
   geom_boxplot(outlier.shape=NA,width=0.3,lwd=1,fatten=1,aes(colour=class))+
   scale_x_discrete(name="")+
-  ggtitle("Boxplot of reads under peaks percentage")+
+  ggtitle("Boxplot of reads under peaks ratio")+
   scale_fill_manual(values=c(`ENCODE PE`="grey",Sample="red"))+
   scale_colour_manual(values=c(`ENCODE PE`="black",Sample="red"))+
   theme_bw()+theme_classic()+theme(legend.position="none")+
@@ -224,9 +224,9 @@ plot=ggplot(ref.map,aes(x=class,y=rup_ratio,fill=class))+
         axis.text.x=element_text(size=10,face="bold",colour=c(`ENCODE PE`="black",Sample="red")),
         axis.text.y=element_text(size=10,face="bold"))
 if(map$rup_ratio<50) {
-  plot+scale_y_continuous(name="Reads under peaks percentage",limits=c(0,50))
+  plot+scale_y_continuous(name="Reads under peaks ratio",limits=c(0,50))
 } else {
-  plot+scale_y_continuous(name="Reads under peaks percentage")
+  plot+scale_y_continuous(name="Reads under peaks ratio")
 }
 options(warn=0)
 dev.off()
@@ -327,9 +327,9 @@ if(class(top)!="try-error"){
   
   png("plot4.6_promoter_distribution_among_peaks.png",height=1800,width=3200,res=300)
   print(ggplot(top,aes(sort(rank),index))+geom_density(stat="identity")+
-    ggtitle("Ratio of promoter regions")+
+    ggtitle("Percentage of promoter regions")+
     theme_bw()+theme_classic()+
-    scale_y_continuous(name="Ratio of promoter regions",limits=c(0,1))+
+    scale_y_continuous(name="Percentage of promoter regions",limits=c(0,1))+
     scale_x_continuous(name="Percentage of Top peaks")+
     theme(plot.title=element_text(size=14,family="Tahoma",face="bold",hjust=0.5),
           text=element_text(size=12,family="Tahoma"),

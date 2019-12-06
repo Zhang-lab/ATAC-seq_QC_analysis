@@ -78,20 +78,28 @@ File name | Content
 ```
 # come to the parent folder where you store all those files
 
-singularity exec <path-2-singularity-image> bash /atac_seq/pipe_code/batch_collection_v3.1.sh
+singularity exec <path-2-singularity-image> bash /atac_seq/pipe_code/batch_result_collection.sh
 ```
 
 
 2. Differential Accessible Region (DAR) detection
 Borrowing the idea of Differentially Expressed Genes (DEG) analysis, we utilize **DESeq2** to identify peak regions in ATAC-seq with differentially insertion events. 
 ```
-# similar to DEG, you will need 2 conditions and sample size for each condition is 2, unbalanced design is supported.
-# please put bed and peak file (*step3.3_rmbl_${name}.open.bed*, and *step3.4_peakcall_${name}_peaks.narrowPeak*) of each data into same folder
-# please make sure for each condition, there is a keyword to group them together, e.g. group1 group2 as prefix. You can add it if necessary.
+# similar to DEG, you will need 2 conditions to compare, and sample size for each condition is at least 2, unbalanced design is supported.
+# please put read file (*step3.3_rmbl_${name}.open.bed*) and peak file (*step3.4_peakcall_${name}_peaks.narrowPeak*) of the compared data into same folder
+# please make sure for each condition, there is a keyword to group them together, namely, use ls *keyword1* can catch all read and peak files in group1, and ls *keyword2* can catch all read and peak files in group2.
 
+# run DAR analysis
 singularity exec <path-2-singularity-image> bash /atac_seq/pipe_code/DOR_analysis.sh ${group1_key} ${group2_key}
 ```
 
+Format of output files:
+```
+DOR_all_regions.bed: records all regions (generated from merged peaks) statistics
+DOR_full.bed: regions with significant DAR (log2fc>1 && padj<0.01), you can get a customed one from the previous file
+full.count: the input matrix to calculate DAR
+merged_all.narrowPeak & reads.txt are intermediate files that can be ignored.
+```
 
 &nbsp;
 &nbsp;

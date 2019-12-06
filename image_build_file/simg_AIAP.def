@@ -1,0 +1,32 @@
+Bootstrap: docker
+From: zhanglab/atac-seq:base_v1.1
+IncludeCmd: yes
+
+
+%runscript
+cd /process \
+	&& bash /atac_seq/pipe_code/ATAC_IAP_v1.1.sh  $@
+
+%post
+############
+# those parts MUST be used here, can not solve the problem in docker, docker does not has locale issue
+apt-get update && apt-get install -y locales
+locale-gen en_US.UTF-8
+
+apt-get install debconf
+dpkg-reconfigure locales
+############
+
+# download pipe
+curl -fsSL http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/atac-seq_pipe.tar.gz   -o ./atac-seq_pipe.tar.gz \
+        && tar -xvzf atac-seq_pipe.tar.gz -C / \
+        && rm atac-seq_pipe.tar.gz
+
+# create folders for ref
+mkdir /data
+mkdir /scratch
+mkdir /process
+mkdir -p /atac_seq/Resource/Genome
+
+PATH=$PATH:/opt/sratoolkit.2.10.0-ubuntu64/bin/:/opt/bwa-0.7.16a/:/opt/bedtools2/bin/:/opt/methylQA/:/opt/kentUtils/bin/
+

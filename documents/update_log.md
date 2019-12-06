@@ -1,8 +1,29 @@
-### Current version: IAP v1.00  
-Last update: 02/11/2019  
+### Current version: AIAP v1.1  
+Last update: 12/05/2019  
 
   
 ### Update record:  
+`12/05/2019, AIAP v1.1`  
+1. Update and fix all the main tools (except methylQA)  
+2. Correct the code path for the DAR analysis  
+3. Installed R packages DESeq2 and EdgeR  
+4. Adjust ylab in the single plot 4.1 and 4.6 to make them accurate  
+5. Add the Dockerfile and Singularity file  
+Fixed version of main tools:
+```
+# Python 3.6.3
+# cutadapt 1.16
+# R 3.6 (previous 3.3)
+# macs2 2.2.5 (previous 2.1.0)
+# BiocManager 3.10
+# SRA toolkit (fastq-dump) 2.10.0 (previous 2.9)
+# fastqc 0.11.7
+# preseq 2.0.0
+# bwa 0.7.16a
+# samtools 1.9 (previous 1.2)
+# bedtools 2.29 (previous 2.25)
+```
+
 `02/11/2019, update documentation`  
 
 `11/03/2018, ATAC-seq TaRGET 181103`  

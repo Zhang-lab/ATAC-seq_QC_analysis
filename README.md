@@ -1,6 +1,7 @@
 # Atac-seq Integrative Analysis Pipeline  
 Pipeline for the QC metrics construction, data analysis and visualization of ATAC-seq data.  
-Current version: `AIAP_v1.00`   
+Current version: `AIAP_v1.1`
+Last update: `2019.12.5`   
 
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
@@ -19,9 +20,16 @@ Please **[ click here](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/ma
 ### General IAP version:   
 Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually **NOT** changed:  
 ####  
-1. find and download the image: **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)**, right click to copy the link, and download by wget command. e.g:  
-`wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.00.simg`  
-2. then **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)** to find your interested genome, for now we have mm9/10, hg19/38, danRer10/11, rn6 and dm6. Use the similar way to download them.  
+1. Download the singularity image:
+`wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.1.simg`
+If you want to use previous version, please find them by **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)**
+
+2. Download the reference files of different genome:
+`wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/atac_mm10_ref.tar.gz`
+You can also find more genome builds: **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)**. Currently we have: mm9/10, hg19/38, danRer10/11, rn6 and dm6.
+
+3. Decompress the reference files and put to your own folder:
+`tar -xzf atac_mm10_ref.tar.gz`
 
 Step2. process data by the singularity image: 
 #### Please run the cmd on the same directory of your data, if your data is on /home/example, then you may need `cd /home/example` first. The location of image and reference files is up to you.    
@@ -30,13 +38,13 @@ singularity run -B ./:/process -B <path-to-parent-folder-of-ref-file>:/atac_seq/
 ```
 It may looks a little confusing at first time, but when you get familier with Singularity they will be friendly :)  
 For example, if  
-a) you download the image on /home/image/ATAC_IAP_v1.00.simg  
+a) you download the image on /home/image/ATAC_IAP_v1.1.simg  
 b) the reference file on /home/src/mm10  
 c) and your data is read1.fastq.gz and read2.fastq.gz on folder /home/data  
 
 Then you need to:
 1. `cd /home/data` 
-2. `singularity run -B ./:/process -B /home/src:/atac_seq/Resource/Genome  /home/image/ATAC_IAP_v1.00.simg  -r PE -g mm10 -o read1.fastq.gz -p read2.fastq.gz`  
+2. `singularity run -B ./:/process -B /home/src:/atac_seq/Resource/Genome  /home/image/ATAC_IAP_v1.1.simg  -r PE -g mm10 -o read1.fastq.gz -p read2.fastq.gz`  
 
 ### TaRGET II version:  
 1. **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/TaRGET/)** to find the TaRGET image and download to your server  

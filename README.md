@@ -1,7 +1,7 @@
 # Atac-seq Integrative Analysis Pipeline  
 Pipeline for the QC metrics construction, data analysis and visualization of ATAC-seq data.  
 Current version: `AIAP_v1.1`
-Last update: `2019.12.5`   
+Last update: `2019.12.9`   
 
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
@@ -17,6 +17,14 @@ Please **[ click here ](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/m
 Please **[ click here](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/master/documents/update_log.md)**  
 <br><br>
 ## Usage:  
+### Test data:  
+There are one paired-end mm10 data with 0.25M reads for test purpose, they can be downloaded by:  
+```
+wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/mm10_1.fastq.gz
+wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/mm10_2.fastq.gz
+```
+
+ 
 ### General IAP version:   
 Step1. download singularity images and reference files (you only need download them **ONCE**, then you can use them directly), if there is any update, you may need to download a new image, but reference files are usually **NOT** changed:  
 ####  

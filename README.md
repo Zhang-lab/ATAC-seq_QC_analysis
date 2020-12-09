@@ -20,8 +20,8 @@ Please **[ click here](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/ma
 ### Test data:  
 There are one paired-end mm10 data with 0.25M reads for test purpose, they can be downloaded by:  
 ```
-wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/mm10_1.fastq.gz
-wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/mm10_2.fastq.gz
+wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/mm10_1.fastq.gz
+wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/mm10_2.fastq.gz
 ```
 
  
@@ -30,13 +30,13 @@ Step1. download singularity images and reference files (you only need download t
 ####  
 1. Download the singularity image:
 ```
-wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.1.simg
+wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.1.simg
 ```
 If you want to use previous version, please find them by **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/)**
 
 2. Download the reference files of different genome:
 ```
-wget http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/atac_mm10_ref.tar.gz
+wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/atac_mm10_ref.tar.gz
 ```
 You can also find more genome builds: **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)**. Currently we have: mm9/10, hg19/38, danRer10/11, rn6 and dm6.
 
@@ -61,7 +61,7 @@ Then you need to:
 2. `singularity run -B ./:/process -B /home/src:/atac_seq/Resource/Genome  /home/image/ATAC_IAP_v1.1.simg  -r PE -g mm10 -o read1.fastq.gz -p read2.fastq.gz`  
 
 ### TaRGET II version:  
-1. **[ click here ](http://brc.wustl.edu/SPACE/shaopengliu/Singularity_image/TaRGET/)** to find the TaRGET image and download to your server  
+1. **[ click here ](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/TaRGET/)** to find the TaRGET image and download to your server  
 2. then run the code below on the same directory with your data:  
 `singularity run -B ./:/process <path-to-image> -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`  
 

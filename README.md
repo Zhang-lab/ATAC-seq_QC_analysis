@@ -32,13 +32,13 @@ Step1. download singularity images and reference files (you only need download t
 ```
 wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.1.simg
 ```
-If you want to use previous version, please find them by **[ click here ](http://http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/)**
+If you want to use previous version, please find them by **[ click here ](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/)**
 
 2. Download the reference files of different genome:
 ```
 wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/atac_mm10_ref.tar.gz
 ```
-You can also find more genome builds: **[ click here ](http://http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)**. Currently we have: mm9/10, hg19/38, danRer10/11, rn6 and dm6.
+You can also find more genome builds: **[ click here ](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)**. Currently we have: mm9/10, hg19/38, danRer10/11, rn6 and dm6.
 
 3. Decompress the reference files and put to your own folder:
 ```

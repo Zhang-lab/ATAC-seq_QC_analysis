@@ -1,6 +1,6 @@
 # Documentation v1.1
 ATAC-seq quality control and analysis pipeline for Bo Zhang's lab  
-Last edit: 12/05/2019  
+Last edit: 07/27/2022  
 For any question please contact: shaopeng.liu@wustl.edu  
 
 **Outline**  
@@ -16,7 +16,7 @@ V, Data processing details
 &nbsp;
 ## I, Output example  
 After running the pipeline, there will be a folder called **Processed_${name}**, all intermediate files and final output files are stored there. And it looks like this (using an ENCODE data for example):  
-![output image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/ATAC_out.png)  
+![output image](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/AIAP_main_output.png)  
 
 &nbsp;
 &nbsp;
@@ -49,10 +49,10 @@ File name | Content
 &nbsp;
 
 If you happens to open the first folder which record intermediate files, you will see:  
-![QC image](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/QC_col_folder_example.png)  
+![QC image](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/AIAP_intermediate.png)  
 
 There will be 33 files, but don't worry, all of them are summaized together in the json file. You might be interested some figures stored in the first folder "plots_collection_${name}". If you open it, you will get this.
-![plot collection](http://brc.wustl.edu/SPACE/shaopengliu/atac_v1/20190211_AIAP_documentation_demo/plot_example.png)  
+![plot collection](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/AIAP_single_plots.png)  
 
 File name | Content
 --------- | -------

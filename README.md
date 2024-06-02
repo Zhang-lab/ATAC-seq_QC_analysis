@@ -32,13 +32,13 @@ Step1. download singularity images and reference files (you only need download t
 ```
 wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.1.simg
 ```
-If you want to use previous version, please find them by **[ click here ](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/)**
+If you want to use previous version, please find them by **[ click here ](https://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/)**
 
-2. Download the reference files of different genome:
+2. Download the reference files of different genomes:
 ```
 wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/atac_mm10_ref.tar.gz
 ```
-You can also find more genome builds: **[ click here ](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)**. Currently we have: mm9/10, hg19/38, danRer10/11, rn6 and dm6.
+You can also find more genome builds: **[ click here ](https://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)**. Currently we have: mm9/10, hg19/38, danRer10/11, rn6 and dm6.
 
 3. Decompress the reference files and put to your own folder:
 ```
@@ -61,7 +61,7 @@ Then you need to:
 2. `singularity run -B ./:/process -B /home/src:/atac_seq/Resource/Genome  /home/image/ATAC_IAP_v1.1.simg  -r PE -g mm10 -o read1.fastq.gz -p read2.fastq.gz`  
 
 ### TaRGET II version:  
-1. **[ click here ](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/TaRGET/)** to find the TaRGET image and download to your server  
+1. **[ click here ](https://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/TaRGET/)** to find the TaRGET image and download to your server  
 2. then run the code below on the same directory with your data:  
 `singularity run -B ./:/process <path-to-image> -r <SE/PE> -g <mm10/hg38>  -o <read_file1>  -p <read_file2>`  
 

@@ -16,7 +16,7 @@ V, Data processing details
 &nbsp;
 ## I, Output example  
 After running the pipeline, there will be a folder called **Processed_${name}**, all intermediate files and final output files are stored there. And it looks like this (using an ENCODE data for example):  
-![output image](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/AIAP_main_output.png)  
+![output image](https://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/AIAP_main_output.png)  
 
 &nbsp;
 &nbsp;
@@ -49,10 +49,10 @@ File name | Content
 &nbsp;
 
 If you happens to open the first folder which record intermediate files, you will see:  
-![QC image](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/AIAP_intermediate.png)  
+![QC image](https://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/AIAP_intermediate.png)  
 
 There will be 33 files, but don't worry, all of them are summaized together in the json file. You might be interested some figures stored in the first folder "plots_collection_${name}". If you open it, you will get this.
-![plot collection](http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/AIAP_single_plots.png)  
+![plot collection](https://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/AIAP_single_plots.png)  
 
 File name | Content
 --------- | -------
@@ -83,7 +83,7 @@ singularity exec <path-2-singularity-image> bash /atac_seq/pipe_code/batch_resul
 
 
 2. Differential Accessible Region (DAR) detection
-Borrowing the idea of Differentially Expressed Genes (DEG) analysis, we utilize **DESeq2** to identify peak regions in ATAC-seq with differentially insertion events. 
+Borrowing the idea of Differentially Expressed Genes (DEG) analysis, we utilize **DESeq2** to identify peak regions in ATAC-seq with differential insertion events. 
 ```
 # similar to DEG, you will need 2 conditions to compare, and sample size for each condition is at least 2, unbalanced design is supported.
 # please put read file (*step3.3_rmbl_${name}.open.bed*) and peak file (*step3.4_peakcall_${name}_peaks.narrowPeak*) of the compared data into same folder

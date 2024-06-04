@@ -36,7 +36,7 @@ If you want to use previous version, please find them by **[ click here ](https:
 
 2. Download the reference files of different genomes:
 ```
-wget https://regmedsrv1.wustl.edu/Public_SPACE/litd/Public_html/pipeline/Singularity_image/atac-seq/ref_file/atac_mm10_ref.tar.gz
+wget https://regmedsrv1.wustl.edu/Public_SPACE/resources/pipeline/atac-seq/ref_file/atac_mm10_ref.tar.gz
 ```
 You can also find more genome builds: **[ click here ](https://regmedsrv1.wustl.edu/Public_SPACE/resources/pipeline/atac-seq/ref_file/)**. Currently we have: mm9/10, hg19/38, danRer10/11, rn6 and dm6.
 

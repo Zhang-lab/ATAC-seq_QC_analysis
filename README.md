@@ -6,7 +6,7 @@ Last update: `2019.12.9`
 Advisor: Bo Zhang  
 Contributor: Cheng Lyu and Shaopeng Liu  
 
-For any question, please contact shaopeng.liu@wustl.edu  
+For any question, please contact tiandao.li@wustl.edu  
 <br><br>
 ## Documentation:  
 1. Pipeline documentation: analysis details and QC metrics information  
@@ -20,8 +20,8 @@ Please **[ click here](https://github.com/Zhang-lab/ATAC-seq_QC_analysis/blob/ma
 ### Test data:  
 There are one paired-end mm10 data with 0.25M reads for test purpose, they can be downloaded by:  
 ```
-wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/mm10_1.fastq.gz
-wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/test_mm10_data/mm10_2.fastq.gz
+wget https://regmedsrv1.wustl.edu/Public_SPACE/litd/Public_html/pipeline/Singularity_image/atac-seq/test_mm10_data/mm10_1.fastq.gz
+wget https://regmedsrv1.wustl.edu/Public_SPACE/litd/Public_html/pipeline/Singularity_image/atac-seq/test_mm10_data/mm10_2.fastq.gz
 ```
 
  
@@ -30,15 +30,15 @@ Step1. download singularity images and reference files (you only need download t
 ####  
 1. Download the singularity image:
 ```
-wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ATAC_IAP_v1.1.simg
+wget https://regmedsrv1.wustl.edu/Public_SPACE/litd/Public_html/pipeline/Singularity_image/atac-seq/ATAC_IAP_v1.1.simg
 ```
-If you want to use previous version, please find them by **[ click here ](https://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/)**
+If you want to use previous version, please find them by **[ click here ](https://regmedsrv1.wustl.edu/Public_SPACE/litd/Public_html/pipeline/Singularity_image/atac-seq/)**
 
 2. Download the reference files of different genomes:
 ```
-wget http://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/atac_mm10_ref.tar.gz
+wget https://regmedsrv1.wustl.edu/Public_SPACE/litd/Public_html/pipeline/Singularity_image/atac-seq/ref_file/atac_mm10_ref.tar.gz
 ```
-You can also find more genome builds: **[ click here ](https://regmedsrv1.wustl.edu/Public_SPACE/shaopengliu/Singularity_image/atac-seq/ref_file/)**. Currently we have: mm9/10, hg19/38, danRer10/11, rn6 and dm6.
+You can also find more genome builds: **[ click here ](https://regmedsrv1.wustl.edu/Public_SPACE/litd/Public_html/pipeline/Singularity_image/atac-seq/ref_file/)**. Currently we have: mm9/10, hg19/38, danRer10/11, rn6 and dm6.
 
 3. Decompress the reference files and put to your own folder:
 ```
